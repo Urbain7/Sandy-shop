@@ -9,11 +9,28 @@
   --font-family: 'Poppins', sans-serif;
 }
 
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
   font-family: var(--font-family);
   margin: 0;
   background-color: var(--background-color);
   color: var(--secondary-color);
+  /* CORRECTION STICKY FOOTER : Fait en sorte que le body prenne toute la hauteur */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  /* CORRECTION STICKY FOOTER : Le contenu principal grandit pour pousser le footer en bas */
+  flex-grow: 1;
 }
 
 /* =============================== */
@@ -26,6 +43,7 @@ header {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex-wrap: wrap; /* Permet de passer à la ligne sur petits écrans */
 }
 
 .logo {
@@ -242,20 +260,31 @@ form button {
 /* Style du Footer (Pied de page)  */
 /* =============================== */
 .footer {
-  background-color: var(--secondary-color); /* Fond sombre (#333) */
-  color: #f0f0f0; /* Texte gris clair */
-  text-align: center;
-  padding: 2rem 1rem;
-  margin-top: 4rem; /* Espace entre le contenu principal et le footer */
+  background-color: var(--secondary-color);
+  color: #f0f0f0;
+  padding: 1.5rem 2rem;
+  margin-top: auto; /* Pousse le footer en bas grâce à flex-grow sur main */
   font-size: 0.9rem;
 }
 
-.footer p {
-  margin: 0.5rem 0;
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .footer a {
-  color: white; /* Liens en blanc pour ressortir */
+  color: white;
   text-decoration: none;
   transition: text-decoration 0.3s;
 }
@@ -268,17 +297,17 @@ form button {
 /* Style du Bouton WhatsApp Flottant */
 /* =============================== */
 .whatsapp-float {
-  position: fixed; /* Reste fixe à l'écran */
+  position: fixed;
   width: 60px;
   height: 60px;
-  bottom: 25px; /* Distance du bas */
-  right: 25px;  /* Distance de la droite */
-  background-color: #25D366; /* Couleur officielle de WhatsApp */
-  color: #FFF; /* Couleur de l'icône */
-  border-radius: 50%; /* Pour le rendre circulaire */
+  bottom: 25px;
+  right: 25px;
+  background-color: #25D366;
+  color: #FFF;
+  border-radius: 50%;
   text-align: center;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 100; /* S'assure qu'il est au-dessus des autres éléments */
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -286,7 +315,7 @@ form button {
 }
 
 .whatsapp-float:hover {
-  transform: scale(1.1); /* Effet de grossissement au survol */
+  transform: scale(1.1);
 }
 
 /* =============================== */
@@ -296,6 +325,7 @@ form button {
   header {
     flex-direction: column;
     gap: 1rem;
+    padding: 1rem;
   }
   
   .filters {
@@ -304,10 +334,17 @@ form button {
   }
 
   #search-input {
-    width: auto;
+    width: 100%;
   }
 
   .banner h1 {
     font-size: 2rem;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 1.5rem;
   }
 }
