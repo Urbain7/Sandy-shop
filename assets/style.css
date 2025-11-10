@@ -244,3 +244,29 @@ form button {
     width: auto;
   }
 }
+
+/* ================= */
+/* Style du Footer   */
+/* ================= */
+.footer {
+  background-color: var(--secondary-color); /* Fond sombre (#333) */
+  color: #f0f0f0; /* Texte gris clair */
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: 4rem; /* Espace entre le contenu principal et le footer */
+  font-size: 0.9rem;
+}
+
+.footer p {
+  margin: 0.5rem 0;
+}
+
+.footer a {
+  color: white; /* Liens en blanc pour ressortir */
+  text-decoration: none;
+  transition: text-decoration 0.3s;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
