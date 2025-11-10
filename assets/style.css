@@ -263,7 +263,7 @@ form button {
   background-color: var(--secondary-color);
   color: #f0f0f0;
   padding: 1.5rem 2rem;
-  margin-top: auto; /* Pousse le footer en bas grâce à flex-grow sur main */
+  margin-top: auto; /* Pousse le footer en bas */
   font-size: 0.9rem;
 }
 
@@ -271,16 +271,23 @@ form button {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Pousse le copyright à gauche et les liens à droite */
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-wrap: wrap; /* Permet de passer à la ligne sur mobile */
+  gap: 1rem; /* Espace si les éléments passent à la ligne */
 }
 
 .footer-links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  align-items: center; /* Aligne verticalement les liens et les séparateurs */
+  flex-wrap: wrap; /* Permet aux liens de passer à la ligne sur de petits écrans */
+  justify-content: center; /* Centre les liens s'ils sont sur plusieurs lignes */
+  gap: 0.75rem; /* Espace autour de chaque lien/séparateur */
+}
+
+.footer-separator {
+  /* On peut donner une couleur plus douce au séparateur si on le souhaite */
+  color: var(--accent-color); 
 }
 
 .footer a {
@@ -293,6 +300,19 @@ form button {
   text-decoration: underline;
 }
 
+/* ... (Le style du bouton WhatsApp reste le même) ... */
+
+/* Dans la section @media (max-width: 768px) */
+@media (max-width: 768px) {
+  /* ... (vos autres styles responsive) ... */
+
+  /* On centre les éléments du footer sur mobile */
+  .footer-container {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem; /* Espace vertical entre le copyright et les liens */
+  }
 /* =============================== */
 /* Style du Bouton WhatsApp Flottant */
 /* =============================== */
