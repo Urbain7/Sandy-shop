@@ -1,43 +1,44 @@
+
 [
   {
     "id": 1,
     "nom": "Sac Élégance Noire",
-    "prix": 89.99,
+    "prix": 59000,
     "categorie": "Sacs",
     "image": "assets/images/sac1.jpg"
   },
   {
     "id": 2,
     "nom": "Robe d'Été Fleurie",
-    "prix": 129.99,
+    "prix": 85000,
     "categorie": "Robes",
     "image": "assets/images/robe1.jpg"
   },
   {
     "id": 3,
     "nom": "Escarpins Roses Poudrés",
-    "prix": 110.00,
+    "prix": 72000,
     "categorie": "Chaussures",
     "image": "assets/images/chaussure1.jpg"
   },
   {
     "id": 4,
     "nom": "Collier Lune Dorée",
-    "prix": 45.50,
+    "prix": 30000,
     "categorie": "Accessoires",
     "image": "assets/images/accessoire1.jpg"
   },
   {
     "id": 5,
     "nom": "Sac à Main Vintage",
-    "prix": 95.00,
+    "prix": 62500,
     "categorie": "Sacs",
     "image": "assets/images/sac2.jpg"
   },
   {
     "id": 6,
     "nom": "Robe de Soirée Satinée",
-    "prix": 150.00,
+    "prix": 98000,
     "categorie": "Robes",
     "image": "assets/images/robe2.jpg"
   }
