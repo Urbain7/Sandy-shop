@@ -243,9 +243,7 @@ form button {
   #search-input {
     width: auto;
   }
-}
-
-/* ================= */
+  /* ================= */
 /* Style du Footer   */
 /* ================= */
 .footer {
@@ -270,3 +268,5 @@ form button {
 .footer a:hover {
   text-decoration: underline;
 }
+}
+
