@@ -254,6 +254,30 @@ form button {
   font-weight: bold;
 }
 
+/* ... (après .cart-total) ... */
+
+/* NOUVEAUX STYLES À AJOUTER */
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap; /* Gère le passage à la ligne sur mobile */
+}
+
+.cart-header h2 {
+  margin: 0; /* Retire la marge par défaut du titre pour un meilleur alignement */
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: var(--secondary-color);
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
 /* =============================== */
 /* Style du Footer (Pied de page)  */
 /* =============================== */
