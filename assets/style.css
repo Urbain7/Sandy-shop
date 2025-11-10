@@ -243,9 +243,7 @@ form button {
   #search-input {
     width: auto;
   }
-  /* ================= */
-/* Style du Footer   */
-/* ================= */
+/* Style du Footer */
 .footer {
   background-color: var(--secondary-color); /* Fond sombre (#333) */
   color: #f0f0f0; /* Texte gris clair */
