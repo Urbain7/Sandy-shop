@@ -48,10 +48,11 @@ function displayProducts(products, likes) {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.dataset.id = product.id;
+        // MODIFICATION ICI: € -> FCFA et formatage du nombre
         productCard.innerHTML = `
             <img src="${product.image}" alt="${product.nom}">
             <h3>${product.nom}</h3>
-            <p class="product-price">${product.prix.toFixed(2)} €</p>
+            <p class="product-price">${product.prix.toLocaleString('fr-FR')} FCFA</p>
             <div class="product-actions">
                 <button class="btn add-to-cart">Ajouter au panier</button>
                 <button class="like-btn ${isLiked ? 'liked' : ''}">
@@ -92,9 +93,9 @@ async function filterAndSearch() {
     }
 }
 
-
 // Ajoute les écouteurs d'événements sur les boutons des cartes produits
 function addEventListenersToCards() {
+    // ... (le code pour les likes et l'ajout au panier reste le même)
     // Gestion des Likes
     document.querySelectorAll('.like-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -164,20 +165,22 @@ async function initPanierPage() {
     cart.forEach(item => {
         const totalLigne = item.prix * item.quantity;
         totalGlobal += totalLigne;
+        // MODIFICATIONS ICI: € -> FCFA et formatage du nombre
         cartHTML += `
             <tr>
                 <td>${item.nom}</td>
-                <td>${item.prix.toFixed(2)} €</td>
+                <td>${item.prix.toLocaleString('fr-FR')} FCFA</td>
                 <td>${item.quantity}</td>
-                <td>${totalLigne.toFixed(2)} €</td>
+                <td>${totalLigne.toLocaleString('fr-FR')} FCFA</td>
             </tr>
         `;
     });
     
-    cartHTML += `</tbody></table><div class="cart-total">Total : ${totalGlobal.toFixed(2)} €</div>`;
+    // MODIFICATION ICI: € -> FCFA et formatage du nombre
+    cartHTML += `</tbody></table><div class="cart-total">Total : ${totalGlobal.toLocaleString('fr-FR')} FCFA</div>`;
     cartContainer.innerHTML = cartHTML;
 
-    // Gestion de l'envoi du formulaire de commande
+    // ... (la suite du code pour le formulaire de commande reste la même)
     orderForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('customer-name').value;
@@ -188,10 +191,9 @@ async function initPanierPage() {
             nom: name,
             email: email,
             panier: JSON.stringify(cart.map(p => ({ nom: p.nom, quantite: p.quantity, prix: p.prix }))),
-            total: totalGlobal.toFixed(2)
+            total: totalGlobal
         };
         
-        // IMPORTANT: N'oubliez pas de remplacer par votre URL Apps Script
         const SCRIPT_URL = "VOTRE_URL_APPS_SCRIPT"; 
 
         if (SCRIPT_URL === "VOTRE_URL_APPS_SCRIPT" || !SCRIPT_URL) {
@@ -214,16 +216,3 @@ async function initPanierPage() {
             });
             
             formMessage.textContent = "Commande envoyée avec succès ! Vous allez être redirigé.";
-            formMessage.style.color = "green";
-            localStorage.removeItem('cart');
-            setTimeout(() => {
-                window.location.href = 'index.html'; // Redirige vers la page d'accueil
-            }, 3000);
-
-        } catch (error) {
-            console.error('Order submission error:', error);
-            formMessage.textContent = "Une erreur est survenue lors de l'envoi. Veuillez réessayer.";
-            formMessage.style.color = "red";
-        }
-    });
-}
