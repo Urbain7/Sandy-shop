@@ -7,80 +7,110 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ... (toutes les fonctions de la page produits restent les mêmes) ...
-// ... (formatPrice, initProduitsPage, displayProducts, etc.) ...
-function formatPrice(price) { /* ... */ }
-async function initProduitsPage() { /* ... */ }
-function displayProducts(products) { /* ... */ }
-function addEventListenersToCards(products) { /* ... */ }
-function addToCart(product) { /* ... */ }
-
-
 // ===============================================
-// MISE À JOUR DE LA PAGE PANIER
+// FONCTION `initPanierPage` CORRIGÉE ET SÉCURISÉE
 // ===============================================
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
     const orderForm = document.getElementById('order-form');
-    const clearCartBtn = document.getElementById('clear-cart-btn'); // On récupère le bouton
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    const cartHeader = document.querySelector('.cart-header'); // Le titre et le bouton "Vider"
+
+    // Vérifie si les éléments essentiels existent. Si non, on arrête pour éviter des erreurs.
+    if (!cartContainer || !orderForm || !clearCartBtn || !cartHeader) {
+        console.error("Un ou plusieurs éléments essentiels du panier sont manquants dans le HTML.");
+        return;
+    }
     
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
-    // Si le panier est vide
+    // Gère l'affichage si le panier est vide
     if (cart.length === 0) {
-        cartContainer.innerHTML = '<p>Votre panier est vide.</p>';
-        if (orderForm) orderForm.style.display = 'none';
-        if (clearCartBtn) clearCartBtn.style.display = 'none'; // On cache le bouton "Vider"
-        return;
+        cartHeader.style.display = 'none'; // Cache le titre et le bouton "Vider"
+        orderForm.style.display = 'none'; // Cache le formulaire
+        cartContainer.innerHTML = '<h2>Votre Panier</h2><p>Votre panier est vide.</p>'; // Affiche le message
+        return; // Stoppe la fonction ici
     }
 
-    // Si le panier n'est pas vide, on affiche le bouton "Vider"
-    if (clearCartBtn) clearCartBtn.style.display = 'block';
+    // Si on arrive ici, le panier n'est pas vide. On affiche tout.
+    cartHeader.style.display = 'flex';
+    orderForm.style.display = 'flex';
 
-    // Logique pour vider le panier
+    // Active le bouton "Vider le panier"
     clearCartBtn.addEventListener('click', () => {
-        // On demande confirmation à l'utilisateur
         if (confirm("Voulez-vous vraiment vider votre panier ?")) {
-            localStorage.removeItem('cart'); // Supprime le panier
-            window.location.reload(); // Recharge la page pour afficher le panier vide
+            localStorage.removeItem('cart');
+            window.location.reload();
         }
     });
 
-    // ... (la suite de la fonction pour afficher le contenu du panier reste la même) ...
-    let cartHTML = `
-        <table class="cart-items">
-            <thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th></tr></thead>
-            <tbody>
-    `;
+    // Affiche le contenu du panier
+    let cartHTML = `<table class="cart-items"><thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th></tr></thead><tbody>`;
     let totalGlobal = 0;
     cart.forEach(item => {
         const totalLigne = item.prix * item.quantity;
         totalGlobal += totalLigne;
-        cartHTML += `
-            <tr>
-                <td>${item.nom}</td>
-                <td>${formatPrice(item.prix)}</td>
-                <td>${item.quantity}</td>
-                <td>${formatPrice(totalLigne)}</td>
-            </tr>
-        `;
+        cartHTML += `<tr><td>${item.nom}</td><td>${formatPrice(item.prix)}</td><td>${item.quantity}</td><td>${formatPrice(totalLigne)}</td></tr>`;
     });
-    
     cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
     cartContainer.innerHTML = cartHTML;
 
-    // Affiche le formulaire de commande
-    if (orderForm) orderForm.style.display = 'flex';
+    // ==============================================================
+    // Activation du bouton "Passer la commande"
+    // L'écouteur est maintenant attaché sans risque d'être bloqué
+    // ==============================================================
+    orderForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Empêche la page de se recharger
+        const name = document.getElementById('customer-name').value;
+        const email = document.getElementById('customer-email').value;
+        const formMessage = document.getElementById('form-message');
 
-    // Logique d'envoi du formulaire (inchangée)
-    orderForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // ... Logique d'envoi vers Google Sheets ...
+        // IMPORTANT : VÉRIFIEZ QUE CETTE URL EST LA BONNE !
+        const SCRIPT_URL = "VOTRE_URL_APPS_SCRIPT"; 
+
+        if (SCRIPT_URL === "VOTRE_URL_APPS_SCRIPT" || !SCRIPT_URL.startsWith("https://script.google.com")) {
+            formMessage.textContent = "Erreur : La fonctionnalité de commande n'est pas encore configurée.";
+            formMessage.style.color = "red";
+            return;
+        }
+
+        formMessage.textContent = "Envoi de la commande en cours...";
+        formMessage.style.color = "grey";
+        formMessage.scrollIntoView(); // Fait défiler jusqu'au message
+
+        const orderData = {
+            nom: name,
+            email: email,
+            panier: JSON.stringify(cart.map(p => ({ nom: p.nom, quantite: p.quantity, prix: p.prix }))),
+            total: totalGlobal
+        };
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                redirect: 'follow',
+                body: JSON.stringify(orderData)
+            });
+
+            formMessage.textContent = "Commande envoyée avec succès ! Vous allez être redirigé.";
+            formMessage.style.color = "green";
+            localStorage.removeItem('cart');
+            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+
+        } catch (error) {
+            console.error('Order submission error:', error);
+            formMessage.textContent = "Une erreur est survenue lors de l'envoi. Veuillez réessayer.";
+            formMessage.style.color = "red";
+        }
     });
 }
 
-// NOTE : Pour la clarté, je remets ici les fonctions que j'ai abrégées plus haut.
-// Assurez-vous que votre fichier final les contienne.
+// ===============================================
+// NE PAS MODIFIER LES FONCTIONS CI-DESSOUS
+// ===============================================
 
 function formatPrice(price) {
     const priceNumber = Number(price);
