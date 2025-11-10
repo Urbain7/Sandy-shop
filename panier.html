@@ -23,7 +23,7 @@
 
     <main>
         <div class="container">
-            <!-- CORRECTION : La structure a été revue pour un alignement correct -->
+            <!-- Structure pour le titre du panier et le bouton "Vider" -->
             <div class="cart-header">
                 <h2>Votre Panier</h2>
                 <button id="clear-cart-btn" class="btn btn-secondary">Vider le panier</button>
@@ -33,17 +33,21 @@
                 <!-- Le contenu du panier est injecté ici par JavaScript -->
             </div>
 
+            <!-- Titre pour le formulaire de commande -->
             <h2>Valider la commande</h2>
+
+            <!-- Formulaire de commande -->
             <form id="order-form">
                 <input type="text" id="customer-name" placeholder="Votre nom complet" required>
                 <input type="email" id="customer-email" placeholder="Votre email" required>
                 <button type="submit" class="btn">Passer la commande</button>
             </form>
+
+            <!-- Conteneur pour les messages de statut du formulaire -->
             <div id="form-message" style="margin-top: 1rem;"></div>
         </div>
     </main>
     
-    <!-- CORRECTION : Le contenu du footer a été restauré -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-copyright">
