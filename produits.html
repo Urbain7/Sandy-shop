@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Produits - Sandy'Shop</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">Sandy'Shop</a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="produits.html" class="active">Produits</a></li>
+                <li><a href="panier.html">Panier</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Notre Catalogue</h2>
+        <div class="filters">
+            <input type="text" id="search-input" placeholder="Rechercher un produit...">
+            <select id="category-filter">
+                <option value="all">Toutes les catégories</option>
+            </select>
+        </div>
+        <div class="product-grid" id="product-list">
+            <!-- Les produits seront injectés ici par JavaScript -->
+        </div>
+    </main>
+    
+    <script src="js/products.js"></script>
+</body>
+</html>
