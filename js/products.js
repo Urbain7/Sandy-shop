@@ -1,64 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Détermine quelle fonction initialiser en fonction de la page actuelle
+    const pageId = document.body.id;
     if (document.getElementById('product-list')) {
         initProduitsPage();
     }
     if (document.getElementById('cart-container')) {
         initPanierPage();
     }
+    if (document.getElementById('product-detail-container')) {
+        initProduitDetailPage();
+    }
 });
 
 // ===============================================
 // FONCTIONS UTILITAIRES COMMUNES
 // ===============================================
-
-/**
- * Formate un nombre en chaîne de caractères monétaire FCFA.
- * Gère les cas où le prix n'est pas un nombre valide.
- * @param {number} price Le prix à formater.
- * @returns {string} Le prix formaté (ex: "59 000 FCFA").
- */
-function formatPrice(price) {
-    const priceNumber = Number(price);
-    if (isNaN(priceNumber)) {
-        console.error("Erreur: Un prix invalide a été détecté:", price);
-        return 'Prix non disponible';
-    }
-    return priceNumber.toLocaleString('fr-FR') + ' FCFA';
-}
-
-/**
- * Ajoute un produit au panier dans le localStorage.
- * @param {object} product L'objet produit à ajouter.
- */
-function addToCart(product) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let existingProduct = cart.find(item => item.id === product.id);
-    if (existingProduct) {
-        existingProduct.quantity++; // Incrémente la quantité si déjà présent
-    } else {
-        cart.push({ ...product, quantity: 1 }); // Ajoute le produit avec une quantité de 1
-    }
-    localStorage.setItem('cart', JSON.stringify(cart));
-}
+function formatPrice(price) {const priceNumber = Number(price); if (isNaN(priceNumber)) {console.error("Erreur: Un prix invalide a été détecté:", price); return 'Prix non disponible';} return priceNumber.toLocaleString('fr-FR') + ' FCFA';}
+function addToCart(product) {let cart = JSON.parse(localStorage.getItem('cart')) || []; let existingProduct = cart.find(item => item.id === product.id); if (existingProduct) {existingProduct.quantity++;} else {cart.push({ ...product, quantity: 1 });} localStorage.setItem('cart', JSON.stringify(cart));}
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE PRODUITS
+// LOGIQUE SPÉCIFIQUE À LA PAGE CATALOGUE
 // ===============================================
-
-/**
- * Initialise la page du catalogue de produits.
- */
 async function initProduitsPage() {
     try {
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Le fichier produits.json est introuvable.');
-        
         const products = await response.json();
         
-        displayProducts(products); // Affiche tous les produits au chargement
+        displayProducts(products);
         
-        // Configuration des filtres et de la recherche
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
         const categories = [...new Set(products.map(p => p.categorie))];
@@ -85,39 +54,33 @@ async function initProduitsPage() {
         }
         categoryFilter.addEventListener('change', handleFilterAndSearch);
         searchInput.addEventListener('input', handleFilterAndSearch);
-
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
         const productList = document.getElementById('product-list');
-        productList.innerHTML = `<p style="color: red; text-align: center;">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
+        if(productList) productList.innerHTML = `<p style="color: red; text-align: center;">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
     }
 }
 
-/**
- * Affiche une liste de produits dans la grille HTML.
- * @param {Array<object>} products La liste des produits à afficher.
- */
 function displayProducts(products) {
     const productList = document.getElementById('product-list');
     const likes = JSON.parse(localStorage.getItem('likes')) || {};
     productList.innerHTML = '';
-
     if (products.length === 0) {
         productList.innerHTML = `<p style="text-align: center;">Aucun produit ne correspond à votre recherche.</p>`;
         return;
     }
-
     products.forEach(product => {
         const isLiked = likes[product.id] || false;
         const likeCount = isLiked ? 1 : 0;
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        productCard.dataset.id = product.id;
         productCard.innerHTML = `
-            <img src="${product.image}" alt="${product.nom}">
-            <h3>${product.nom}</h3>
+            <a href="produit.html?id=${product.id}" class="product-link">
+                <img src="${product.image}" alt="${product.nom}">
+                <h3>${product.nom}</h3>
+            </a>
             <p class="product-price">${formatPrice(product.prix)}</p>
-            <div class="product-actions">
+            <div class="product-actions" data-id="${product.id}">
                 <button class="btn add-to-cart">Ajouter au panier</button>
                 <button class="like-btn ${isLiked ? 'liked' : ''}">
                     ❤️ <span class="like-count">${likeCount}</span>
@@ -128,43 +91,99 @@ function displayProducts(products) {
     addEventListenersToCards(products);
 }
 
-/**
- * Attache les écouteurs d'événements (like, ajout au panier) aux cartes de produits.
- * @param {Array<object>} products La liste des produits actuellement affichés.
- */
 function addEventListenersToCards(products) {
-    document.querySelectorAll('.like-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
-            const productId = card.dataset.id;
-            let likes = JSON.parse(localStorage.getItem('likes')) || {};
-            likes[productId] = !likes[productId];
-            localStorage.setItem('likes', JSON.stringify(likes));
-            btn.classList.toggle('liked', likes[productId]);
-            btn.querySelector('.like-count').textContent = likes[productId] ? 1 : 0;
-        });
-    });
+    document.querySelectorAll('.product-actions').forEach(actions => {
+        const productId = actions.dataset.id;
+        
+        const likeBtn = actions.querySelector('.like-btn');
+        if (likeBtn) {
+            likeBtn.addEventListener('click', () => {
+                let likes = JSON.parse(localStorage.getItem('likes')) || {};
+                likes[productId] = !likes[productId];
+                localStorage.setItem('likes', JSON.stringify(likes));
+                likeBtn.classList.toggle('liked', likes[productId]);
+                likeBtn.querySelector('.like-count').textContent = likes[productId] ? 1 : 0;
+            });
+        }
 
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
-            const productId = parseInt(card.dataset.id, 10);
-            const productToAdd = products.find(p => p.id === productId);
-            if (productToAdd) {
-                addToCart(productToAdd);
-                alert('Produit ajouté au panier !');
-            }
-        });
+        const cartBtn = actions.querySelector('.add-to-cart');
+        if (cartBtn) {
+            cartBtn.addEventListener('click', () => {
+                const productToAdd = products.find(p => p.id == productId);
+                if (productToAdd) {
+                    addToCart(productToAdd);
+                    alert('Produit ajouté au panier !');
+                }
+            });
+        }
     });
 }
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER (Version Formspree)
+// LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL
 // ===============================================
+async function initProduitDetailPage() {
+    const container = document.getElementById('product-detail-container');
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
 
-/**
- * Initialise la page du panier.
- */
+    if (!productId) { container.innerHTML = "<p>Produit non trouvé.</p>"; return; }
+
+    try {
+        const response = await fetch('data/produits.json');
+        if(!response.ok) throw new Error("Could not fetch product data.");
+        const products = await response.json();
+        const product = products.find(p => p.id == productId);
+
+        if (!product) { container.innerHTML = "<p>Produit non trouvé.</p>"; return; }
+
+        document.title = `${product.nom} - Sandy'Shop`;
+        container.innerHTML = `
+            <div class="product-detail">
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img src="${product.image}" alt="${product.nom}" id="main-product-image">
+                    </div>
+                    <div class="thumbnail-images">
+                        ${product.images.map((img, index) => `
+                            <img src="${img}" alt="Vue ${index + 1}" class="${index === 0 ? 'active' : ''}">
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h1>${product.nom}</h1>
+                    <p class="product-price">${formatPrice(product.prix)}</p>
+                    <p class="product-description">${product.description}</p>
+                    <button class="btn add-to-cart-detail">Ajouter au panier</button>
+                </div>
+            </div>
+        `;
+
+        const mainImage = document.getElementById('main-product-image');
+        const thumbnails = container.querySelectorAll('.thumbnail-images img');
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                mainImage.src = thumb.src;
+                thumbnails.forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            });
+        });
+
+        const addToCartBtn = container.querySelector('.add-to-cart-detail');
+        addToCartBtn.addEventListener('click', () => {
+            addToCart(product);
+            alert(`${product.nom} a été ajouté au panier !`);
+        });
+    } catch (error) {
+        console.error("Erreur lors du chargement du produit:", error);
+        container.innerHTML = "<p>Erreur lors du chargement du produit.</p>";
+    }
+}
+
+
+// ===============================================
+// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER
+// ===============================================
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
     const orderSection = document.getElementById('order-section');
@@ -185,7 +204,6 @@ async function initPanierPage() {
         if(cartHeader) cartHeader.style.display = 'none';
         if(orderSection) orderSection.style.display = 'none';
         cartContainer.innerHTML = '<p style="text-align: center; padding: 2rem 0;">Votre panier est vide.</p>';
-        // On cache le titre principal "Votre Panier" s'il existe et que le panier est vide
         const mainTitle = document.querySelector('.cart-header h2');
         if(mainTitle) mainTitle.style.display = 'none';
         return;
@@ -220,9 +238,8 @@ async function initPanierPage() {
 
     const orderForm = document.getElementById('order-form');
     orderForm.addEventListener('submit', () => {
-        // Vider le panier après la soumission du formulaire
         setTimeout(() => {
             localStorage.removeItem('cart');
-        }, 500); // Délai pour s'assurer que le formulaire a eu le temps de s'envoyer
+        }, 500);
     });
-}
+}```
