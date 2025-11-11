@@ -27,16 +27,14 @@
   },
   {
     "id": 3,
-    "nom": "Escarpins Roses Poudrés",
-    "prix": 72000,
+    "nom": "Tapette Versace",
+    "prix": 9000,
     "categorie": "Chaussures",
     "image": "assets/images/chaussure1.jpg",
     "images": [
-      "assets/images/chaussure1.jpg",
-      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
-      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
+      "images/chaussures/chaussure.jpeg"
     ],
-    "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance à n'importe quelle tenue. Avec leur talon de 8 cm, ils offrent un confort surprenant pour une démarche assurée."
+    "description": "Tapettes féminines au style Versace, alliant légèreté, confort et élégance. Leur design raffiné et leurs finitions dorées ajoutent une note chic à chaque pas."
   },
   {
     "id": 4,
