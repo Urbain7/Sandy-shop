@@ -66,9 +66,9 @@ async function initPanierPage() {
         const formMessage = document.getElementById('form-message');
 
         // IMPORTANT : VÉRIFIEZ QUE CETTE URL EST LA BONNE !
-        const SCRIPT_URL = "VOTRE_URL_APPS_SCRIPT"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmAPcGGLRDMVbIjv6EWbHXJAR3k92NqLMiqaJ69u5cHLTdQApyewHJUvDJBKc9okw/exec"; 
 
-        if (SCRIPT_URL === "VOTRE_URL_APPS_SCRIPT" || !SCRIPT_URL.startsWith("https://script.google.com")) {
+        if (SCRIPT_URL === "https://script.google.com/macros/s/AKfycbzmAPcGGLRDMVbIjv6EWbHXJAR3k92NqLMiqaJ69u5cHLTdQApyewHJUvDJBKc9okw/exec" || !SCRIPT_URL.startsWith("https://script.google.com")) {
             formMessage.textContent = "Erreur : La fonctionnalité de commande n'est pas encore configurée.";
             formMessage.style.color = "red";
             return;
