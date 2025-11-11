@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const pageId = document.body.id;
+    // Détermine quelle fonction initialiser en fonction de la page actuelle
     if (document.getElementById('product-list')) {
         initProduitsPage();
     }
@@ -74,6 +74,7 @@ function displayProducts(products) {
         const likeCount = isLiked ? 1 : 0;
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
+        // Le lien entoure l'image et le titre
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}">
@@ -88,9 +89,11 @@ function displayProducts(products) {
             </div>`;
         productList.appendChild(productCard);
     });
+    // On appelle la fonction pour attacher les événements après avoir créé les cartes
     addEventListenersToCards(products);
 }
 
+// CORRECTION MAJEURE : La logique pour attacher les événements est restaurée et fonctionnelle
 function addEventListenersToCards(products) {
     document.querySelectorAll('.product-actions').forEach(actions => {
         const productId = actions.dataset.id;
@@ -109,6 +112,7 @@ function addEventListenersToCards(products) {
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
+                // On cherche le produit dans la liste complète
                 const productToAdd = products.find(p => p.id == productId);
                 if (productToAdd) {
                     addToCart(productToAdd);
@@ -118,6 +122,7 @@ function addEventListenersToCards(products) {
         }
     });
 }
+
 
 // ===============================================
 // LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL
@@ -141,14 +146,8 @@ async function initProduitDetailPage() {
         container.innerHTML = `
             <div class="product-detail">
                 <div class="product-gallery">
-                    <div class="main-image">
-                        <img src="${product.image}" alt="${product.nom}" id="main-product-image">
-                    </div>
-                    <div class="thumbnail-images">
-                        ${product.images.map((img, index) => `
-                            <img src="${img}" alt="Vue ${index + 1}" class="${index === 0 ? 'active' : ''}">
-                        `).join('')}
-                    </div>
+                    <div class="main-image"><img src="${product.image}" alt="${product.nom}" id="main-product-image"></div>
+                    <div class="thumbnail-images">${product.images.map((img, index) => `<img src="${img}" alt="Vue ${index + 1}" class="${index === 0 ? 'active' : ''}">`).join('')}</div>
                 </div>
                 <div class="product-info">
                     <h1>${product.nom}</h1>
@@ -156,8 +155,7 @@ async function initProduitDetailPage() {
                     <p class="product-description">${product.description}</p>
                     <button class="btn add-to-cart-detail">Ajouter au panier</button>
                 </div>
-            </div>
-        `;
+            </div>`;
 
         const mainImage = document.getElementById('main-product-image');
         const thumbnails = container.querySelectorAll('.thumbnail-images img');
@@ -242,4 +240,4 @@ async function initPanierPage() {
             localStorage.removeItem('cart');
         }, 500);
     });
-}```
+}
