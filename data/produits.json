@@ -6,9 +6,9 @@
     "categorie": "Sacs",
     "image": "images/sacs/pedro_blanc.jpeg",
     "images": [
-      "images/sacs/pedro_blanc.jpeg/ccc/333?text=Vue+1",
-      "images/sacs/pedro_marron.jpeg/ddd/333?text=Vue+2",
-      "images/sacs/pedro_noir.jpeg/eee/333?text=Vue+3"
+      "images/sacs/pedro_blanc.jpeg",
+      "images/sacs/pedro_marron.jpeg",
+      "images/sacs/pedro_noir.jpeg"
     ],
     "description": "Élégant et fonctionnel, le sac Pedro se distingue par sa texture en cuir lisse, sa silhouette moderne et ses finitions premium. Idéal pour un usage quotidien ou une sortie chic."
   },
