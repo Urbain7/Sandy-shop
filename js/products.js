@@ -213,7 +213,7 @@ async function initPanierPage() {
         const formMessage = document.getElementById('form-message');
 
         // URL de votre script Google Apps pour enregistrer les commandes
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmAPcGGLRDMVbIjv6EWbHXJAR3k92NqLMiqaJ69u5cHLTdQApyewHJUvDJBKc9okw/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVmc7a9c9pMCuEZWXY4e5aE4TKobSH2ZPM4VYP99e4S5749k85LRDui8pscQ46b3l1/exec"; 
         
         formMessage.textContent = "Envoi de la commande en cours...";
         formMessage.style.color = "grey";
