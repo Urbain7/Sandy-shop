@@ -14,10 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
             categories.slice(0, 4).forEach(category => {
                 const product = products.find(p => p.categorie === category);
                 if (product) {
+                    // CORRECTION : Le lien entoure maintenant l'image et le titre
                     const categoryCard = `
                         <div class="product-card">
                             <a href="produit.html?id=${product.id}" class="product-link">
-                                <img src="${product.image}" alt="${product.nom}">
+                                <img src="${product.image}" alt="${product.categorie}">
                                 <h3>${product.categorie}</h3>
                             </a>
                             <a href="produits.html?categorie=${category}" class="btn">Découvrir</a>
