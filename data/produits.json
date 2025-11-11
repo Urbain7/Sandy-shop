@@ -9,7 +9,7 @@
   {
     "id": 2,
     "nom": "Robe d'Été Fleurie",
-    "prix": 85000,
+    "prix": 8500,
     "categorie": "Robes",
     "image": "assets/images/robe1.jpg"
   },
@@ -37,7 +37,7 @@
   {
     "id": 6,
     "nom": "Robe de Soirée Satinée",
-    "prix": 98000,
+    "prix": 9800,
     "categorie": "Robes",
     "image": "assets/images/robe2.jpg"
   }
