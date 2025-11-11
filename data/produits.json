@@ -14,15 +14,16 @@
   },
   {
     "id": 2,
-    "nom": "Robe d'Été Fleurie",
-    "prix": 85000,
-    "categorie": "Robes",
-    "image": "assets/images/robe1.jpg",
+    "nom": "Sac à main Chic Célitina",
+    "prix": 14500,
+    "categorie": "Sacs",
+    "image": "images/sacs/chic_Célitina_noir.jpeg",
     "images": [
-      "assets/images/robe1.jpg",
-      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
+      "images/sacs/chic_Célitina_noir.jpeg",
+      "images/sacs/Chic_célitina_violet.jpeg",
+      "images/sacs/Chic_célitina_marron.jpeg"
     ],
-    "description": "Légère et aérienne, cette robe est confectionnée en coton doux avec un imprimé floral délicat. Sa coupe fluide et sa taille cintrée flattent toutes les silhouettes. Idéale pour les journées ensoleillées."
+    "description": "Raffiné et moderne, le sac Chic Célitina séduit par sa silhouette élégante et sa touche de féminité. Parfait pour accompagner vos journées avec style."
   },
   {
     "id": 3,
