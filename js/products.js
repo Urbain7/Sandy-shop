@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Détermine quelle fonction initialiser en fonction de la page actuelle
     if (document.getElementById('product-list')) {
         initProduitsPage();
     }
@@ -8,9 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===============================================
-// FONCTIONS UTILITAIRES
+// FONCTIONS UTILITAIRES COMMUNES
 // ===============================================
 
+/**
+ * Formate un nombre en chaîne de caractères monétaire FCFA.
+ * Gère les cas où le prix n'est pas un nombre valide.
+ * @param {number} price Le prix à formater.
+ * @returns {string} Le prix formaté (ex: "59 000 FCFA").
+ */
 function formatPrice(price) {
     const priceNumber = Number(price);
     if (isNaN(priceNumber)) {
@@ -20,29 +27,38 @@ function formatPrice(price) {
     return priceNumber.toLocaleString('fr-FR') + ' FCFA';
 }
 
+/**
+ * Ajoute un produit au panier dans le localStorage.
+ * @param {object} product L'objet produit à ajouter.
+ */
 function addToCart(product) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let existingProduct = cart.find(item => item.id === product.id);
     if (existingProduct) {
-        existingProduct.quantity++;
+        existingProduct.quantity++; // Incrémente la quantité si déjà présent
     } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({ ...product, quantity: 1 }); // Ajoute le produit avec une quantité de 1
     }
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 // ===============================================
-// LOGIQUE DE LA PAGE PRODUITS
+// LOGIQUE SPÉCIFIQUE À LA PAGE PRODUITS
 // ===============================================
 
+/**
+ * Initialise la page du catalogue de produits.
+ */
 async function initProduitsPage() {
     try {
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Le fichier produits.json est introuvable.');
+        
         const products = await response.json();
         
-        displayProducts(products);
+        displayProducts(products); // Affiche tous les produits au chargement
         
+        // Configuration des filtres et de la recherche
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
         const categories = [...new Set(products.map(p => p.categorie))];
@@ -59,6 +75,7 @@ async function initProduitsPage() {
             const category = categoryFilter.value;
             const searchTerm = searchInput.value.toLowerCase();
             let filteredProducts = products;
+
             if (category !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.categorie === category);
             }
@@ -69,6 +86,7 @@ async function initProduitsPage() {
         }
         categoryFilter.addEventListener('change', handleFilterAndSearch);
         searchInput.addEventListener('input', handleFilterAndSearch);
+
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
         const productList = document.getElementById('product-list');
@@ -76,26 +94,45 @@ async function initProduitsPage() {
     }
 }
 
+/**
+ * Affiche une liste de produits dans la grille HTML.
+ * @param {Array<object>} products La liste des produits à afficher.
+ */
 function displayProducts(products) {
     const productList = document.getElementById('product-list');
     const likes = JSON.parse(localStorage.getItem('likes')) || {};
     productList.innerHTML = '';
+
     if (products.length === 0) {
         productList.innerHTML = `<p style="text-align: center;">Aucun produit ne correspond à votre recherche.</p>`;
         return;
     }
+
     products.forEach(product => {
         const isLiked = likes[product.id] || false;
         const likeCount = isLiked ? 1 : 0;
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.dataset.id = product.id;
-        productCard.innerHTML = `<img src="${product.image}" alt="${product.nom}"><h3>${product.nom}</h3><p class="product-price">${formatPrice(product.prix)}</p><div class="product-actions"><button class="btn add-to-cart">Ajouter au panier</button><button class="like-btn ${isLiked ? 'liked' : ''}">❤️ <span class="like-count">${likeCount}</span></button></div>`;
+        productCard.innerHTML = `
+            <img src="${product.image}" alt="${product.nom}">
+            <h3>${product.nom}</h3>
+            <p class="product-price">${formatPrice(product.prix)}</p>
+            <div class="product-actions">
+                <button class="btn add-to-cart">Ajouter au panier</button>
+                <button class="like-btn ${isLiked ? 'liked' : ''}">
+                    ❤️ <span class="like-count">${likeCount}</span>
+                </button>
+            </div>`;
         productList.appendChild(productCard);
     });
     addEventListenersToCards(products);
 }
 
+/**
+ * Attache les écouteurs d'événements (like, ajout au panier) aux cartes de produits.
+ * @param {Array<object>} products La liste des produits actuellement affichés.
+ */
 function addEventListenersToCards(products) {
     document.querySelectorAll('.like-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -108,6 +145,7 @@ function addEventListenersToCards(products) {
             btn.querySelector('.like-count').textContent = likes[productId] ? 1 : 0;
         });
     });
+
     document.querySelectorAll('.add-to-cart').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const card = e.target.closest('.product-card');
@@ -122,9 +160,12 @@ function addEventListenersToCards(products) {
 }
 
 // ===============================================
-// LOGIQUE DE LA PAGE PANIER
+// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER
 // ===============================================
 
+/**
+ * Initialise la page du panier.
+ */
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
     const orderForm = document.getElementById('order-form');
@@ -171,10 +212,8 @@ async function initPanierPage() {
         const email = document.getElementById('customer-email').value;
         const formMessage = document.getElementById('form-message');
 
-        // L'URL que vous avez fournie
+        // URL de votre script Google Apps pour enregistrer les commandes
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmAPcGGLRDMVbIjv6EWbHXJAR3k92NqLMiqaJ69u5cHLTdQApyewHJUvDJBKc9okw/exec"; 
-
-        // CORRECTION : La condition erronée a été supprimée. Le code va maintenant essayer d'envoyer la commande.
         
         formMessage.textContent = "Envoi de la commande en cours...";
         formMessage.style.color = "grey";
