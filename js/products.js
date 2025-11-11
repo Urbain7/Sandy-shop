@@ -58,6 +58,7 @@ async function initProduitsPage() {
         
         displayProducts(products); // Affiche tous les produits au chargement
         
+        // Configuration des filtres et de la recherche
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
         const categories = [...new Set(products.map(p => p.categorie))];
@@ -162,19 +163,18 @@ function addEventListenersToCards(products) {
 // ===============================================
 
 /**
- * Initialise la page du panier pour une utilisation avec Formspree.
+ * Initialise la page du panier.
  */
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
-    const orderForm = document.getElementById('order-form');
+    const orderSection = document.getElementById('order-section');
     const clearCartBtn = document.getElementById('clear-cart-btn');
     const cartHeader = document.querySelector('.cart-header');
     
-    // Récupération des champs cachés du formulaire
     const cartContentInput = document.getElementById('cart-content');
     const cartTotalInput = document.getElementById('cart-total');
 
-    if (!cartContainer || !orderForm || !clearCartBtn || !cartHeader || !cartContentInput || !cartTotalInput) {
+    if (!cartContainer || !orderSection || !clearCartBtn || !cartHeader || !cartContentInput || !cartTotalInput) {
         console.error("Un ou plusieurs éléments HTML essentiels du panier sont manquants.");
         return;
     }
@@ -182,17 +182,18 @@ async function initPanierPage() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
     if (cart.length === 0) {
-        cartHeader.style.display = 'none';
-        orderForm.style.display = 'none';
-        cartContainer.innerHTML = '<h2>Votre Panier</h2><p>Votre panier est vide.</p>';
+        if(cartHeader) cartHeader.style.display = 'none';
+        if(orderSection) orderSection.style.display = 'none';
+        cartContainer.innerHTML = '<p style="text-align: center; padding: 2rem 0;">Votre panier est vide.</p>';
+        // On cache le titre principal "Votre Panier" s'il existe et que le panier est vide
+        const mainTitle = document.querySelector('.cart-header h2');
+        if(mainTitle) mainTitle.style.display = 'none';
         return;
     }
 
-    // Affiche les éléments si le panier n'est pas vide
     cartHeader.style.display = 'flex';
-    orderForm.style.display = 'flex';
+    orderSection.style.display = 'block';
 
-    // Attache l'événement au bouton "Vider le panier"
     clearCartBtn.addEventListener('click', () => {
         if (confirm("Voulez-vous vraiment vider votre panier ?")) {
             localStorage.removeItem('cart');
@@ -200,34 +201,28 @@ async function initPanierPage() {
         }
     });
 
-    // Affiche les articles du panier dans le tableau
     let cartHTML = `<table class="cart-items"><thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th></tr></thead><tbody>`;
     let totalGlobal = 0;
-    let cartTextSummary = ""; // Chaîne de texte pour le résumé dans l'email
+    let cartTextSummary = "";
 
     cart.forEach(item => {
         const totalLigne = item.prix * item.quantity;
         totalGlobal += totalLigne;
         cartHTML += `<tr><td>${item.nom}</td><td>${formatPrice(item.prix)}</td><td>${item.quantity}</td><td>${formatPrice(totalLigne)}</td></tr>`;
-        
-        // Construit un résumé texte du panier, ligne par ligne
         cartTextSummary += `${item.nom} (Quantité: ${item.quantity}) - Total: ${formatPrice(totalLigne)}\n`;
     });
 
     cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
     cartContainer.innerHTML = cartHTML;
-
-    // Remplit les champs cachés du formulaire avec les données du panier
-    // Ces données seront envoyées à Formspree avec le reste du formulaire
+    
     cartContentInput.value = cartTextSummary;
     cartTotalInput.value = formatPrice(totalGlobal);
 
-    // Vider le panier après la soumission réussie du formulaire
-    // Formspree redirige vers une page de remerciement, nous utilisons un petit hack
-    // pour vider le panier quand l'utilisateur reviendra sur le site.
+    const orderForm = document.getElementById('order-form');
     orderForm.addEventListener('submit', () => {
+        // Vider le panier après la soumission du formulaire
         setTimeout(() => {
             localStorage.removeItem('cart');
-        }, 500); // Délai pour s'assurer que le formulaire a le temps de s'envoyer
+        }, 500); // Délai pour s'assurer que le formulaire a eu le temps de s'envoyer
     });
 }
