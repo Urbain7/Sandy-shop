@@ -58,7 +58,6 @@ async function initProduitsPage() {
         
         displayProducts(products); // Affiche tous les produits au chargement
         
-        // Configuration des filtres et de la recherche
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
         const categories = [...new Set(products.map(p => p.categorie))];
@@ -75,7 +74,6 @@ async function initProduitsPage() {
             const category = categoryFilter.value;
             const searchTerm = searchInput.value.toLowerCase();
             let filteredProducts = products;
-
             if (category !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.categorie === category);
             }
@@ -160,20 +158,24 @@ function addEventListenersToCards(products) {
 }
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER
+// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER (Version Formspree)
 // ===============================================
 
 /**
- * Initialise la page du panier.
+ * Initialise la page du panier pour une utilisation avec Formspree.
  */
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
     const orderForm = document.getElementById('order-form');
     const clearCartBtn = document.getElementById('clear-cart-btn');
     const cartHeader = document.querySelector('.cart-header');
+    
+    // Récupération des champs cachés du formulaire
+    const cartContentInput = document.getElementById('cart-content');
+    const cartTotalInput = document.getElementById('cart-total');
 
-    if (!cartContainer || !orderForm || !clearCartBtn || !cartHeader) {
-        console.error("Un ou plusieurs éléments essentiels du panier sont manquants dans le HTML.");
+    if (!cartContainer || !orderForm || !clearCartBtn || !cartHeader || !cartContentInput || !cartTotalInput) {
+        console.error("Un ou plusieurs éléments HTML essentiels du panier sont manquants.");
         return;
     }
     
@@ -186,9 +188,11 @@ async function initPanierPage() {
         return;
     }
 
+    // Affiche les éléments si le panier n'est pas vide
     cartHeader.style.display = 'flex';
     orderForm.style.display = 'flex';
 
+    // Attache l'événement au bouton "Vider le panier"
     clearCartBtn.addEventListener('click', () => {
         if (confirm("Voulez-vous vraiment vider votre panier ?")) {
             localStorage.removeItem('cart');
@@ -196,55 +200,34 @@ async function initPanierPage() {
         }
     });
 
+    // Affiche les articles du panier dans le tableau
     let cartHTML = `<table class="cart-items"><thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th></tr></thead><tbody>`;
     let totalGlobal = 0;
+    let cartTextSummary = ""; // Chaîne de texte pour le résumé dans l'email
+
     cart.forEach(item => {
         const totalLigne = item.prix * item.quantity;
         totalGlobal += totalLigne;
         cartHTML += `<tr><td>${item.nom}</td><td>${formatPrice(item.prix)}</td><td>${item.quantity}</td><td>${formatPrice(totalLigne)}</td></tr>`;
+        
+        // Construit un résumé texte du panier, ligne par ligne
+        cartTextSummary += `${item.nom} (Quantité: ${item.quantity}) - Total: ${formatPrice(totalLigne)}\n`;
     });
+
     cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
     cartContainer.innerHTML = cartHTML;
 
-    orderForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('customer-name').value;
-        const email = document.getElementById('customer-email').value;
-        const formMessage = document.getElementById('form-message');
+    // Remplit les champs cachés du formulaire avec les données du panier
+    // Ces données seront envoyées à Formspree avec le reste du formulaire
+    cartContentInput.value = cartTextSummary;
+    cartTotalInput.value = formatPrice(totalGlobal);
 
-        // URL de votre script Google Apps pour enregistrer les commandes
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVmc7a9c9pMCuEZWXY4e5aE4TKobSH2ZPM4VYP99e4S5749k85LRDui8pscQ46b3l1/exec"; 
-        
-        formMessage.textContent = "Envoi de la commande en cours...";
-        formMessage.style.color = "grey";
-        formMessage.scrollIntoView();
-
-        const orderData = {
-            nom: name,
-            email: email,
-            panier: JSON.stringify(cart.map(p => ({ nom: p.nom, quantite: p.quantity, prix: p.prix }))),
-            total: totalGlobal
-        };
-
-        try {
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                redirect: 'follow',
-                body: JSON.stringify(orderData)
-            });
-
-            formMessage.textContent = "Commande envoyée avec succès ! Vous allez être redirigé.";
-            formMessage.style.color = "green";
+    // Vider le panier après la soumission réussie du formulaire
+    // Formspree redirige vers une page de remerciement, nous utilisons un petit hack
+    // pour vider le panier quand l'utilisateur reviendra sur le site.
+    orderForm.addEventListener('submit', () => {
+        setTimeout(() => {
             localStorage.removeItem('cart');
-            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
-
-        } catch (error) {
-            console.error('Order submission error:', error);
-            formMessage.textContent = "Une erreur est survenue lors de l'envoi. Veuillez réessayer.";
-            formMessage.style.color = "red";
-        }
+        }, 500); // Délai pour s'assurer que le formulaire a le temps de s'envoyer
     });
 }
