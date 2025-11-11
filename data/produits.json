@@ -30,7 +30,7 @@
     "nom": "Tapette Versace",
     "prix": 9000,
     "categorie": "Chaussures",
-    "image": "assets/images/chaussure1.jpg",
+    "image": "images/chaussures/chaussure.jpeg",
     "images": [
       "images/chaussures/chaussure.jpeg"
     ],
