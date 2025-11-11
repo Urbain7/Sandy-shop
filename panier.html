@@ -24,31 +24,25 @@
                 <!-- Le contenu du panier est injecté ici -->
             </div>
 
-            <h2>Valider la commande</h2>
-
             <!-- ======================================================= -->
-            <!-- MODIFICATION MAJEURE : Le formulaire utilise Formspree -->
+            <!-- NOUVEAU CONTENEUR POUR TOUT LE BLOC DE COMMANDE -->
             <!-- ======================================================= -->
-            <!-- Remplacez VOTRE_NOUVELLE_URL_FORMSPREE par l'URL que vous venez de créer -->
-            <form id="order-form" action="https://formspree.io/f/xyzlydrz" method="POST">
-                
-                <!-- Champ pour le nom du client -->
-                <label for="name">Votre nom complet :</label>
-                <input type="text" id="customer-name" name="nom_client" required>
+            <div id="order-section">
+                <h2>Valider la commande</h2>
+                <form id="order-form" action="https://formspree.io/f/xyzlydrz" method="POST">
+                    <label for="name">Votre nom complet :</label>
+                    <input type="text" id="customer-name" name="nom_client" required>
 
-                <!-- Champ pour l'email du client (Formspree l'utilise pour répondre) -->
-                <label for="email">Votre email :</label>
-                <input type="email" id="customer-email" name="email" required>
+                    <label for="email">Votre email :</label>
+                    <input type="email" id="customer-email" name="email" required>
 
-                <!-- Champ caché pour le contenu du panier (rempli par JS) -->
-                <input type="hidden" id="cart-content" name="contenu_panier">
-                
-                <!-- Champ caché pour le total de la commande (rempli par JS) -->
-                <input type="hidden" id="cart-total" name="total_commande">
+                    <input type="hidden" id="cart-content" name="contenu_panier">
+                    <input type="hidden" id="cart-total" name="total_commande">
 
-                <button type="submit" class="btn">Passer la commande</button>
-            </form>
-
+                    <button type="submit" class="btn">Passer la commande</button>
+                </form>
+            </div>
+            
             <div id="form-message" style="margin-top: 1rem;"></div>
         </div>
     </main>
