@@ -4,41 +4,71 @@
     "nom": "Sac Élégance Noire",
     "prix": 59000,
     "categorie": "Sacs",
-    "image": "assets/images/sac1.jpg"
+    "image": "assets/images/sac1.jpg",
+    "images": [
+      "assets/images/sac1.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
+      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
+    ],
+    "description": "Un sac à main structuré en cuir synthétique de première qualité. Parfait pour vos sorties en soirée comme pour une journée de travail. Dispose de multiples compartiments pour une organisation optimale."
   },
   {
     "id": 2,
     "nom": "Robe d'Été Fleurie",
-    "prix": 8500,
+    "prix": 85000,
     "categorie": "Robes",
-    "image": "assets/images/robe1.jpg"
+    "image": "assets/images/robe1.jpg",
+    "images": [
+      "assets/images/robe1.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
+    ],
+    "description": "Légère et aérienne, cette robe est confectionnée en coton doux avec un imprimé floral délicat. Sa coupe fluide et sa taille cintrée flattent toutes les silhouettes. Idéale pour les journées ensoleillées."
   },
   {
     "id": 3,
     "nom": "Escarpins Roses Poudrés",
-    "prix": 9000,
+    "prix": 72000,
     "categorie": "Chaussures",
-    "image": "5805570567921405246.jpg"
+    "image": "assets/images/chaussure1.jpg",
+    "images": [
+      "assets/images/chaussure1.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
+      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
+    ],
+    "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance à n'importe quelle tenue. Avec leur talon de 8 cm, ils offrent un confort surprenant pour une démarche assurée."
   },
   {
     "id": 4,
     "nom": "Collier Lune Dorée",
     "prix": 30000,
     "categorie": "Accessoires",
-    "image": "assets/images/accessoire1.jpg"
+    "image": "assets/images/accessoire1.jpg",
+    "images": [
+      "assets/images/accessoire1.jpg"
+    ],
+    "description": "Un collier fin et délicat en plaqué or, orné d'un pendentif en forme de croissant de lune. Un bijou minimaliste qui se porte aussi bien seul qu'en accumulation."
   },
   {
     "id": 5,
     "nom": "Sac à Main Vintage",
     "prix": 62500,
     "categorie": "Sacs",
-    "image": "images/sac.jpg"
+    "image": "assets/images/sac2.jpg",
+    "images": [
+      "assets/images/sac2.jpg"
+    ],
+    "description": "Inspiré des années 70, ce sac à main en cuir vegan apporte une touche rétro-chic à votre look. Sa bandoulière ajustable permet de le porter à l'épaule ou en travers du corps."
   },
   {
     "id": 6,
     "nom": "Robe de Soirée Satinée",
-    "prix": 9800,
+    "prix": 98000,
     "categorie": "Robes",
-    "image": "assets/images/robe2.jpg"
+    "image": "assets/images/robe2.jpg",
+    "images": [
+      "assets/images/robe2.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
+    ],
+    "description": "Faites sensation avec cette robe longue en satin fluide. Sa coupe portefeuille et sa fente latérale créent une silhouette glamour et sophistiquée. Parfaite pour les grandes occasions."
   }
 ]
