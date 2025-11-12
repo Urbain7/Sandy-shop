@@ -73,19 +73,9 @@ nav a:hover, nav a.active { color: var(--accent-color); }
 .banner { background-image: url('https://via.placeholder.com/1200x400.png/f5e6e8/333333?text=Bienvenue+chez+Sandy%27Shop'); background-size: cover; background-position: center; height: 400px; display: flex; justify-content: center; align-items: center; text-align: center; color: white; }
 .banner-content { background-color: rgba(0, 0, 0, 0.4); padding: 2rem; border-radius: 5px; }
 .banner h1 { font-size: 3rem; margin: 0; }
-
-/* CORRECTION : Amélioration du bouton de la bannière */
-.banner .btn {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    font-weight: bold;
-}
-.banner .btn:hover {
-    background-color: #f0f0f0;
-}
-html.dark-mode .banner .btn:hover {
-    background-color: #444;
-}
+.banner .btn { background-color: var(--background-color); color: var(--text-color); font-weight: bold; }
+.banner .btn:hover { background-color: #f0f0f0; }
+html.dark-mode .banner .btn:hover { background-color: #444; }
 
 /* =============================== */
 /* Sections et Contenu Principal   */
@@ -101,7 +91,6 @@ h2 { text-align: center; margin-bottom: 2rem; font-size: 2rem; color: var(--acce
 .product-card .product-link { text-decoration: none; color: inherit; }
 .product-card:hover { transform: translateY(-5px); }
 .product-card img { max-width: 100%; height: 250px; object-fit: cover; }
-/* CORRECTION : Le titre utilise maintenant la variable de couleur du texte */
 .product-card h3 { font-size: 1.2rem; margin: 1rem 0 0.5rem; color: var(--text-color); }
 .product-price { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; }
 .product-actions { display: flex; justify-content: space-around; align-items: center; padding: 1rem; }
@@ -169,16 +158,25 @@ form button { background-color: var(--accent-color); color: white; border: none;
 /* Design Responsive (pour mobiles)                         */
 /* ======================================================== */
 @media (max-width: 768px) {
-  header { padding: 0.75rem 1rem; flex-wrap: nowrap; }
-  .logo { font-size: 1.2rem; }
-  nav { margin: 0; }
-  nav ul { gap: 0.75rem; }
-  nav a { font-size: 0.9rem; }
-  .header-right { gap: 0.75rem; }
+  /* --- CORRECTION HEADER --- */
+  header {
+    padding: 1rem;
+    flex-wrap: wrap; /* On permet aux éléments de passer à la ligne si nécessaire */
+    justify-content: space-between; /* Garde le logo à gauche et le reste à droite */
+  }
+
+  .logo { font-size: 1.5rem; } /* On redonne une taille normale au logo */
+  
+  /* On ajuste les espacements pour les petits écrans */
+  nav ul { gap: 1rem; }
+  nav a { font-size: 1rem; } /* Police un peu plus grande */
+  .header-right { gap: 1rem; }
   .theme-toggle-btn { padding: 0.4rem; }
 
+  /* --- Grille produits à 2 colonnes --- */
   .product-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
   
+  /* --- Autres règles responsive --- */
   .container { padding: 0 1rem; }
   .filters { flex-direction: column; align-items: stretch; }
   #search-input { width: 100%; }
