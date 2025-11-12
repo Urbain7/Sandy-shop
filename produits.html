@@ -6,6 +6,14 @@
     <title>Nos Produits - Sandy'Shop</title>
     <link rel="stylesheet" href="assets/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- ... (vos balises <link>) ... -->
+    <script>
+        // Script "anti-flash" pour appliquer le thème sombre immédiatement
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+        }
+    </script>
 </head>
 <body>
 
