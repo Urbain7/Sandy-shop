@@ -28,8 +28,8 @@ html.dark-mode {
   --input-bg-color: #333;
   --input-border-color: #555;
   --accent-color: #d1a3a4;
-  --secondary-color: #f0f0f0;
-  --btn-main-text: #1a1a1a;
+  --secondary-color: #f0f0f0; /* Boutons principaux deviennent clairs */
+  --btn-main-text: #1a1a1a; /* Texte des boutons principaux devient sombre */
   --btn-secondary-text: #f0f0f0;
 }
 
@@ -56,10 +56,22 @@ header {
   gap: 1rem;
 }
 
-.logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--header-text-color); }
-.header-right { display: flex; align-items: center; gap: 1.5rem; }
+.logo { 
+  font-size: 1.5rem; 
+  font-weight: bold; 
+  text-decoration: none; 
+  color: var(--header-text-color);
+  flex-shrink: 0; 
+}
+
+.header-right { 
+  display: flex; 
+  align-items: center; 
+  gap: 1.5rem; 
+}
+
 nav { margin: 0; }
-nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.5rem; }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.5rem; }
 nav a { text-decoration: none; color: var(--header-text-color); font-weight: 500; transition: color 0.3s; }
 nav a:hover, nav a.active { color: var(--accent-color); }
 
@@ -158,20 +170,21 @@ form button { background-color: var(--accent-color); color: white; border: none;
 /* Design Responsive (pour mobiles)                         */
 /* ======================================================== */
 @media (max-width: 768px) {
-  /* --- CORRECTION HEADER --- */
+  /* --- Header --- */
   header {
     padding: 1rem;
-    flex-wrap: wrap; /* On permet aux éléments de passer à la ligne si nécessaire */
-    justify-content: space-between; /* Garde le logo à gauche et le reste à droite */
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
   }
-
-  .logo { font-size: 1.5rem; } /* On redonne une taille normale au logo */
-  
-  /* On ajuste les espacements pour les petits écrans */
-  nav ul { gap: 1rem; }
-  nav a { font-size: 1rem; } /* Police un peu plus grande */
-  .header-right { gap: 1rem; }
-  .theme-toggle-btn { padding: 0.4rem; }
+  .logo {
+    width: 100%; 
+    text-align: center;
+  }
+  .header-right {
+    width: 100%;
+    justify-content: center;
+  }
 
   /* --- Grille produits à 2 colonnes --- */
   .product-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
