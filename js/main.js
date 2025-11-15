@@ -72,11 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         mediaElement = `<img src="${product.image}" alt="${product.nom}">`;
                     }
-
-                    storyContent.innerHTML = `
-                        ${mediaElement}
-                        <a href="produit.html?id=${product.id}" class="btn">Voir le produit</a>
-                    `;
+                    storyContent.innerHTML = `${mediaElement}<a href="produit.html?id=${product.id}" class="btn">Voir le produit</a>`;
                     storyViewer.classList.add('show');
                 }
             }
