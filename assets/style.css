@@ -31,8 +31,8 @@ nav a:hover, nav a.active { color: var(--accent-color); }
 /* Bannière page d'accueil         */
 /* =============================== */
 .banner {
-  /* CORRECTION : On met une couleur de fond au cas où l'image ne charge pas */
-  background-color: #ccc;
+  /* CORRECTION : Couleur de fond de secours */
+  background-color: #444; 
   background-image: url('https://via.placeholder.com/1200x400.png/f5e6e8/333333?text=Bienvenue+chez+Sandy%27Shop');
   background-size: cover;
   background-position: center;
