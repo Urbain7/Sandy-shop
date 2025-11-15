@@ -143,6 +143,16 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .toast.show { bottom: 90px; }
 
 /* =============================== */
+/* Styles des Messages d'Erreur    */
+/* =============================== */
+.error-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #c0392b; /* Une couleur rouge plus douce */
+  font-weight: 500;
+}
+
+/* =============================== */
 /* Design Responsive (pour mobiles)*/
 /* =============================== */
 @media (max-width: 768px) {
