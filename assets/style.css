@@ -30,7 +30,19 @@ nav a:hover, nav a.active { color: var(--accent-color); }
 /* =============================== */
 /* Bannière page d'accueil         */
 /* =============================== */
-.banner { background-image: url('https://via.placeholder.com/1200x400.png/f5e6e8/333333?text=Bienvenue+chez+Sandy%27Shop'); background-size: cover; background-position: center; height: 400px; display: flex; justify-content: center; align-items: center; text-align: center; color: white; }
+.banner {
+  /* CORRECTION : On met une couleur de fond au cas où l'image ne charge pas */
+  background-color: #ccc;
+  background-image: url('https://via.placeholder.com/1200x400.png/f5e6e8/333333?text=Bienvenue+chez+Sandy%27Shop');
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
 .banner-content { background-color: rgba(0, 0, 0, 0.4); padding: 2rem; border-radius: 5px; }
 .banner h1 { font-size: 3rem; margin: 0; }
 .banner .btn { background-color: var(--background-color); color: var(--text-color); font-weight: bold; }
@@ -126,9 +138,9 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .error-message {
   text-align: center;
   padding: 3rem 1rem;
-  color: #c0392b;
+  color: #e74c3c; /* Rouge plus vif */
   font-weight: 500;
-  width: 100%; /* S'assure que le message prend toute la largeur pour être centré */
+  grid-column: 1 / -1; /* Permet au message de s'étendre sur toute la grille */
 }
 
 /* =============================== */
