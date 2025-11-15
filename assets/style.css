@@ -28,26 +28,41 @@ nav a:hover, nav a.active { color: var(--accent-color); }
 #sun-icon { display: none; }
 
 /* =============================== */
-/* Bannière page d'accueil         */
+/* Bannière page d'accueil (NOUVEAU STYLE) */
 /* =============================== */
-.banner {
-  /* CORRECTION : Couleur de fond de secours */
-  background-color: #444; 
-  background-image: url('https://via.placeholder.com/1200x400.png/f5e6e8/333333?text=Bienvenue+chez+Sandy%27Shop');
-  background-size: cover;
-  background-position: center;
-  height: 400px;
-  display: flex;
-  justify-content: center;
+.banner-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   align-items: center;
-  text-align: center;
-  color: white;
+  gap: 3rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
-.banner-content { background-color: rgba(0, 0, 0, 0.4); padding: 2rem; border-radius: 5px; }
-.banner h1 { font-size: 3rem; margin: 0; }
-.banner .btn { background-color: var(--background-color); color: var(--text-color); font-weight: bold; }
-.banner .btn:hover { background-color: #f0f0f0; }
-html.dark-mode .banner .btn:hover { background-color: #444; }
+
+.banner-text h1 {
+  font-size: 3.5rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+  color: var(--text-color);
+}
+
+.banner-text p {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+.banner-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+html.dark-mode .banner-image img {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
 
 /* =============================== */
 /* Sections et Contenu Principal   */
@@ -58,7 +73,7 @@ h2 { text-align: center; margin-bottom: 2rem; font-size: 2rem; color: var(--acce
 /* =============================== */
 /* Section Stories                 */
 /* =============================== */
-.stories-section { padding: 1rem 0; }
+.stories-section { padding: 1rem 0; border-top: 1px solid var(--card-border-color); border-bottom: 1px solid var(--card-border-color); }
 .stories-container { display: flex; gap: 1.5rem; overflow-x: auto; padding: 1rem 0; -ms-overflow-style: none; scrollbar-width: none; }
 .stories-container::-webkit-scrollbar { display: none; }
 .story-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; text-align: center; }
@@ -73,8 +88,7 @@ h2 { text-align: center; margin-bottom: 2rem; font-size: 2rem; color: var(--acce
 .story-viewer.show { display: flex; }
 .close-story { position: absolute; top: 20px; right: 30px; font-size: 3rem; color: white; background: none; border: none; cursor: pointer; }
 .story-content { position: relative; max-width: 400px; width: 90%; max-height: 90vh; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-.story-content img { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; }
-.story-content video { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; }
+.story-content img, .story-content video { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; }
 .story-content .btn { background-color: var(--background-color); color: var(--text-color); font-weight: bold; }
 
 /* =============================== */
@@ -135,24 +149,17 @@ form button { background-color: var(--accent-color); color: white; border: none;
 /* =============================== */
 /* Styles des Messages d'Erreur    */
 /* =============================== */
-.error-message {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #e74c3c; /* Rouge plus vif */
-  font-weight: 500;
-  grid-column: 1 / -1; /* Permet au message de s'étendre sur toute la grille */
-}
+.error-message { text-align: center; padding: 3rem 1rem; color: #e74c3c; font-weight: 500; grid-column: 1 / -1; }
 
 /* =============================== */
 /* Style du Footer (Pied de page)  */
 /* =============================== */
-.footer { background-color: var(--header-bg-color); color: var(--header-text-color); padding: 1.5rem 2rem; margin-top: auto; font-size: 0.9rem; }
+.footer { background-color: var(--header-bg-color); color: var(--header-text-color); padding: 1.5rem 2rem; margin-top: auto; font-size: 0.9rem; border-top: 3px solid var(--accent-color); }
 .footer-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
 .footer-links { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
 .footer-separator { color: var(--accent-color); }
 .footer a { color: var(--header-text-color); text-decoration: none; transition: text-decoration 0.3s; }
 .footer a:hover { text-decoration: underline; }
-
 
 /* =============================== */
 /* Style du Bouton WhatsApp Flottant */
@@ -166,18 +173,23 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background-color: var(--header-bg-color); color: var(--header-text-color); padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 2000; transition: bottom 0.5s ease; font-weight: 500; }
 .toast.show { bottom: 90px; }
 
-/* =============================== */
-/* Design Responsive (pour mobiles)*/
-/* =============================== */
+/* ======================================================== */
+/* Design Responsive (pour mobiles)                         */
+/* ======================================================== */
 @media (max-width: 768px) {
   header { padding: 1rem; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
   .logo { width: 100%; text-align: center; }
   .header-right { width: 100%; justify-content: center; }
+  
+  .banner-container { grid-template-columns: 1fr; text-align: center; }
+  .banner-text { text-align: center; order: 2; }
+  .banner-image { order: 1; }
+  .banner-text h1 { font-size: 2.5rem; }
+
   .product-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
   .container { padding: 0 1rem; }
   .filters { flex-direction: column; align-items: stretch; }
   #search-input { width: 100%; }
-  .banner h1 { font-size: 2rem; }
   .product-detail { grid-template-columns: 1fr; }
   .footer-container { flex-direction: column; justify-content: center; text-align: center; gap: 1rem; }
 }
