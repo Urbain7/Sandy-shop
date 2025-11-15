@@ -121,6 +121,17 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .cart-header h2 { margin: 0; }
 
 /* =============================== */
+/* Styles des Messages d'Erreur    */
+/* =============================== */
+.error-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #c0392b;
+  font-weight: 500;
+  width: 100%; /* S'assure que le message prend toute la largeur pour être centré */
+}
+
+/* =============================== */
 /* Style du Footer (Pied de page)  */
 /* =============================== */
 .footer { background-color: var(--header-bg-color); color: var(--header-text-color); padding: 1.5rem 2rem; margin-top: auto; font-size: 0.9rem; }
@@ -141,16 +152,6 @@ form button { background-color: var(--accent-color); color: white; border: none;
 /* =============================== */
 .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background-color: var(--header-bg-color); color: var(--header-text-color); padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 2000; transition: bottom 0.5s ease; font-weight: 500; }
 .toast.show { bottom: 90px; }
-
-/* =============================== */
-/* Styles des Messages d'Erreur    */
-/* =============================== */
-.error-message {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #c0392b; /* Une couleur rouge plus douce */
-  font-weight: 500;
-}
 
 /* =============================== */
 /* Design Responsive (pour mobiles)*/
