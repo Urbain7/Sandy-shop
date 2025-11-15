@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    /**
-     * Affiche l'aperçu des catégories sur la page d'accueil.
-     */
     const displayCategoryPreview = (products) => {
         const categoryPreview = document.getElementById('category-preview');
         if (!categoryPreview) return;
@@ -27,9 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    /**
-     * Gère l'affichage et l'interaction des stories.
-     */
     const handleStories = (products) => {
         const storiesContainer = document.getElementById('stories-container');
         const storyViewer = document.getElementById('story-viewer');
@@ -91,9 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    /**
-     * Fonction principale qui charge les données et initialise les sections.
-     */
     const main = async () => {
         try {
             const response = await fetch('data/produits.json');
@@ -105,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Failed to initialize homepage sections:', error);
+            const storiesContainer = document.getElementById('stories-container');
+            const categoryPreview = document.getElementById('category-preview');
+            if(storiesContainer) storiesContainer.innerHTML = `<p class="error-message">Impossible de charger les stories.</p>`;
+            if(categoryPreview) categoryPreview.innerHTML = `<p class="error-message">Impossible de charger les catégories.</p>`;
         }
     };
 
