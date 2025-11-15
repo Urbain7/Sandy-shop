@@ -44,15 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const storyElement = document.createElement('div');
             storyElement.className = 'story-item';
             storyElement.dataset.productId = product.id;
+            
+            // CORRECTION : Le span avec le nom est maintenant DANS le cercle
             storyElement.innerHTML = `
                 <div class="story-circle">
                     <img src="${product.image}" alt="${product.nom}">
+                    <span>${product.nom}</span>
                 </div>
-                <span>${product.nom}</span>
             `;
             storiesContainer.appendChild(storyElement);
         });
 
+        // Le reste de la fonction est correct...
         storiesContainer.addEventListener('click', (e) => {
             const storyItem = e.target.closest('.story-item');
             if (storyItem) {
