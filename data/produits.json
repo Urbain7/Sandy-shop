@@ -1,41 +1,45 @@
 [
   {
     "id": 1,
-    "nom": "Sac à main Pedro",
-    "prix": 14500,
+    "nom": "Sac Élégance Noire",
+    "prix": 59000,
     "categorie": "Sacs",
-    "image": "images/sacs/pedro_blanc.jpeg",
+    "image": "assets/images/sac1.jpg",
     "images": [
-      "images/sacs/pedro_blanc.jpeg",
-      "images/sacs/pedro_marron.jpeg",
-      "images/sacs/pedro_noir.jpeg"
+      "assets/images/sac1.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
+      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
     ],
-    "description": "Élégant et fonctionnel, le sac Pedro se distingue par sa texture en cuir lisse, sa silhouette moderne et ses finitions premium. Idéal pour un usage quotidien ou une sortie chic."
+    "description": "Un sac à main structuré en cuir synthétique de première qualité. Parfait pour vos sorties en soirée comme pour une journée de travail. Dispose de multiples compartiments pour une organisation optimale.",
+    "in_story": true,
+    "story_video": "assets/videos/sac-elegance.mp4"
   },
   {
     "id": 2,
-    "nom": "Sac à main Chic Célitina",
-    "prix": 14500,
-    "categorie": "Sacs",
-    "image": "images/sacs/chic_Célitina_noir.jpeg",
+    "nom": "Robe d'Été Fleurie",
+    "prix": 85000,
+    "categorie": "Robes",
+    "image": "assets/images/robe1.jpg",
     "images": [
-      "images/sacs/chic_Célitina_noir.jpeg",
-      "images/sacs/Chic_célitina_violet.jpeg",
-      "images/sacs/Chic_célitina_marron.jpeg"
+      "assets/images/robe1.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
     ],
-    "description": "Raffiné et moderne, le sac Chic Célitina séduit par sa silhouette élégante et sa touche de féminité. Parfait pour accompagner vos journées avec style."
+    "description": "Légère et aérienne, cette robe est confectionnée en coton doux avec un imprimé floral délicat. Sa coupe fluide et sa taille cintrée flattent toutes les silhouettes. Idéale pour les journées ensoleillées.",
+    "in_story": true
   },
   {
     "id": 3,
-    "nom": "Tapette Versace",
-    "prix": 9000,
+    "nom": "Escarpins Roses Poudrés",
+    "prix": 72000,
     "categorie": "Chaussures",
-    "image": "images/chaussures/chaussure.jpeg",
+    "image": "assets/images/chaussure1.jpg",
     "images": [
-      "images/chaussures/chaussure.jpeg",
-      "images/chaussures/versace_rouge.jpeg"
+      "assets/images/chaussure1.jpg",
+      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
+      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
     ],
-    "description": "Tapettes féminines au style Versace, alliant légèreté, confort et élégance. Leur design raffiné et leurs finitions dorées ajoutent une note chic à chaque pas."
+    "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance à n'importe quelle tenue. Avec leur talon de 8 cm, ils offrent un confort surprenant pour une démarche assurée.",
+    "in_story": true
   },
   {
     "id": 4,
@@ -46,7 +50,8 @@
     "images": [
       "assets/images/accessoire1.jpg"
     ],
-    "description": "Un collier fin et délicat en plaqué or, orné d'un pendentif en forme de croissant de lune. Un bijou minimaliste qui se porte aussi bien seul qu'en accumulation."
+    "description": "Un collier fin et délicat en plaqué or, orné d'un pendentif en forme de croissant de lune. Un bijou minimaliste qui se porte aussi bien seul qu'en accumulation.",
+    "in_story": false
   },
   {
     "id": 5,
@@ -57,7 +62,8 @@
     "images": [
       "assets/images/sac2.jpg"
     ],
-    "description": "Inspiré des années 70, ce sac à main en cuir vegan apporte une touche rétro-chic à votre look. Sa bandoulière ajustable permet de le porter à l'épaule ou en travers du corps."
+    "description": "Inspiré des années 70, ce sac à main en cuir vegan apporte une touche rétro-chic à votre look. Sa bandoulière ajustable permet de le porter à l'épaule ou en travers du corps.",
+    "in_story": false
   },
   {
     "id": 6,
@@ -69,6 +75,7 @@
       "assets/images/robe2.jpg",
       "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
     ],
-    "description": "Faites sensation avec cette robe longue en satin fluide. Sa coupe portefeuille et sa fente latérale créent une silhouette glamour et sophistiquée. Parfaite pour les grandes occasions."
+    "description": "Faites sensation avec cette robe longue en satin fluide. Sa coupe portefeuille et sa fente latérale créent une silhouette glamour et sophistiquée. Parfaite pour les grandes occasions.",
+    "in_story": true
   }
 ]
