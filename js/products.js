@@ -51,7 +51,7 @@ async function initProduitsPage() {
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
         const productList = document.getElementById('product-list');
-        if(productList) productList.innerHTML = `<p style="color: red; text-align: center;">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
+        if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
     }
 }
 
@@ -133,7 +133,7 @@ async function initProduitDetailPage() {
         });
     } catch (error) {
         console.error("Erreur lors du chargement du produit:", error);
-        container.innerHTML = "<p>Erreur lors du chargement du produit.</p>";
+        container.innerHTML = `<p class="error-message">Erreur lors du chargement du produit.</p>`;
     }
 }
 
