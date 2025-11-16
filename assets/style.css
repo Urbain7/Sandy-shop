@@ -583,4 +583,74 @@ form button {
   #search-input { width: 100%; }
   .product-detail { grid-template-columns: 1fr; }
   .footer-container { flex-direction: column; justify-content: center; text-align: center; gap: 1rem; }
+  
+  /* =============================== */
+  /* PANIER RESPONSIVE (NOUVEAU)     */
+  /* =============================== */
+  .cart-items thead {
+    /* Masque complètement les en-têtes du tableau sur mobile */
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  .cart-items tr {
+    display: block; /* Chaque ligne devient un bloc, comme une carte */
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--card-border-color);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .cart-items td {
+    display: flex; /* Utilise flexbox pour aligner le label et la valeur */
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 0.75rem 0.5rem;
+    border-bottom: none; /* Supprime les bordures de base des cellules */
+  }
+  .cart-items td:not(:first-child) {
+    border-top: 1px solid var(--card-border-color); /* Ajoute un séparateur entre les "lignes" de la carte */
+  }
+  .cart-items td::before {
+    content: ''; /* Initialisation, le contenu sera ajouté ci-dessous */
+    font-weight: bold;
+    text-align: left;
+    margin-right: 1rem;
+  }
+
+  /* Ajout des labels pour chaque cellule de données */
+  .cart-items td:nth-of-type(1)::before { content: 'Produit'; }
+  .cart-items td:nth-of-type(2)::before { content: 'Prix'; }
+  .cart-items td:nth-of-type(3)::before { content: 'Quantité'; }
+  .cart-items td:nth-of-type(4)::before { content: 'Total'; }
+  .cart-items td:nth-of-type(5)::before { content: 'Actions'; }
+
+  /* Ajustements pour une meilleure lisibilité */
+  .cart-items td:nth-of-type(1) {
+    font-size: 1.1rem;
+    font-weight: 500;
+    justify-content: center; /* Centrer le nom du produit */
+    padding-bottom: 0.75rem;
+  }
+  .cart-items td:nth-of-type(1)::before {
+    display: none; /* On n'a pas besoin de répéter "Produit" ici */
+  }
+  .cart-items td:nth-of-type(5) {
+    justify-content: center; /* Centrer le bouton supprimer */
+  }
+  .cart-items td:nth-of-type(5) .btn-secondary {
+    flex-grow: 1; /* Le bouton prend toute la largeur disponible */
+  }
+  .cart-items td:nth-of-type(5)::before {
+    display: none; /* On n'a pas besoin de répéter "Actions" ici */
+  }
+  .cart-total {
+    text-align: center;
+    font-size: 1.6rem;
+  }
 }
