@@ -365,4 +365,4 @@ async function initPanierPage() {
             }, 1500);
         });
     }
-}```
+}
