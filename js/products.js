@@ -12,13 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE CATALOGUE
+// LOGIQUE SPÉCIFIQUE À LA PAGE CATALOGUE (`produits.html`)
 // ===============================================
 
 function displaySkeletonCards() {
     const productList = document.getElementById('product-list');
     if (!productList) return;
-    productList.innerHTML = ''; 
+    productList.innerHTML = '';
 
     for (let i = 0; i < 8; i++) {
         const skeletonCard = document.createElement('div');
@@ -37,7 +37,7 @@ async function initProduitsPage() {
     displaySkeletonCards();
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 500)); 
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Le fichier produits.json est introuvable.');
@@ -104,7 +104,7 @@ async function initProduitsPage() {
         initialLoad();
 
     } catch (error) {
-        console.error("Erreur critique lors du chargement des produits:", error);
+        console.error("Erreur critique:", error);
         if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue.</p>`;
     }
 }
@@ -125,10 +125,8 @@ function displayProducts(products) {
         const isOutOfStock = product.stock === 0;
 
         const productCard = document.createElement('div');
-        // Ajoute la classe 'out-of-stock' si le produit est épuisé
         productCard.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
 
-        // Adapte le bouton en fonction du stock
         const cartButtonHTML = isOutOfStock
             ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>`
             : `<button class="btn add-to-cart">Ajouter au panier</button>`;
@@ -188,7 +186,7 @@ function addEventListenersToCards(products) {
 }
 
 // ===============================================
-// FONCTION POUR LES RECOMMANDATIONS
+// FONCTION POUR LES RECOMMANDATIONS (`produit.html`)
 // ===============================================
 function displayRecommendations(currentProduct, allProducts) {
     const recommendationsSection = document.getElementById('recommendations-section');
@@ -225,13 +223,23 @@ function displayRecommendations(currentProduct, allProducts) {
 }
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL PRODUIT
+// LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL PRODUIT (`produit.html`)
 // ===============================================
 
 async function initProduitDetailPage() {
-    // ... (le début de la fonction reste inchangé) ...
+    const container = document.getElementById('product-detail-container');
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+
+    if (!productId) { 
+        container.innerHTML = "<p class='error-message'>Produit non trouvé.</p>"; 
+        return; 
+    }
+
     try {
-        // ... (le fetch des produits reste inchangé) ...
+        const response = await fetch('data/produits.json');
+        if(!response.ok) throw new Error("Could not fetch product data.");
+        const allProducts = await response.json();
         const product = allProducts.find(p => p.id == productId);
 
         if (!product) { 
@@ -239,23 +247,27 @@ async function initProduitDetailPage() {
             return; 
         }
 
+        document.title = `${product.nom} - Sandy'Shop`;
+
         const isOutOfStock = product.stock === 0;
 
-        // Adapte le bouton d'ajout au panier en fonction du stock
         const cartButtonHTML = isOutOfStock
             ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>`
             : `<button class="btn add-to-cart-detail">Ajouter au panier</button>`;
 
+        const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
         container.innerHTML = `
             <div class="product-detail">
                 <div class="product-gallery">
-                    <!-- ... galerie ... -->
+                    <div class="main-image"><img src="${productImages[0]}" alt="${product.nom}" id="main-product-image"></div>
+                    <div class="thumbnail-images">${productImages.map((img, index) => `<img src="${img}" alt="Vue ${index + 1}" class="${index === 0 ? 'active' : ''}">`).join('')}</div>
                 </div>
                 <div class="product-info">
                     <h1>${product.nom}</h1>
                     <p class="product-price">${formatPrice(product.prix)}</p>
                     <div class="product-options">
-                        <!-- ... options ... -->
+                        <label for="product-quantity">Quantité :</label>
+                        <input type="number" id="product-quantity" value="1" min="1" max="${product.stock}" ${isOutOfStock ? 'disabled' : ''}>
                     </div>
                     <p class="product-description">${product.description}</p>
                     ${cartButtonHTML}
@@ -263,26 +275,44 @@ async function initProduitDetailPage() {
             </div>
         `;
 
-        // ... (l'écouteur d'événement pour la galerie reste le même) ...
-
-        // On n'attache l'écouteur que si le produit est en stock
+        const mainImage = document.getElementById('main-product-image');
+        const thumbnails = container.querySelectorAll('.thumbnail-images img');
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                mainImage.src = thumb.src;
+                thumbnails.forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            });
+        });
+        
         if (!isOutOfStock) {
             const addToCartBtn = container.querySelector('.add-to-cart-detail');
             const quantityInput = container.querySelector('#product-quantity');
             addToCartBtn.addEventListener('click', () => {
-                // ... (logique d'ajout au panier inchangée) ...
+                const quantity = parseInt(quantityInput.value) || 1;
+                addToCart(product, quantity);
+                showToast(`${quantity} ${product.nom} ajouté(s) au panier !`);
+                
+                const originalText = addToCartBtn.innerHTML;
+                addToCartBtn.innerHTML = 'Ajouté ✔';
+                addToCartBtn.disabled = true;
+                setTimeout(() => {
+                    addToCartBtn.innerHTML = originalText;
+                    addToCartBtn.disabled = false;
+                }, 2000);
             });
         }
-        
+
         displayRecommendations(product, allProducts);
 
     } catch (error) {
-        // ... (gestion d'erreur inchangée) ...
+        console.error("Erreur lors du chargement du produit:", error);
+        container.innerHTML = `<p class="error-message">Erreur lors du chargement du produit.</p>`;
     }
 }
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER
+// LOGIQUE SPÉCIFIQUE À LA PAGE PANIER (`panier.html`)
 // ===============================================
 
 async function initPanierPage() {
