@@ -335,3 +335,13 @@ form button { background-color: var(--accent-color); color: white; border: none;
     /* Rend la grille transparente pour l'effet de fondu */
     opacity: 0;
 }
+
+/* ==================================== */
+/* Style pour message dans grille vide  */
+/* ==================================== */
+.empty-grid-message {
+    /* Fait en sorte que l'élément s'étende sur toutes les colonnes de la grille */
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem 0;
+}
