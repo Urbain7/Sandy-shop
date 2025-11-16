@@ -710,3 +710,36 @@ form button {
     justify-content: space-around;
     gap: 1rem;
 }
+
+/* ==================================== */
+/* Style de l'icône de panier dynamique */
+/* ==================================== */
+.nav-cart-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cart-count {
+    background-color: var(--accent-color);
+    color: #1a1a1a; /* Texte foncé pour une meilleure lisibilité sur la couleur d'accent */
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.1rem 0.4rem;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    transform: scale(0);
+    opacity: 0;
+}
+
+.cart-count.visible {
+    transform: scale(1);
+    opacity: 1;
+}
