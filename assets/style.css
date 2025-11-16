@@ -241,6 +241,100 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .modal-actions { display: flex; justify-content: space-around; gap: 1rem; }
 
 /* =============================== */
+/* Header et Navigation (Mise à jour) */
+/* =============================== */
+header {
+    /* ... vos styles existants ... */
+    position: relative; /* Nécessaire pour le positionnement du menu mobile */
+}
+
+/* Le menu desktop est visible par défaut */
+.nav-desktop {
+    margin: 0 auto; /* Centre le menu entre le logo et les icônes de droite */
+}
+
+/* Le bouton hamburger est caché par défaut sur grand écran */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--header-text-color);
+}
+
+/* Le menu mobile est caché par défaut */
+.nav-mobile {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--header-bg-color);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+.nav-mobile ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+.nav-mobile li a {
+    display: block;
+    padding: 1rem 2rem;
+    text-align: center;
+    color: var(--header-text-color);
+    text-decoration: none;
+    border-bottom: 1px solid var(--card-border-color);
+    transition: background-color 0.2s;
+}
+.nav-mobile li:last-child a {
+    border-bottom: none;
+}
+.nav-mobile li a:hover {
+    background-color: var(--card-bg-color);
+    color: var(--accent-color);
+}
+
+
+/* =============================== */
+/* Design Responsive (pour mobiles)*/
+/* =============================== */
+@media (max-width: 768px) {
+    /* ... vos styles responsives existants ... */
+
+    /* NOUVELLES RÈGLES POUR LE HEADER RESPONSIVE */
+    header {
+        justify-content: space-between;
+    }
+    
+    .logo {
+        width: auto; /* Le logo ne prend plus toute la largeur */
+        text-align: left;
+    }
+
+    .header-right {
+        width: auto; /* Le conteneur d'icônes ne prend plus toute la largeur */
+    }
+
+    /* On cache le menu desktop */
+    .nav-desktop {
+        display: none;
+    }
+
+    /* On affiche le bouton hamburger */
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    /* Style du menu mobile quand il est ouvert */
+    .nav-mobile.open {
+        display: block;
+    }
+}
+
+/* =============================== */
 /* Design Responsive (pour mobiles)*/
 /* =============================== */
 @media (max-width: 768px) {
