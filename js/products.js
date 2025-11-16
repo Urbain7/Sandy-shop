@@ -68,34 +68,55 @@ async function initProduitsPage() {
             categoryFilter.value = initialCategory;
         }
 
+        // Fonction de filtrage et de tri avec effet de fondu
         function handleFilterAndSort() {
-            const category = categoryFilter.value;
-            const searchTerm = searchInput.value.toLowerCase();
-            const sortValue = sortBy.value;
-            let filteredProducts = [...products];
+            // Appliquer la classe pour faire disparaître la grille en fondu
+            productList.classList.add('is-loading');
 
-            if (category !== 'all') {
-                filteredProducts = filteredProducts.filter(p => p.categorie === category);
-            }
-            if (searchTerm) {
-                filteredProducts = filteredProducts.filter(p => p.nom.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
-            }
+            // Attendre la fin de l'animation de fondu (300ms) avant de changer le contenu
+            setTimeout(() => {
+                let filteredProducts = [...products];
 
-            switch (sortValue) {
-                case 'price-asc': filteredProducts.sort((a, b) => a.prix - b.prix); break;
-                case 'price-desc': filteredProducts.sort((a, b) => b.prix - a.prix); break;
-                case 'name-asc': filteredProducts.sort((a, b) => a.nom.localeCompare(b.nom)); break;
-                case 'name-desc': filteredProducts.sort((a, b) => b.nom.localeCompare(a.nom)); break;
-            }
-            // 2. REMPLACER LES SQUELETTES PAR LES VRAIS PRODUITS
-            displayProducts(filteredProducts);
+                const category = categoryFilter.value;
+                const searchTerm = searchInput.value.toLowerCase();
+                const sortValue = sortBy.value;
+
+                if (category !== 'all') {
+                    filteredProducts = filteredProducts.filter(p => p.categorie === category);
+                }
+                if (searchTerm) {
+                    filteredProducts = filteredProducts.filter(p => p.nom.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
+                }
+
+                switch (sortValue) {
+                    case 'price-asc': filteredProducts.sort((a, b) => a.prix - b.prix); break;
+                    case 'price-desc': filteredProducts.sort((a, b) => b.prix - a.prix); break;
+                    case 'name-asc': filteredProducts.sort((a, b) => a.nom.localeCompare(b.nom)); break;
+                    case 'name-desc': filteredProducts.sort((a, b) => b.nom.localeCompare(a.nom)); break;
+                }
+                
+                // Afficher les nouveaux produits (la grille est encore invisible)
+                displayProducts(filteredProducts);
+
+                // Retirer la classe pour faire réapparaître la grille en fondu
+                productList.classList.remove('is-loading');
+            }, 300); // Ce délai doit correspondre à la durée de la transition en CSS (0.3s)
         }
 
         categoryFilter.addEventListener('change', handleFilterAndSort);
         searchInput.addEventListener('input', handleFilterAndSort);
         sortBy.addEventListener('change', handleFilterAndSort);
         
-        handleFilterAndSort();
+        // Chargement initial SANS effet de fondu pour remplacer les squelettes
+        function initialLoad() {
+            let filteredProducts = [...products];
+            const initialCategoryValue = categoryFilter.value;
+             if (initialCategoryValue !== 'all') {
+                filteredProducts = filteredProducts.filter(p => p.categorie === initialCategoryValue);
+            }
+            displayProducts(filteredProducts);
+        }
+        initialLoad();
 
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
