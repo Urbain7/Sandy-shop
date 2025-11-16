@@ -15,13 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // LOGIQUE SPÉCIFIQUE À LA PAGE CATALOGUE
 // ===============================================
 
-/**
- * Affiche 8 cartes de chargement (squelettes) dans la grille de produits.
- */
 function displaySkeletonCards() {
     const productList = document.getElementById('product-list');
     if (!productList) return;
-    productList.innerHTML = ''; // Vide la grille
+    productList.innerHTML = ''; 
 
     for (let i = 0; i < 8; i++) {
         const skeletonCard = document.createElement('div');
@@ -37,12 +34,9 @@ function displaySkeletonCards() {
 
 async function initProduitsPage() {
     const productList = document.getElementById('product-list');
-    
-    // 1. AFFICHER LES SQUELETTES IMMÉDIATEMENT
     displaySkeletonCards();
 
     try {
-        // Simuler un léger délai de chargement pour mieux voir l'effet (optionnel, à retirer en production)
         await new Promise(resolve => setTimeout(resolve, 500)); 
 
         const response = await fetch('data/produits.json');
@@ -68,15 +62,10 @@ async function initProduitsPage() {
             categoryFilter.value = initialCategory;
         }
 
-        // Fonction de filtrage et de tri avec effet de fondu
         function handleFilterAndSort() {
-            // Appliquer la classe pour faire disparaître la grille en fondu
             productList.classList.add('is-loading');
-
-            // Attendre la fin de l'animation de fondu (300ms) avant de changer le contenu
             setTimeout(() => {
                 let filteredProducts = [...products];
-
                 const category = categoryFilter.value;
                 const searchTerm = searchInput.value.toLowerCase();
                 const sortValue = sortBy.value;
@@ -95,19 +84,15 @@ async function initProduitsPage() {
                     case 'name-desc': filteredProducts.sort((a, b) => b.nom.localeCompare(a.nom)); break;
                 }
                 
-                // Afficher les nouveaux produits (la grille est encore invisible)
                 displayProducts(filteredProducts);
-
-                // Retirer la classe pour faire réapparaître la grille en fondu
                 productList.classList.remove('is-loading');
-            }, 300); // Ce délai doit correspondre à la durée de la transition en CSS (0.3s)
+            }, 300);
         }
 
         categoryFilter.addEventListener('change', handleFilterAndSort);
         searchInput.addEventListener('input', handleFilterAndSort);
         sortBy.addEventListener('change', handleFilterAndSort);
         
-        // Chargement initial SANS effet de fondu pour remplacer les squelettes
         function initialLoad() {
             let filteredProducts = [...products];
             const initialCategoryValue = categoryFilter.value;
@@ -120,7 +105,7 @@ async function initProduitsPage() {
 
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
-        if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
+        if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue.</p>`;
     }
 }
 
@@ -192,41 +177,31 @@ function addEventListenersToCards(products) {
         }
     });
 }
+
 // ===============================================
-// NOUVELLE FONCTION POUR LES RECOMMANDATIONS
+// FONCTION POUR LES RECOMMANDATIONS
 // ===============================================
-/**
- * Affiche des produits recommandés basés sur la catégorie du produit actuel.
- * @param {object} currentProduct - Le produit actuellement affiché.
- * @param {Array} allProducts - La liste de tous les produits.
- */
 function displayRecommendations(currentProduct, allProducts) {
     const recommendationsSection = document.getElementById('recommendations-section');
     const recommendationsGrid = document.getElementById('recommendations-grid');
 
     if (!recommendationsSection || !recommendationsGrid) return;
 
-    // 1. Filtrer les produits pour trouver ceux de la même catégorie
     const recommendedProducts = allProducts.filter(product => 
         product.categorie === currentProduct.categorie && product.id !== currentProduct.id
     );
 
-    // 2. S'il n'y a pas de recommandations, on ne fait rien
     if (recommendedProducts.length === 0) {
-        recommendationsSection.style.display = 'none'; // Garde la section cachée
+        recommendationsSection.style.display = 'none';
         return;
     }
 
-    // 3. Mélanger et prendre les 4 premiers pour un effet aléatoire
     const shuffledRecommendations = recommendedProducts.sort(() => 0.5 - Math.random()).slice(0, 4);
+    recommendationsGrid.innerHTML = '';
 
-    recommendationsGrid.innerHTML = ''; // Vide la grille
-
-    // 4. Afficher chaque produit recommandé
     shuffledRecommendations.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        // On utilise la même structure de carte que sur la page produits
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}">
@@ -237,7 +212,6 @@ function displayRecommendations(currentProduct, allProducts) {
         recommendationsGrid.appendChild(productCard);
     });
 
-    // 5. Afficher la section
     recommendationsSection.style.display = 'block';
 }
 
@@ -258,8 +232,8 @@ async function initProduitDetailPage() {
     try {
         const response = await fetch('data/produits.json');
         if(!response.ok) throw new Error("Could not fetch product data.");
-        const allProducts = await response.json(); // On charge TOUS les produits
-        const product = products.find(p => p.id == productId);
+        const allProducts = await response.json();
+        const product = allProducts.find(p => p.id == productId);
 
         if (!product) { 
             container.innerHTML = "<p class='error-message'>Produit non trouvé.</p>"; 
@@ -314,13 +288,7 @@ async function initProduitDetailPage() {
             }, 2000);
         });
 
-    } catch (error) {
-        console.error("Erreur lors du chargement du produit:", error);
-        container.innerHTML = `<p class="error-message">Erreur lors du chargement du produit.</p>`;
-    }
-}
-
- // APPEL DE LA NOUVELLE FONCTION
+        // APPEL DE LA FONCTION DE RECOMMANDATION
         displayRecommendations(product, allProducts);
 
     } catch (error) {
@@ -352,7 +320,7 @@ async function initPanierPage() {
         if (cart.length === 0) {
             cartHeader.style.display = 'none';
             orderSection.style.display = 'none';
-            cartContainer.innerHTML = '<p style="text-align: center; padding: 2rem 0;">Votre panier est vide.</p>';
+            cartContainer.innerHTML = '<p class="empty-grid-message">Votre panier est vide.</p>';
             return;
         }
 
@@ -439,7 +407,7 @@ async function initPanierPage() {
             showToast('Commande envoyée !');
             setTimeout(() => {
                 localStorage.removeItem('cart');
-                orderForm.submit(); // Soumet le formulaire après un court délai
+                orderForm.submit();
             }, 1500);
         });
     }
