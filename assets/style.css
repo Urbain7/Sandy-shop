@@ -345,3 +345,17 @@ form button { background-color: var(--accent-color); color: white; border: none;
     text-align: center;
     padding: 2rem 0;
 }
+
+/* ==================================== */
+/* Section des Produits Recommandés     */
+/* ==================================== */
+#recommendations-section {
+    border-top: 1px solid var(--card-border-color);
+    padding-top: 2rem;
+    margin-top: 3rem;
+}
+
+/* Limite le nombre de produits par ligne dans la section des recommandations */
+#recommendations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
