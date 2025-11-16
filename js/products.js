@@ -107,6 +107,7 @@ function displayProducts(products) {
         const likeCount = isLiked ? 1 : 0;
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
+        // CORRECTION APPLIQUÉE ICI pour afficher le prix
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}">
