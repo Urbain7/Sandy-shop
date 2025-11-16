@@ -1,48 +1,48 @@
 [
   {
-    "id": 1,
+    "id": "prod_1",
     "nom": "Sac Élégance Noire",
     "prix": 59000,
     "categorie": "Sacs",
     "image": "assets/images/sac1.jpg",
     "images": [
       "assets/images/sac1.jpg",
-      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
-      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Sac+Elegance+-+Vue+2",
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Sac+Elegance+-+Vue+3"
     ],
     "description": "Un sac à main structuré en cuir synthétique de première qualité. Parfait pour vos sorties en soirée comme pour une journée de travail. Dispose de multiples compartiments pour une organisation optimale.",
     "in_story": true,
     "story_video": "assets/videos/sac-elegance.mp4"
   },
   {
-    "id": 2,
+    "id": "prod_2",
     "nom": "Robe d'Été Fleurie",
     "prix": 85000,
     "categorie": "Robes",
     "image": "assets/images/robe1.jpg",
     "images": [
       "assets/images/robe1.jpg",
-      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Robe+Fleurie+-+Vue+2"
     ],
     "description": "Légère et aérienne, cette robe est confectionnée en coton doux avec un imprimé floral délicat. Sa coupe fluide et sa taille cintrée flattent toutes les silhouettes. Idéale pour les journées ensoleillées.",
     "in_story": true
   },
   {
-    "id": 3,
+    "id": "prod_3",
     "nom": "Escarpins Roses Poudrés",
     "prix": 72000,
     "categorie": "Chaussures",
     "image": "assets/images/chaussure1.jpg",
     "images": [
       "assets/images/chaussure1.jpg",
-      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2",
-      "https://via.placeholder.com/400x400.png/ddd/333?text=Vue+3"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Escarpins+-+Vue+2",
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Escarpins+-+Vue+3"
     ],
     "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance à n'importe quelle tenue. Avec leur talon de 8 cm, ils offrent un confort surprenant pour une démarche assurée.",
     "in_story": true
   },
   {
-    "id": 4,
+    "id": "prod_4",
     "nom": "Collier Lune Dorée",
     "prix": 30000,
     "categorie": "Accessoires",
@@ -54,7 +54,7 @@
     "in_story": false
   },
   {
-    "id": 5,
+    "id": "prod_5",
     "nom": "Sac à Main Vintage",
     "prix": 62500,
     "categorie": "Sacs",
@@ -66,14 +66,14 @@
     "in_story": false
   },
   {
-    "id": 6,
+    "id": "prod_6",
     "nom": "Robe de Soirée Satinée",
     "prix": 98000,
     "categorie": "Robes",
     "image": "assets/images/robe2.jpg",
     "images": [
       "assets/images/robe2.jpg",
-      "https://via.placeholder.com/400x400.png/eee/333?text=Vue+2"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Robe+Soiree+-+Vue+2"
     ],
     "description": "Faites sensation avec cette robe longue en satin fluide. Sa coupe portefeuille et sa fente latérale créent une silhouette glamour et sophistiquée. Parfaite pour les grandes occasions.",
     "in_story": true
