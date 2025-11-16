@@ -192,6 +192,54 @@ function addEventListenersToCards(products) {
         }
     });
 }
+// ===============================================
+// NOUVELLE FONCTION POUR LES RECOMMANDATIONS
+// ===============================================
+/**
+ * Affiche des produits recommandés basés sur la catégorie du produit actuel.
+ * @param {object} currentProduct - Le produit actuellement affiché.
+ * @param {Array} allProducts - La liste de tous les produits.
+ */
+function displayRecommendations(currentProduct, allProducts) {
+    const recommendationsSection = document.getElementById('recommendations-section');
+    const recommendationsGrid = document.getElementById('recommendations-grid');
+
+    if (!recommendationsSection || !recommendationsGrid) return;
+
+    // 1. Filtrer les produits pour trouver ceux de la même catégorie
+    const recommendedProducts = allProducts.filter(product => 
+        product.categorie === currentProduct.categorie && product.id !== currentProduct.id
+    );
+
+    // 2. S'il n'y a pas de recommandations, on ne fait rien
+    if (recommendedProducts.length === 0) {
+        recommendationsSection.style.display = 'none'; // Garde la section cachée
+        return;
+    }
+
+    // 3. Mélanger et prendre les 4 premiers pour un effet aléatoire
+    const shuffledRecommendations = recommendedProducts.sort(() => 0.5 - Math.random()).slice(0, 4);
+
+    recommendationsGrid.innerHTML = ''; // Vide la grille
+
+    // 4. Afficher chaque produit recommandé
+    shuffledRecommendations.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        // On utilise la même structure de carte que sur la page produits
+        productCard.innerHTML = `
+            <a href="produit.html?id=${product.id}" class="product-link">
+                <img src="${product.image}" alt="${product.nom}">
+                <h3>${product.nom}</h3>
+            </a>
+            <p class="product-price">${formatPrice(product.prix)}</p>
+        `;
+        recommendationsGrid.appendChild(productCard);
+    });
+
+    // 5. Afficher la section
+    recommendationsSection.style.display = 'block';
+}
 
 // ===============================================
 // LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL PRODUIT
@@ -210,7 +258,7 @@ async function initProduitDetailPage() {
     try {
         const response = await fetch('data/produits.json');
         if(!response.ok) throw new Error("Could not fetch product data.");
-        const products = await response.json();
+        const allProducts = await response.json(); // On charge TOUS les produits
         const product = products.find(p => p.id == productId);
 
         if (!product) { 
@@ -265,6 +313,15 @@ async function initProduitDetailPage() {
                 addToCartBtn.disabled = false;
             }, 2000);
         });
+
+    } catch (error) {
+        console.error("Erreur lors du chargement du produit:", error);
+        container.innerHTML = `<p class="error-message">Erreur lors du chargement du produit.</p>`;
+    }
+}
+
+ // APPEL DE LA NOUVELLE FONCTION
+        displayRecommendations(product, allProducts);
 
     } catch (error) {
         console.error("Erreur lors du chargement du produit:", error);
