@@ -130,7 +130,7 @@ function displayProducts(products) {
     productList.innerHTML = '';
 
     if (products.length === 0) {
-        productList.innerHTML = `<p style="text-align: center; padding: 2rem 0;">Aucun produit ne correspond à votre recherche.</p>`;
+        productList.innerHTML = `<p class="empty-grid-message">Aucun produit ne correspond à votre recherche.</p>`;
         return;
     }
 
