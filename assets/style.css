@@ -240,99 +240,35 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .modal-content p { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.5; }
 .modal-actions { display: flex; justify-content: space-around; gap: 1rem; }
 
+
 /* =============================== */
 /* Header et Navigation (Mise à jour) */
 /* =============================== */
 header {
-    /* ... vos styles existants ... */
-    position: relative; /* Nécessaire pour le positionnement du menu mobile */
-}
-
-/* Le menu desktop est visible par défaut */
-.nav-desktop {
-    margin: 0 auto; /* Centre le menu entre le logo et les icônes de droite */
-}
-
-/* Le bouton hamburger est caché par défaut sur grand écran */
-.mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--header-text-color);
-}
-
-/* Le menu mobile est caché par défaut */
-.nav-mobile {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
     background-color: var(--header-bg-color);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-.nav-mobile ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-.nav-mobile li a {
-    display: block;
     padding: 1rem 2rem;
-    text-align: center;
-    color: var(--header-text-color);
-    text-decoration: none;
-    border-bottom: 1px solid var(--card-border-color);
-    transition: background-color 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative; 
 }
-.nav-mobile li:last-child a {
-    border-bottom: none;
-}
-.nav-mobile li a:hover {
-    background-color: var(--card-bg-color);
-    color: var(--accent-color);
-}
+.logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--header-text-color); }
+.nav-desktop { margin: 0 auto; }
+.nav-desktop ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.5rem; }
+.nav-desktop a { text-decoration: none; color: var(--header-text-color); font-weight: 500; transition: color 0.3s; }
+.nav-desktop a:hover, .nav-desktop a.active { color: var(--accent-color); }
+.header-right { display: flex; align-items: center; gap: 1rem; }
+.theme-toggle-btn { background: none; border: none; cursor: pointer; color: var(--header-text-color); padding: 0.5rem; border-radius: 50%; display: flex; }
+.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--header-text-color); }
+.nav-mobile { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--header-bg-color); box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 1000; }
+.nav-mobile.open { display: block; }
+.nav-mobile ul { list-style: none; padding: 0; margin: 0; flex-direction: column; }
+.nav-mobile li a { display: block; padding: 1rem 2rem; text-align: center; color: var(--header-text-color); text-decoration: none; border-bottom: 1px solid var(--card-border-color); }
+.nav-mobile li:last-child a { border-bottom: none; }
+.nav-mobile li a.active { color: var(--accent-color); font-weight: bold; }
 
-
-/* =============================== */
-/* Design Responsive (pour mobiles)*/
-/* =============================== */
-@media (max-width: 768px) {
-    /* ... vos styles responsives existants ... */
-
-    /* NOUVELLES RÈGLES POUR LE HEADER RESPONSIVE */
-    header {
-        justify-content: space-between;
-    }
-    
-    .logo {
-        width: auto; /* Le logo ne prend plus toute la largeur */
-        text-align: left;
-    }
-
-    .header-right {
-        width: auto; /* Le conteneur d'icônes ne prend plus toute la largeur */
-    }
-
-    /* On cache le menu desktop */
-    .nav-desktop {
-        display: none;
-    }
-
-    /* On affiche le bouton hamburger */
-    .mobile-menu-btn {
-        display: block;
-    }
-    
-    /* Style du menu mobile quand il est ouvert */
-    .nav-mobile.open {
-        display: block;
-    }
-}
+/* ... (le reste de vos styles) ... */
 
 /* =============================== */
 /* Design Responsive (pour mobiles)*/
