@@ -3,14 +3,15 @@
     "id": "prod_1",
     "nom": "Sac Élégance Noire",
     "prix": 59000,
+    "stock": 5,
     "categorie": "Sacs",
     "image": "assets/images/sac1.jpg",
     "images": [
       "assets/images/sac1.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Sac+Elegance+-+Vue+2",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Sac+Elegance+-+Vue+3"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2",
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+3"
     ],
-    "description": "Un sac à main structuré en cuir synthétique de première qualité. Parfait pour vos sorties en soirée comme pour une journée de travail. Dispose de multiples compartiments pour une organisation optimale.",
+    "description": "Un sac à main structuré en cuir synthétique de première qualité...",
     "in_story": true,
     "story_video": "assets/videos/sac-elegance.mp4"
   },
@@ -18,64 +19,69 @@
     "id": "prod_2",
     "nom": "Robe d'Été Fleurie",
     "prix": 85000,
+    "stock": 8,
     "categorie": "Robes",
     "image": "assets/images/robe1.jpg",
     "images": [
       "assets/images/robe1.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Robe+Fleurie+-+Vue+2"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2"
     ],
-    "description": "Légère et aérienne, cette robe est confectionnée en coton doux avec un imprimé floral délicat. Sa coupe fluide et sa taille cintrée flattent toutes les silhouettes. Idéale pour les journées ensoleillées.",
+    "description": "Légère et aérienne, cette robe est confectionnée en coton doux...",
     "in_story": true
   },
   {
     "id": "prod_3",
     "nom": "Escarpins Roses Poudrés",
     "prix": 72000,
+    "stock": 0,
     "categorie": "Chaussures",
     "image": "assets/images/chaussure1.jpg",
     "images": [
       "assets/images/chaussure1.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Escarpins+-+Vue+2",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Escarpins+-+Vue+3"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2",
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+3"
     ],
-    "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance à n'importe quelle tenue. Avec leur talon de 8 cm, ils offrent un confort surprenant pour une démarche assurée.",
+    "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance...",
     "in_story": true
   },
   {
     "id": "prod_4",
     "nom": "Collier Lune Dorée",
     "prix": 30000,
+    "stock": 12,
     "categorie": "Accessoires",
     "image": "assets/images/accessoire1.jpg",
     "images": [
       "assets/images/accessoire1.jpg"
     ],
-    "description": "Un collier fin et délicat en plaqué or, orné d'un pendentif en forme de croissant de lune. Un bijou minimaliste qui se porte aussi bien seul qu'en accumulation.",
+    "description": "Un collier fin et délicat en plaqué or, orné d'un pendentif en forme de croissant de lune...",
     "in_story": false
   },
   {
     "id": "prod_5",
     "nom": "Sac à Main Vintage",
     "prix": 62500,
+    "stock": 3,
     "categorie": "Sacs",
     "image": "assets/images/sac2.jpg",
     "images": [
       "assets/images/sac2.jpg"
     ],
-    "description": "Inspiré des années 70, ce sac à main en cuir vegan apporte une touche rétro-chic à votre look. Sa bandoulière ajustable permet de le porter à l'épaule ou en travers du corps.",
+    "description": "Inspiré des années 70, ce sac à main en cuir vegan apporte une touche rétro-chic...",
     "in_story": false
   },
   {
     "id": "prod_6",
     "nom": "Robe de Soirée Satinée",
     "prix": 98000,
+    "stock": 0,
     "categorie": "Robes",
     "image": "assets/images/robe2.jpg",
     "images": [
       "assets/images/robe2.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Robe+Soiree+-+Vue+2"
+      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2"
     ],
-    "description": "Faites sensation avec cette robe longue en satin fluide. Sa coupe portefeuille et sa fente latérale créent une silhouette glamour et sophistiquée. Parfaite pour les grandes occasions.",
+    "description": "Faites sensation avec cette robe longue en satin fluide...",
     "in_story": true
   }
 ]
