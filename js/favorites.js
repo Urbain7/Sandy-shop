@@ -15,7 +15,7 @@ async function loadFavoriteProducts() {
         const likedProductIds = Object.keys(likes).filter(id => likes[id]);
 
         if (likedProductIds.length === 0) {
-            favoritesGrid.innerHTML = '<p style="text-align: center; padding: 2rem 0;">Vous n\'avez encore aucun produit en favori.</p>';
+            favoritesGrid.innerHTML = '<p class="empty-grid-message">Vous n\'avez encore aucun produit en favori.</p>';
             return;
         }
 
@@ -27,7 +27,7 @@ async function loadFavoriteProducts() {
         const favoriteProducts = allProducts.filter(product => likedProductIds.includes(product.id));
 
         if (favoriteProducts.length === 0) {
-            favoritesGrid.innerHTML = '<p style="text-align: center; padding: 2rem 0;">Certains de vos favoris n\'ont pas pu être trouvés.</p>';
+            favoritesGrid.innerHTML = '<p class="empty-grid-message">Vous n\'avez encore aucun produit en favori.</p>';
             return;
         }
 
@@ -101,7 +101,7 @@ function addEventListenersToFavoriteCards(products) {
                     cardToRemove.remove();
                     // Si c'était le dernier favori, on affiche le message
                     if (document.querySelectorAll('#favorites-grid .product-card').length === 0) {
-                        document.getElementById('favorites-grid').innerHTML = '<p style="text-align: center; padding: 2rem 0;">Vous n\'avez plus de produit en favori.</p>';
+                        document.getElementById('favorites-grid').innerHTML = '<p class="empty-grid-message">Vous n\'avez encore aucun produit en favori.</p>';
                     }
                 }, 300);
             });
