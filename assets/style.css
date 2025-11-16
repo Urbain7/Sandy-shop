@@ -275,3 +275,50 @@ form button { background-color: var(--accent-color); color: white; border: none;
     .cart-items td:nth-of-type(5) .btn-secondary { flex-grow: 1; }
     .cart-total { text-align: center; font-size: 1.6rem; }
 }
+
+/* ==================================== */
+/* Squelettes de Chargement (Skeleton)  */
+/* ==================================== */
+.product-card.skeleton {
+    border-color: var(--card-border-color);
+    box-shadow: none;
+    cursor: progress;
+}
+
+.skeleton .skeleton-img,
+.skeleton .skeleton-text {
+    background-color: var(--card-border-color);
+    border-radius: 4px;
+    animation: skeleton-pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton .skeleton-img {
+    width: 100%;
+    height: 250px;
+    margin-bottom: 1rem;
+}
+
+.skeleton .skeleton-text {
+    height: 1.2rem;
+    margin: 0.5rem auto;
+}
+
+.skeleton .skeleton-text.short {
+    width: 60%;
+}
+
+.skeleton .skeleton-text.long {
+    width: 85%;
+}
+
+@keyframes skeleton-pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}
