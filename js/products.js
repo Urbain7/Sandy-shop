@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function displaySkeletonCards() {
     const productList = document.getElementById('product-list');
     if (!productList) return;
-    productList.innerHTML = '';
+    productList.innerHTML = ''; 
 
     for (let i = 0; i < 8; i++) {
         const skeletonCard = document.createElement('div');
@@ -37,7 +37,7 @@ async function initProduitsPage() {
     displaySkeletonCards();
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 500)); 
 
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Le fichier produits.json est introuvable.');
@@ -247,10 +247,18 @@ async function initProduitDetailPage() {
             return; 
         }
 
+        // --- OPTIMISATION SEO ---
         document.title = `${product.nom} - Sandy'Shop`;
+        let metaDescription = document.querySelector('meta[name="description"]');
+        if (!metaDescription) {
+            metaDescription = document.createElement('meta');
+            metaDescription.name = 'description';
+            document.head.appendChild(metaDescription);
+        }
+        metaDescription.content = `Découvrez ${product.nom}. ${product.description.substring(0, 120)}...`;
+        // --- FIN OPTIMISATION SEO ---
 
         const isOutOfStock = product.stock === 0;
-
         const cartButtonHTML = isOutOfStock
             ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>`
             : `<button class="btn add-to-cart-detail">Ajouter au panier</button>`;
@@ -267,7 +275,7 @@ async function initProduitDetailPage() {
                     <p class="product-price">${formatPrice(product.prix)}</p>
                     <div class="product-options">
                         <label for="product-quantity">Quantité :</label>
-                        <input type="number" id="product-quantity" value="1" min="1" max="${product.stock}" ${isOutOfStock ? 'disabled' : ''}>
+                        <input type="number" id="product-quantity" value="1" min="1" max="${product.stock || 99}" style="width: 60px; padding: 0.5rem; text-align: center; border-radius: 5px; border: 1px solid var(--input-border-color);" ${isOutOfStock ? 'disabled' : ''}>
                     </div>
                     <p class="product-description">${product.description}</p>
                     ${cartButtonHTML}
