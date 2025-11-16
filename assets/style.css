@@ -322,3 +322,16 @@ form button { background-color: var(--accent-color); color: white; border: none;
         opacity: 1;
     }
 }
+
+/* ==================================== */
+/* Transitions pour le filtrage         */
+/* ==================================== */
+.product-grid {
+    /* Ajoute une transition douce sur l'opacité */
+    transition: opacity 0.3s ease-in-out;
+}
+
+.product-grid.is-loading {
+    /* Rend la grille transparente pour l'effet de fondu */
+    opacity: 0;
+}
