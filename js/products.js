@@ -15,8 +15,36 @@ document.addEventListener('DOMContentLoaded', () => {
 // LOGIQUE SPÉCIFIQUE À LA PAGE CATALOGUE
 // ===============================================
 
+/**
+ * Affiche 8 cartes de chargement (squelettes) dans la grille de produits.
+ */
+function displaySkeletonCards() {
+    const productList = document.getElementById('product-list');
+    if (!productList) return;
+    productList.innerHTML = ''; // Vide la grille
+
+    for (let i = 0; i < 8; i++) {
+        const skeletonCard = document.createElement('div');
+        skeletonCard.className = 'product-card skeleton';
+        skeletonCard.innerHTML = `
+            <div class="skeleton-img"></div>
+            <div class="skeleton-text long"></div>
+            <div class="skeleton-text short"></div>
+        `;
+        productList.appendChild(skeletonCard);
+    }
+}
+
 async function initProduitsPage() {
+    const productList = document.getElementById('product-list');
+    
+    // 1. AFFICHER LES SQUELETTES IMMÉDIATEMENT
+    displaySkeletonCards();
+
     try {
+        // Simuler un léger délai de chargement pour mieux voir l'effet (optionnel, à retirer en production)
+        await new Promise(resolve => setTimeout(resolve, 500)); 
+
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Le fichier produits.json est introuvable.');
         const products = await response.json();
@@ -25,7 +53,6 @@ async function initProduitsPage() {
         const searchInput = document.getElementById('search-input');
         const sortBy = document.getElementById('sort-by');
         
-        // Remplissage du filtre des catégories
         const categories = [...new Set(products.map(p => p.categorie))];
         categoryFilter.innerHTML = '<option value="all">Toutes les catégories</option>';
         categories.forEach(cat => {
@@ -35,7 +62,6 @@ async function initProduitsPage() {
             categoryFilter.appendChild(option);
         });
 
-        // Appliquer un filtre de catégorie initial si présent dans l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const initialCategory = urlParams.get('categorie');
         if (initialCategory && categories.includes(initialCategory)) {
@@ -46,48 +72,33 @@ async function initProduitsPage() {
             const category = categoryFilter.value;
             const searchTerm = searchInput.value.toLowerCase();
             const sortValue = sortBy.value;
-            let filteredProducts = [...products]; // Copie pour ne pas altérer le tableau original
+            let filteredProducts = [...products];
 
-            // 1. Filtrer par catégorie
             if (category !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.categorie === category);
             }
-            // 2. Filtrer par recherche
             if (searchTerm) {
-                filteredProducts = filteredProducts.filter(p => 
-                    p.nom.toLowerCase().includes(searchTerm) || 
-                    p.description.toLowerCase().includes(searchTerm)
-                );
+                filteredProducts = filteredProducts.filter(p => p.nom.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
             }
-            // 3. Trier les résultats
+
             switch (sortValue) {
-                case 'price-asc':
-                    filteredProducts.sort((a, b) => a.prix - b.prix);
-                    break;
-                case 'price-desc':
-                    filteredProducts.sort((a, b) => b.prix - a.prix);
-                    break;
-                case 'name-asc':
-                    filteredProducts.sort((a, b) => a.nom.localeCompare(b.nom));
-                    break;
-                case 'name-desc':
-                    filteredProducts.sort((a, b) => b.nom.localeCompare(a.nom));
-                    break;
+                case 'price-asc': filteredProducts.sort((a, b) => a.prix - b.prix); break;
+                case 'price-desc': filteredProducts.sort((a, b) => b.prix - a.prix); break;
+                case 'name-asc': filteredProducts.sort((a, b) => a.nom.localeCompare(b.nom)); break;
+                case 'name-desc': filteredProducts.sort((a, b) => b.nom.localeCompare(a.nom)); break;
             }
+            // 2. REMPLACER LES SQUELETTES PAR LES VRAIS PRODUITS
             displayProducts(filteredProducts);
         }
 
-        // Ajouter les écouteurs d'événements pour les filtres et le tri
         categoryFilter.addEventListener('change', handleFilterAndSort);
         searchInput.addEventListener('input', handleFilterAndSort);
         sortBy.addEventListener('change', handleFilterAndSort);
         
-        // Affichage initial des produits
         handleFilterAndSort();
 
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
-        const productList = document.getElementById('product-list');
         if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
     }
 }
@@ -107,13 +118,12 @@ function displayProducts(products) {
         const likeCount = isLiked ? 1 : 0;
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        // CORRECTION APPLIQUÉE ICI pour afficher le prix
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}">
                 <h3>${product.nom}</h3>
             </a>
-            <p class="product-price">${formatPrice(product.prix)}</p>
+            <p class="product-price">${formatPrice(product.prix)}</p> 
             <div class="product-actions" data-id="${product.id}">
                 <button class="btn add-to-cart">Ajouter au panier</button>
                 <button class="like-btn ${isLiked ? 'liked' : ''}">
@@ -130,7 +140,6 @@ function addEventListenersToCards(products) {
     document.querySelectorAll('.product-actions').forEach(actions => {
         const productId = actions.dataset.id;
         
-        // Logique du bouton "like"
         const likeBtn = actions.querySelector('.like-btn');
         if (likeBtn) {
             likeBtn.addEventListener('click', () => {
@@ -142,7 +151,6 @@ function addEventListenersToCards(products) {
             });
         }
 
-        // Logique du bouton "Ajouter au panier" avec feedback visuel
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
@@ -357,4 +365,4 @@ async function initPanierPage() {
             }, 1500);
         });
     }
-}
+}```
