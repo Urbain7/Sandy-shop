@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Exécute la fonction d'initialisation appropriée en fonction de la page actuelle
     if (document.getElementById('product-list')) {
         initProduitsPage();
     }
@@ -22,7 +23,9 @@ async function initProduitsPage() {
         
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
+        const sortBy = document.getElementById('sort-by');
         
+        // Remplissage du filtre des catégories
         const categories = [...new Set(products.map(p => p.categorie))];
         categoryFilter.innerHTML = '<option value="all">Toutes les catégories</option>';
         categories.forEach(cat => {
@@ -32,37 +35,60 @@ async function initProduitsPage() {
             categoryFilter.appendChild(option);
         });
 
+        // Appliquer un filtre de catégorie initial si présent dans l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const initialCategory = urlParams.get('categorie');
         if (initialCategory && categories.includes(initialCategory)) {
             categoryFilter.value = initialCategory;
         }
 
-        function handleFilterAndSearch() {
+        function handleFilterAndSort() {
             const category = categoryFilter.value;
             const searchTerm = searchInput.value.toLowerCase();
-            let filteredProducts = products;
+            const sortValue = sortBy.value;
+            let filteredProducts = [...products]; // Copie pour ne pas altérer le tableau original
 
+            // 1. Filtrer par catégorie
             if (category !== 'all') {
                 filteredProducts = filteredProducts.filter(p => p.categorie === category);
             }
+            // 2. Filtrer par recherche
             if (searchTerm) {
                 filteredProducts = filteredProducts.filter(p => 
                     p.nom.toLowerCase().includes(searchTerm) || 
                     p.description.toLowerCase().includes(searchTerm)
                 );
             }
+            // 3. Trier les résultats
+            switch (sortValue) {
+                case 'price-asc':
+                    filteredProducts.sort((a, b) => a.prix - b.prix);
+                    break;
+                case 'price-desc':
+                    filteredProducts.sort((a, b) => b.prix - a.prix);
+                    break;
+                case 'name-asc':
+                    filteredProducts.sort((a, b) => a.nom.localeCompare(b.nom));
+                    break;
+                case 'name-desc':
+                    filteredProducts.sort((a, b) => b.nom.localeCompare(a.nom));
+                    break;
+            }
             displayProducts(filteredProducts);
         }
 
-        categoryFilter.addEventListener('change', handleFilterAndSearch);
-        searchInput.addEventListener('input', handleFilterAndSearch);
-        handleFilterAndSearch();
+        // Ajouter les écouteurs d'événements pour les filtres et le tri
+        categoryFilter.addEventListener('change', handleFilterAndSort);
+        searchInput.addEventListener('input', handleFilterAndSort);
+        sortBy.addEventListener('change', handleFilterAndSort);
+        
+        // Affichage initial des produits
+        handleFilterAndSort();
 
     } catch (error) {
         console.error("Erreur critique lors du chargement des produits:", error);
         const productList = document.getElementById('product-list');
-        if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue.</p>`;
+        if(productList) productList.innerHTML = `<p class="error-message">Impossible de charger le catalogue. Veuillez réessayer plus tard.</p>`;
     }
 }
 
@@ -103,6 +129,7 @@ function addEventListenersToCards(products) {
     document.querySelectorAll('.product-actions').forEach(actions => {
         const productId = actions.dataset.id;
         
+        // Logique du bouton "like"
         const likeBtn = actions.querySelector('.like-btn');
         if (likeBtn) {
             likeBtn.addEventListener('click', () => {
@@ -114,6 +141,7 @@ function addEventListenersToCards(products) {
             });
         }
 
+        // Logique du bouton "Ajouter au panier" avec feedback visuel
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
@@ -121,6 +149,14 @@ function addEventListenersToCards(products) {
                 if (productToAdd) {
                     addToCart(productToAdd);
                     showToast(`${productToAdd.nom} ajouté au panier !`);
+                    
+                    const originalText = cartBtn.innerHTML;
+                    cartBtn.innerHTML = 'Ajouté ✔';
+                    cartBtn.disabled = true;
+                    setTimeout(() => {
+                        cartBtn.innerHTML = originalText;
+                        cartBtn.disabled = false;
+                    }, 2000);
                 }
             });
         }
@@ -128,7 +164,7 @@ function addEventListenersToCards(products) {
 }
 
 // ===============================================
-// LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL
+// LOGIQUE SPÉCIFIQUE À LA PAGE DÉTAIL PRODUIT
 // ===============================================
 
 async function initProduitDetailPage() {
@@ -155,7 +191,6 @@ async function initProduitDetailPage() {
         document.title = `${product.nom} - Sandy'Shop`;
 
         const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
-
         container.innerHTML = `
             <div class="product-detail">
                 <div class="product-gallery">
@@ -166,8 +201,8 @@ async function initProduitDetailPage() {
                     <h1>${product.nom}</h1>
                     <p class="product-price">${formatPrice(product.prix)}</p>
                     <div class="product-options">
-                        <label for="product-quantity">Quantité:</label>
-                        <input type="number" id="product-quantity" value="1" min="1" max="99" style="width: 60px; padding: 0.5rem; text-align: center;">
+                        <label for="product-quantity">Quantité :</label>
+                        <input type="number" id="product-quantity" value="1" min="1" max="99" style="width: 60px; padding: 0.5rem; text-align: center; border-radius: 5px; border: 1px solid var(--input-border-color);">
                     </div>
                     <p class="product-description">${product.description}</p>
                     <button class="btn add-to-cart-detail">Ajouter au panier</button>
@@ -191,6 +226,14 @@ async function initProduitDetailPage() {
             const quantity = parseInt(quantityInput.value) || 1;
             addToCart(product, quantity);
             showToast(`${quantity} ${product.nom} ajouté(s) au panier !`);
+            
+            const originalText = addToCartBtn.innerHTML;
+            addToCartBtn.innerHTML = 'Ajouté ✔';
+            addToCartBtn.disabled = true;
+            setTimeout(() => {
+                addToCartBtn.innerHTML = originalText;
+                addToCartBtn.disabled = false;
+            }, 2000);
         });
 
     } catch (error) {
