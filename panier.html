@@ -16,38 +16,22 @@
 <body>
     <div id="toast-notification" class="toast"></div>
 
-    <header>
+   <!-- Dans panier.html, remplacez tout le <header> par celui-ci -->
+<header>
     <a href="index.html" class="logo">Sandy'Shop</a>
-
-    <!-- Menu de navigation pour grand écran -->
     <nav class="nav-desktop">
         <ul>
             <li><a href="index.html">Accueil</a></li>
             <li><a href="produits.html">Produits</a></li>
             <li><a href="favoris.html">Favoris</a></li>
-            <li>
-                <a href="panier.html" class="nav-cart-link active">
-                    Panier <span id="cart-item-count" class="cart-count">0</span>
-                </a>
-            </li>
+            <li><a href="panier.html" class="nav-cart-link active">Panier <span id="cart-item-count" class="cart-count">0</span></a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
     </nav>
-
     <div class="header-right">
-        <button id="theme-toggle" class="theme-toggle-btn">
-            <!-- SVG soleil/lune -->
-        </button>
-
-        <!-- NOUVEAU : Bouton Hamburger pour mobile -->
-        <button id="mobile-menu-btn" class="mobile-menu-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-                <path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-            </svg>
-        </button>
+        <button id="theme-toggle" class="theme-toggle-btn">...</button>
+        <button id="mobile-menu-btn" class="mobile-menu-btn">...</button>
     </div>
-
-    <!-- NOUVEAU : Menu de navigation pour mobile (caché par défaut) -->
     <nav id="nav-mobile" class="nav-mobile">
         <ul>
             <li><a href="index.html">Accueil</a></li>
