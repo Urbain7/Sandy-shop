@@ -46,23 +46,23 @@ body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--ba
 main { flex-grow: 1; }
 
 /* =============================== */
-/* Header et Navigation (CORRIGÉ)  */
+/* Header et Navigation (FINAL)    */
 /* =============================== */
 header {
     background-color: var(--header-bg-color);
     padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative; /* Pour le menu mobile */
+    position: relative;
 }
 .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--header-text-color); flex-shrink: 0; }
-.nav-desktop { margin: 0 auto; /* Centre le menu horizontalement */ }
-.nav-desktop ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.nav-desktop { flex-grow: 1; }
+.nav-desktop ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 1.5rem; }
 .nav-desktop a { text-decoration: none; color: var(--header-text-color); font-weight: 500; transition: color 0.3s; }
 .nav-desktop a:hover, .nav-desktop a.active { color: var(--accent-color); }
-.header-right { display: flex; align-items: center; gap: 1rem; }
+.header-right { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
 .theme-toggle-btn { background: none; border: none; cursor: pointer; color: var(--header-text-color); padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
 .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
 #moon-icon { display: block; }
@@ -70,7 +70,7 @@ header {
 html.dark-mode #moon-icon { display: none; }
 html.dark-mode #sun-icon { display: block; }
 
-.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--header-text-color); }
+.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--header-text-color); padding: 0.5rem; }
 .nav-mobile { display: none; position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--header-bg-color); box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 1000; }
 .nav-mobile.open { display: block; }
 .nav-mobile ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
@@ -175,6 +175,31 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .cart-total { text-align: right; margin-top: 2rem; font-size: 1.5rem; font-weight: bold; }
 .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
 .cart-header h2 { margin: 0; }
+.empty-grid-message { grid-column: 1 / -1; text-align: center; padding: 2rem 0; }
+
+/* =============================== */
+/* Section des Produits Recommandés*/
+/* =============================== */
+#recommendations-section { border-top: 1px solid var(--card-border-color); padding-top: 2rem; margin-top: 3rem; }
+#recommendations-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+/* =============================== */
+/* Squelettes de Chargement        */
+/* =============================== */
+.product-card.skeleton { border-color: var(--card-border-color); box-shadow: none; cursor: progress; }
+.skeleton .skeleton-img, .skeleton .skeleton-text { background-color: var(--card-border-color); border-radius: 4px; animation: skeleton-pulse 1.5s infinite ease-in-out; }
+.skeleton .skeleton-img { width: 100%; height: 250px; margin-bottom: 1rem; }
+.skeleton .skeleton-text { height: 1.2rem; margin: 0.5rem auto; }
+.skeleton .skeleton-text.short { width: 60%; }
+.skeleton .skeleton-text.long { width: 85%; }
+@keyframes skeleton-pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+/* =============================== */
+/* Styles pour la Gestion du Stock */
+/* =============================== */
+.product-card.out-of-stock { position: relative; opacity: 0.7; }
+.product-card.out-of-stock::before { content: 'Épuisé'; position: absolute; top: 10px; left: 10px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 0.3rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: bold; z-index: 2; }
+.btn.out-of-stock-btn { background-color: #aaa; color: #fff; cursor: not-allowed; pointer-events: none; }
 
 /* =============================== */
 /* Style du Footer (Pied de page)  */
@@ -192,23 +217,39 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 25px; right: 25px; background-color: #25D366; color: #FFF; border-radius: 50%; text-align: center; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); z-index: 1000; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
 .whatsapp-float:hover { transform: scale(1.1); }
 
-/* ... (Autres styles : toast, icône panier, modal, etc. restent les mêmes) ... */
+/* =============================== */
+/* Style de la Notification Toast  */
+/* =============================== */
+.toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background-color: var(--header-bg-color); color: var(--header-text-color); padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 2000; transition: bottom 0.5s ease; font-weight: 500; }
+.toast.show { bottom: 90px; }
 
 /* ==================================== */
-/* Styles pour la Gestion du Stock      */
+/* Style de l'icône de panier dynamique */
 /* ==================================== */
-.product-card.out-of-stock { position: relative; opacity: 0.7; }
-.product-card.out-of-stock::before { content: 'Épuisé'; position: absolute; top: 10px; left: 10px; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 0.3rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: bold; z-index: 2; }
-.btn.out-of-stock-btn { background-color: #aaa; color: #fff; cursor: not-allowed; pointer-events: none; }
+.nav-cart-link { position: relative; display: flex; align-items: center; gap: 0.5rem; }
+.cart-count { background-color: var(--accent-color); color: #1a1a1a; font-size: 0.75rem; font-weight: bold; padding: 0.1rem 0.4rem; border-radius: 50%; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; line-height: 1; transition: transform 0.2s ease, opacity 0.2s ease; transform: scale(0); opacity: 0; }
+.cart-count.visible { transform: scale(1); opacity: 1; }
+
+/* ==================================== */
+/* Modal de Confirmation Personnalisé   */
+/* ==================================== */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 4000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+.modal-overlay.show { opacity: 1; visibility: visible; }
+.modal-content { background-color: var(--card-bg-color); color: var(--text-color); padding: 2rem; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); transition: transform 0.3s ease; }
+.modal-overlay.show .modal-content { transform: scale(1); }
+.modal-content p { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.5; }
+.modal-actions { display: flex; justify-content: space-around; gap: 1rem; }
 
 /* =============================== */
-/* Design Responsive (CORRIGÉ)     */
+/* Design Responsive (FINAL)       */
 /* =============================== */
-@media (max-width: 768px) {
-    header { padding: 1rem; }
+@media (max-width: 900px) {
     .nav-desktop { display: none; }
     .mobile-menu-btn { display: block; }
-    
+}
+
+@media (max-width: 768px) {
+    header { padding: 1rem; }
     .banner-container { grid-template-columns: 1fr; text-align: center; }
     .banner-text { text-align: center; order: 2; }
     .banner-image { order: 1; }
@@ -236,117 +277,4 @@ form button { background-color: var(--accent-color); color: white; border: none;
     .cart-items td:nth-of-type(5) { justify-content: center; }
     .cart-items td:nth-of-type(5) .btn-secondary { flex-grow: 1; }
     .cart-total { text-align: center; font-size: 1.6rem; }
-}
-
-/* ==================================== */
-/* Squelettes de Chargement (Skeleton)  */
-/* ==================================== */
-.product-card.skeleton {
-    border-color: var(--card-border-color);
-    box-shadow: none;
-    cursor: progress;
-}
-
-.skeleton .skeleton-img,
-.skeleton .skeleton-text {
-    background-color: var(--card-border-color);
-    border-radius: 4px;
-    animation: skeleton-pulse 1.5s infinite ease-in-out;
-}
-
-.skeleton .skeleton-img {
-    width: 100%;
-    height: 250px;
-    margin-bottom: 1rem;
-}
-
-.skeleton .skeleton-text {
-    height: 1.2rem;
-    margin: 0.5rem auto;
-}
-
-.skeleton .skeleton-text.short {
-    width: 60%;
-}
-
-.skeleton .skeleton-text.long {
-    width: 85%;
-}
-
-@keyframes skeleton-pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.6;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-/* ==================================== */
-/* Transitions pour le filtrage         */
-/* ==================================== */
-.product-grid {
-    /* Ajoute une transition douce sur l'opacité */
-    transition: opacity 0.3s ease-in-out;
-}
-
-.product-grid.is-loading {
-    /* Rend la grille transparente pour l'effet de fondu */
-    opacity: 0;
-}
-
-/* ==================================== */
-/* Style pour message dans grille vide  */
-/* ==================================== */
-.empty-grid-message {
-    /* Fait en sorte que l'élément s'étende sur toutes les colonnes de la grille */
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 2rem 0;
-}
-
-/* ==================================== */
-/* Section des Produits Recommandés     */
-/* ==================================== */
-#recommendations-section {
-    border-top: 1px solid var(--card-border-color);
-    padding-top: 2rem;
-    margin-top: 3rem;
-}
-
-/* Limite le nombre de produits par ligne dans la section des recommandations */
-#recommendations-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-}
-
-/* ==================================== */
-/* Styles pour la Gestion du Stock      */
-/* ==================================== */
-.product-card.out-of-stock {
-    position: relative;
-    opacity: 0.7;
-}
-
-.product-card.out-of-stock::before {
-    content: 'Épuisé';
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 0.3rem 0.6rem;
-    border-radius: 5px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    z-index: 2;
-}
-
-.btn.out-of-stock-btn {
-    background-color: #aaa;
-    color: #fff;
-    cursor: not-allowed;
-    pointer-events: none; /* Désactive complètement le clic */
 }
