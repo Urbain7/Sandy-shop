@@ -15,15 +15,16 @@
     "story_video": "assets/videos/sac-elegance.mp4"
   },
   {
-    "id": "prod_2",
+    "id": "Sac PEDRA",
     "nom": "Robe d'Été Fleurie",
     "prix": 85000,
     "stock": 8,
-    "categorie": "Robes",
-    "image": "assets/images/robe1.jpg",
+    "categorie": "12000",
+    "image": "images/sacs/sac_pedra.jpg"
     "images": [
-      "assets/images/robe1.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2"
+      "images/sacs/sac_pedra.jpg",
+      "images/sacs/sac_pedra_2.jpg",
+      "images/sacs/sac_pedra_collection.jpg"
     ],
     "description": "Légère et aérienne, cette robe est confectionnée en coton doux...",
     "in_story": true
