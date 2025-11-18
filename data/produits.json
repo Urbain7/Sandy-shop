@@ -84,4 +84,20 @@
     "description": "Faites sensation avec cette robe longue en satin fluide...",
     "in_story": true
   }
+
+  {
+    "id": "prod_7",
+    "nom": "Robe Corset",
+    "prix": 8500,
+    "stock": 100,
+    "categorie": "Robes",
+    "image": "images/robes/robe_mou_blanche.png",
+    "images": [
+      "images/robes/robe_mou_blanche.png",
+      "images/robes/robe_mou_noir.png",
+      "images/robes/robe_mou_rose.png"
+    ],
+    "description": "Cette robe longue met en valeur une silhouette élégante et audacieuse. Son design unique avec un corset lacé sur le devant et un décolleté plongeant, rehaussé par des bretelles croisées sophistiquées, en fait un choix parfait pour des soirées glamour. La texture du tissu, parsemée de subtils détails scintillants, ajoute une touche de raffinement. Idéale pour celles qui souhaitent allier charme et modernité.",
+    "in_story": true
+  }
 ]
