@@ -72,17 +72,17 @@
   },
   {
     "id": "prod_6",
-    "nom": "Robe de Soirée Satinée",
-    "prix": 98000,
-    "stock": 0,
+    "nom": "Divine Jupe & Top",
+    "prix": 7000,
+    "stock": 10,
     "categorie": "Robes",
-    "image": "assets/images/robe2.jpg",
+    "image": "images/robes/robevc.png",
     "images": [
-      "assets/images/robe2.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2"
+      "images/robes/robevc.png",
+      "images/robes/ro2.jpg"
     ],
-    "description": "Faites sensation avec cette robe longue en satin fluide...",
-    "in_story": true
+    "description": "Capturez l'essence de l'élégance moderne avec notre ensemble deux pièces chic et polyvalent. Composé d'un crop top drapé à col licou qui sublime le décolleté et d'une jupe longue fendue à la texture fluide, ornée d'un imprimé floral délicat. Idéal pour une soirée estivale, une escapade romantique ou un événement spécial. Son tissu léger et son design aérien garantissent un confort absolu et un style affirmé. Disponible en diverses tailles pour épouser parfaitement votre silhouette.",
+    "in_story": false
   },
   {
     "id": "prod_7",
