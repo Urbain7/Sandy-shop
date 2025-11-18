@@ -5,9 +5,9 @@
     "prix": 14500,
     "stock": 5,
     "categorie": "Sacs",
-    "image": "images/sacs/sac_pedro_noir.png",
+    "image": "images/sacs/sac_pedro_marron.jpg",
     "images": [
-      "images/sacs/sac_pedro_noir.png",
+      "images/sacs/sac_pedro_marron.jpg",
       "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2",
       "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+3"
     ],
