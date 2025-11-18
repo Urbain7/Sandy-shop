@@ -44,38 +44,76 @@ html { box-sizing: border-box; }
 a, button, input, textarea, select, .like-btn, .thumbnail-images img { -webkit-tap-highlight-color: transparent; outline: none; }
 body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--background-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
 main { flex-grow: 1; }
-
 /* =============================== */
-/* Header et Navigation (FINAL)    */
+/* Header et Navigation (FINAL V2) */
 /* =============================== */
 header {
     background-color: var(--header-bg-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 1rem 2rem;
-    position: relative; /* Gardé pour la compatibilité avec certains navigateurs */
-}
-.header-main {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--header-text-color); }
-.nav-desktop { flex-grow: 1; }
-.nav-desktop ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 1.5rem; }
-.nav-desktop a { text-decoration: none; color: var(--header-text-color); font-weight: 500; transition: color 0.3s; }
-.nav-desktop a:hover, .nav-desktop a.active { color: var(--accent-color); }
-.header-right { display: flex; align-items: center; gap: 1rem; }
-.theme-toggle-btn { background: none; border: none; cursor: pointer; color: var(--header-text-color); padding: 0.5rem; border-radius: 50%; display: flex; }
-.mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--header-text-color); padding: 0.5rem; }
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--header-text-color);
+}
+.nav-desktop {
+    /* Ce menu est pour les grands écrans */
+}
+.nav-desktop ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+}
+.nav-desktop a {
+    text-decoration: none;
+    color: var(--header-text-color);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+.nav-desktop a:hover, .nav-desktop a.active {
+    color: var(--accent-color);
+}
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--header-text-color);
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+}
 
-/* Menu Mobile */
-.nav-mobile {
-    display: none; /* Caché par défaut */
-    background-color: var(--header-bg-color);
-    width: 100%;
-    margin: 1rem -2rem -1rem; /* Utilise les marges négatives pour remplir l'espace */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    border-top: 1px solid var(--card-border-color);
+/* **** LA CORRECTION EST ICI **** */
+#sun-icon { display: none; } /* Le soleil est masqué par défaut */
+#moon-icon { display: block; } /* La lune est visible par défaut (en thème clair) */
+
+html.dark-mode #sun-icon {
+    display: block; /* En mode sombre, on affiche le soleil */
+}
+html.dark-mode #moon-icon {
+    display: none; /* Et on cache la lune */
+}
+/* **** FIN DE LA CORRECTION **** */
+
+
+.mobile-menu-btn {
+    display: none; /* Caché par défaut sur PC */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--header-text-color);
+    padding: 0.5rem;
 }
 .nav-mobile.open { display: block; }
 .nav-mobile ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
