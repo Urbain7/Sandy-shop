@@ -15,11 +15,11 @@
     "story_video": "assets/videos/sac-elegance.mp4"
   },
   {
-    "id": "Sac PEDRA",
-    "nom": "Robe d'Été Fleurie",
-    "prix": 85000,
-    "stock": 8,
-    "categorie": "12000",
+    "id": "prod_2",
+    "nom": "Sac PEDRA",
+    "prix": 12000,
+    "stock": 100,
+    "categorie": "Sacs",
     "image": "images/sacs/sac_pedra.jpg"
     "images": [
       "images/sacs/sac_pedra.jpg",
@@ -27,7 +27,7 @@
       "images/sacs/sac_pedra_collection.jpg"
     ],
     "description": "Découvrez le sac PEDRA, un accessoire chic pensé pour sublimer votre style. Avec son design moderne et sa finition impeccable, il apporte une touche d’élégance à toutes vos tenues, qu’elles soient décontractées ou habillées.",
-    "in_story": false
+    "in_story": true
   },
   {
     "id": "prod_3",
