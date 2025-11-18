@@ -27,7 +27,7 @@
       "images/sacs/sac_pedra_collection.jpg"
     ],
     "description": "Découvrez le sac PEDRA, un accessoire chic pensé pour sublimer votre style. Avec son design moderne et sa finition impeccable, il apporte une touche d’élégance à toutes vos tenues, qu’elles soient décontractées ou habillées.",
-    "in_story": true
+    "in_story": false
   },
   {
     "id": "prod_3",
