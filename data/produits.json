@@ -59,16 +59,16 @@
   },
   {
     "id": "prod_5",
-    "nom": "Sac à Main Vintage",
-    "prix": 62500,
+    "nom": "Combinaison jean",
+    "prix": 8500,
     "stock": 3,
-    "categorie": "Sacs",
-    "image": "assets/images/sac2.jpg",
+    "categorie": "Jeans",
+    "image": "images/robes/jeans.png",
     "images": [
-      "assets/images/sac2.jpg"
+      "images/robes/jeans.png"
     ],
-    "description": "Inspiré des années 70, ce sac à main en cuir vegan apporte une touche rétro-chic...",
-    "in_story": false
+    "description": "Affirmez votre style avec notre ensemble iconique en jean, parfait pour une allure décontractée mais sophistiquée. Cet ensemble comprend une chemise en denim oversize aux détails travaillés et un pantalon jean coupe droite qui sculpte la silhouette. Conçu dans un denim de qualité, il offre confort et durabilité, avec une texture authentique qui s'embellit avec le temps. Idéal pour un look quotidien tendance ou une sortie entre amis. Un classique indémodable revisité pour la femme moderne.",
+    "in_story": true
   },
   {
     "id": "prod_6",
