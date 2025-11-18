@@ -1,18 +1,18 @@
 [
   {
     "id": "prod_1",
-    "nom": "Sac Élégance Noire",
-    "prix": 59000,
+    "nom": "Sac à main Pedro",
+    "prix": 14500,
     "stock": 5,
     "categorie": "Sacs",
-    "image": "assets/images/sac1.jpg",
+    "image": "images/sacs/sac_pedro_noir.png",
     "images": [
-      "assets/images/sac1.jpg",
+      "images/sacs/sac_pedro_noir.png",
       "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2",
       "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+3"
     ],
     "description": "Un sac à main structuré en cuir synthétique de première qualité...",
-    "in_story": true,
+    "in_story": false,
     "story_video": "assets/videos/sac-elegance.mp4"
   },
   {
