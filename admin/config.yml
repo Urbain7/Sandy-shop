@@ -1,11 +1,11 @@
 backend:
   name: github
-  repo: urbain7/Sandy-shop  # <--- VÉRIFIEZ QUE C'EST BIEN VOTRE NOM
+  repo: urbain7/Sandy-shop
   branch: main
 
-# Où Sveltia doit stocker les nouvelles images que vous uploadez
+# Dossier où les images uploadées seront stockées sur GitHub
 media_folder: "images/uploads"
-# Ce qui sera écrit dans le fichier json (le chemin pour le site)
+# Chemin que le site utilisera pour afficher les images
 public_folder: "images/uploads"
 
 collections:
@@ -14,17 +14,65 @@ collections:
     files:
       - name: "catalogue"
         label: "Catalogue Général"
-        file: "data/produits.json"  # <--- Le fichier qu'il va modifier
+        file: "data/produits.json"
         fields:
           - name: "items"
             label: "Liste des produits"
             widget: "list"
+            collapsed: false
+            summary: "{{fields.nom}} - {{fields.prix}} FCFA"
             fields:
-              - {label: "ID (Unique, ex: prod_10)", name: "id", widget: "string"}
-              - {label: "Nom du produit", name: "nom", widget: "string"}
-              - {label: "Prix (Chiffre sans FCFA)", name: "prix", widget: "number"}
-              - {label: "Stock", name: "stock", widget: "number", default: 1}
-              - {label: "Catégorie", name: "categorie", widget: "select", options: ["Sacs", "Chaussures", "Robes", "Accessoires", "Jeans", "Ensembles"]}
-              - {label: "Image", name: "image", widget: "image"}
-              - {label: "Description", name: "description", widget: "text"}
-              - {label: "En Story (Accueil) ?", name: "in_story", widget: "boolean", default: false}
+              # 1. Identifiant unique (Important pour le panier)
+              - label: "ID (Unique, ex: prod_10)"
+                name: "id"
+                widget: "string"
+
+              # 2. Informations de base
+              - label: "Nom du produit"
+                name: "nom"
+                widget: "string"
+
+              - label: "Prix (Chiffre uniquement, sans 'FCFA')"
+                name: "prix"
+                widget: "number"
+                value_type: "int"
+
+              - label: "Stock disponible"
+                name: "stock"
+                widget: "number"
+                default: 1
+
+              - label: "Catégorie"
+                name: "categorie"
+                widget: "select"
+                options: 
+                  - "Sacs"
+                  - "Chaussures"
+                  - "Robes"
+                  - "Accessoires"
+                  - "Jeans"
+                  - "Ensembles"
+                  - "Cosmétiques"
+
+              # 3. Gestion des images (Principale + Galerie)
+              - label: "Image Principale (Celle qu'on voit partout)"
+                name: "image"
+                widget: "image"
+                choose_url: false
+
+              - label: "Galerie photos (Optionnel : Vue de dos, zoom...)"
+                name: "images"
+                widget: "list"
+                collapsed: true
+                summary: "Image supplémentaire"
+                field: {label: "Photo", widget: "image"}
+
+              # 4. Description et options d'affichage
+              - label: "Description détaillée"
+                name: "description"
+                widget: "text"
+
+              - label: "Afficher en Story (Rond sur l'accueil) ?"
+                name: "in_story"
+                widget: "boolean"
+                default: false
