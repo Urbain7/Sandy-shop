@@ -369,8 +369,9 @@ async function initPanierPage() {
                     <td><button class="btn-secondary remove-from-cart-btn" data-id="${item.id}">Supprimer</button></td>
                 </tr>
             `;
-            cartTextSummary += `${item.nom} (Quantité: ${item.quantity}) - Total: ${formatPrice(totalLigne)}\\n`;
+            cartTextSummary += `[ x${item.quantity} ] ${item.nom} -- (Taille/Option: Standard) -- Prix: ${formatPrice(totalLigne)}\n`;
         });
+        cartTextSummary += `\n-----------------------------\nTOTAL À PAYER : ${formatPrice(totalGlobal)}`;
 
         cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
         cartContainer.innerHTML = cartHTML;
