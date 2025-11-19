@@ -133,7 +133,7 @@ function displayProducts(products) {
         
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
-                <img src="${product.image}" alt="${product.nom}">
+                <img src="${product.image}" loading="lazy" alt="${product.nom}">
                 <h3>${product.nom}</h3>
             </a>
             <p class="product-price">${formatPrice(product.prix)}</p> 
