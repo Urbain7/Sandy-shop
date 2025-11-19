@@ -47,6 +47,7 @@ async function initProduitsPage() {
         const searchInput = document.getElementById('search-input');
         const sortBy = document.getElementById('sort-by');
         
+        // Remplissage dynamique du filtre par catégorie
         const categories = [...new Set(products.map(p => p.categorie))];
         categoryFilter.innerHTML = '<option value="all">Toutes les catégories</option>';
         categories.forEach(cat => {
@@ -56,6 +57,7 @@ async function initProduitsPage() {
             categoryFilter.appendChild(option);
         });
 
+        // Gestion de la pré-sélection de catégorie via URL
         const urlParams = new URLSearchParams(window.location.search);
         const initialCategory = urlParams.get('categorie');
         if (initialCategory && categories.includes(initialCategory)) {
@@ -70,6 +72,7 @@ async function initProduitsPage() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const sortValue = sortBy.value;
 
+                // Filtrage
                 if (category !== 'all') {
                     filteredProducts = filteredProducts.filter(p => p.categorie === category);
                 }
@@ -77,6 +80,7 @@ async function initProduitsPage() {
                     filteredProducts = filteredProducts.filter(p => p.nom.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
                 }
 
+                // Tri
                 switch (sortValue) {
                     case 'price-asc': filteredProducts.sort((a, b) => a.prix - b.prix); break;
                     case 'price-desc': filteredProducts.sort((a, b) => b.prix - a.prix); break;
@@ -93,6 +97,7 @@ async function initProduitsPage() {
         searchInput.addEventListener('input', handleFilterAndSort);
         sortBy.addEventListener('change', handleFilterAndSort);
         
+        // Chargement initial
         function initialLoad() {
             let filteredProducts = [...products];
             const initialCategoryValue = categoryFilter.value;
@@ -131,9 +136,10 @@ function displayProducts(products) {
             ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>`
             : `<button class="btn add-to-cart">Ajouter au panier</button>`;
         
+        // Ajout de loading="lazy" pour améliorer la performance
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
-                <img src="${product.image}" loading="lazy" alt="${product.nom}">
+                <img src="${product.image}" alt="${product.nom}" loading="lazy">
                 <h3>${product.nom}</h3>
             </a>
             <p class="product-price">${formatPrice(product.prix)}</p> 
@@ -153,6 +159,7 @@ function addEventListenersToCards(products) {
     document.querySelectorAll('.product-actions').forEach(actions => {
         const productId = actions.dataset.id;
         
+        // Gestion des Likes
         const likeBtn = actions.querySelector('.like-btn');
         if (likeBtn) {
             likeBtn.addEventListener('click', () => {
@@ -164,6 +171,7 @@ function addEventListenersToCards(products) {
             });
         }
 
+        // Gestion de l'ajout au panier
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
@@ -172,6 +180,7 @@ function addEventListenersToCards(products) {
                     addToCart(productToAdd);
                     showToast(`${productToAdd.nom} ajouté au panier !`);
                     
+                    // Feedback visuel sur le bouton
                     const originalText = cartBtn.innerHTML;
                     cartBtn.innerHTML = 'Ajouté ✔';
                     cartBtn.disabled = true;
@@ -209,9 +218,10 @@ function displayRecommendations(currentProduct, allProducts) {
     shuffledRecommendations.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
+        // Ajout de loading="lazy" ici aussi
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
-                <img src="${product.image}" alt="${product.nom}">
+                <img src="${product.image}" alt="${product.nom}" loading="lazy">
                 <h3>${product.nom}</h3>
             </a>
             <p class="product-price">${formatPrice(product.prix)}</p>
@@ -360,6 +370,7 @@ async function initPanierPage() {
         cart.forEach(item => {
             const totalLigne = item.prix * item.quantity;
             totalGlobal += totalLigne;
+            
             cartHTML += `
                 <tr>
                     <td>${item.nom}</td>
@@ -369,15 +380,21 @@ async function initPanierPage() {
                     <td><button class="btn-secondary remove-from-cart-btn" data-id="${item.id}">Supprimer</button></td>
                 </tr>
             `;
-            cartTextSummary += `[ x${item.quantity} ] ${item.nom} -- (Taille/Option: Standard) -- Prix: ${formatPrice(totalLigne)}\n`;
+            
+            // --- MODIFICATION: Format propre pour l'email Formspree ---
+            cartTextSummary += `• ${item.nom} (x${item.quantity}) : ${formatPrice(totalLigne)}\n`;
         });
-        cartTextSummary += `\n-----------------------------\nTOTAL À PAYER : ${formatPrice(totalGlobal)}`;
 
         cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
+        
+        // --- Ajout du total dans le résumé email ---
+        cartTextSummary += `\n-----------------------------\nTOTAL À PAYER : ${formatPrice(totalGlobal)}`;
+
         cartContainer.innerHTML = cartHTML;
         cartContentInput.value = cartTextSummary;
         cartTotalInput.value = formatPrice(totalGlobal);
 
+        // --- Gestionnaires d'événements pour les quantités et la suppression ---
         cartContainer.querySelectorAll('.cart-quantity-input').forEach(input => {
             input.addEventListener('change', async (e) => {
                 const productId = e.target.dataset.id;
@@ -414,6 +431,7 @@ async function initPanierPage() {
 
     renderCart();
 
+    // Gestion du bouton "Vider le panier"
     clearCartBtn.addEventListener('click', async () => {
         const confirmed = await showCustomConfirm("Voulez-vous vraiment vider votre panier ?");
         if (confirmed) {
@@ -423,14 +441,15 @@ async function initPanierPage() {
         }
     });
 
+    // Gestion de la soumission du formulaire de commande
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
         orderForm.addEventListener('submit', (e) => {
-            e.preventDefault(); 
+            e.preventDefault(); // Empêche l'envoi immédiat pour laisser le temps au toast
             showToast('Commande envoyée !');
             setTimeout(() => {
-                localStorage.removeItem('cart');
-                orderForm.submit();
+                localStorage.removeItem('cart'); // Vide le panier avant de partir
+                orderForm.submit(); // Envoie réellement le formulaire à Formspree
             }, 1500);
         });
     }
