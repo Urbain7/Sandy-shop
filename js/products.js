@@ -41,7 +41,10 @@ async function initProduitsPage() {
 
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Le fichier produits.json est introuvable.');
-        const products = await response.json();
+        
+        // --- MODIFICATION CMS : Gestion de la structure JSON (Tableau ou Objet) ---
+        const data = await response.json();
+        const products = data.items ? data.items : data;
         
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
@@ -136,6 +139,7 @@ function displayProducts(products) {
             ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>`
             : `<button class="btn add-to-cart">Ajouter au panier</button>`;
         
+        // Utilisation de loading="lazy" pour la performance
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}" loading="lazy">
@@ -246,7 +250,11 @@ async function initProduitDetailPage() {
     try {
         const response = await fetch('data/produits.json');
         if(!response.ok) throw new Error("Could not fetch product data.");
-        const allProducts = await response.json();
+        
+        // --- MODIFICATION CMS ---
+        const data = await response.json();
+        const allProducts = data.items ? data.items : data;
+        
         const product = allProducts.find(p => p.id == productId);
 
         if (!product) { 
@@ -378,20 +386,18 @@ async function initPanierPage() {
                 </tr>
             `;
             
-            // --- FORMATAGE EMAIL PROPRE ---
+            // --- FORMATAGE EMAIL ---
             cartTextSummary += `• ${item.nom} (x${item.quantity}) : ${formatPrice(totalLigne)}\n`;
         });
 
         cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
         
-        // --- TOTAL EMAIL ---
         cartTextSummary += `\n-----------------------------\nTOTAL À PAYER : ${formatPrice(totalGlobal)}`;
 
         cartContainer.innerHTML = cartHTML;
         cartContentInput.value = cartTextSummary;
         cartTotalInput.value = formatPrice(totalGlobal);
 
-        // Listeners pour quantité et suppression
         cartContainer.querySelectorAll('.cart-quantity-input').forEach(input => {
             input.addEventListener('change', async (e) => {
                 const productId = e.target.dataset.id;
@@ -428,7 +434,6 @@ async function initPanierPage() {
 
     renderCart();
 
-    // Vider le panier
     clearCartBtn.addEventListener('click', async () => {
         const confirmed = await showCustomConfirm("Voulez-vous vraiment vider votre panier ?");
         if (confirmed) {
@@ -438,11 +443,11 @@ async function initPanierPage() {
         }
     });
 
-    // --- CORRECTION FORMSPREE (Méthode AJAX) ---
+    // --- SOUMISSION FORMULAIRE AVEC AJAX ET REDIRECTION FORCÉE ---
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
         orderForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Empêche la soumission par défaut
+            e.preventDefault(); // On bloque la soumission classique
             
             const submitBtn = orderForm.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.textContent;
@@ -453,7 +458,7 @@ async function initPanierPage() {
             try {
                 const formData = new FormData(orderForm);
                 
-                // Envoi AJAX vers Formspree
+                // Envoi AJAX à Formspree
                 const response = await fetch(orderForm.action, {
                     method: 'POST',
                     body: formData,
@@ -464,11 +469,11 @@ async function initPanierPage() {
 
                 if (response.ok) {
                     showToast('Commande validée avec succès !');
-                    localStorage.removeItem('cart'); // Vide le panier
+                    localStorage.removeItem('cart'); 
                     
-                    // Redirection forcée vers l'accueil
+                    // Redirection forcée vers la page d'accueil
                     setTimeout(() => {
-                        window.location.href = "https://urbain7.github.io/Sandy-shop/"; 
+                        window.location.href = "index.html"; 
                     }, 1500);
                 } else {
                     throw new Error('Erreur Formspree');
