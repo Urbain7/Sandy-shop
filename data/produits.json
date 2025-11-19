@@ -1,102 +1,74 @@
-[
-  {
-    "id": "prod_1",
-    "nom": "Sac à main Pedro",
-    "prix": 14500,
-    "stock": 100,
-    "categorie": "Sacs",
-    "image": "images/sacs/sac_pedro_marron.jpg",
-    "images": [
-      "images/sacs/sac_pedro_marron.jpg",
-      "images/sacs/sac_pedro_noir (5).png"
-    ],
-    "description": "Ce sac élégant est un accessoire de choix, alliant sophistication et praticité. Sa texture imitation crocodile apporte une touche d'exotisme et de luxe, tandis que sa forme structurée et ses poignées solides en font un compagnon idéal pour le quotidien ou pour des occasions plus formelles. La finition impeccable et le détail discret du logo Pedro soulignent son design raffiné. Disponible en teintes classiques comme le marron cognac ou le noir intemporel, il s'adaptera parfaitement à diverses tenues.",
-    "in_story": false,
-    "story_video": "assets/videos/sac-elegance.mp4"
-  },
-  {
-    "id": "prod_2",
-    "nom": "Sac PEDRA",
-    "prix": 12000,
-    "stock": 100,
-    "categorie": "Sacs",
-    "image": "images/sacs/sac_pedra.jpg",
-    "images": [
-      "images/sacs/sac_pedra.jpg",
-      "images/sacs/sac_pedra_2.jpg",
-      "images/sacs/sac_pedra_collection.jpg"
-    ],
-    "description": "Découvrez le sac PEDRA, un accessoire chic pensé pour sublimer votre style. Avec son design moderne et sa finition impeccable, il apporte une touche d’élégance à toutes vos tenues, qu’elles soient décontractées ou habillées.",
-    "in_story": true
-  },
-  {
-    "id": "prod_3",
-    "nom": "Escarpins Roses Poudrés",
-    "prix": 72000,
-    "stock": 0,
-    "categorie": "Chaussures",
-    "image": "assets/images/chaussure1.jpg",
-    "images": [
-      "assets/images/chaussure1.jpg",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+2",
-      "https://via.placeholder.com/400x400.png/f5e6e8/333?text=Vue+3"
-    ],
-    "description": "Ces escarpins en suédine rose poudré ajoutent une touche d'élégance...",
-    "in_story": true
-  },
-  {
-    "id": "prod_4",
-    "nom": "Collier Lune Dorée",
-    "prix": 30000,
-    "stock": 12,
-    "categorie": "Accessoires",
-    "image": "assets/images/accessoire1.jpg",
-    "images": [
-      "assets/images/accessoire1.jpg"
-    ],
-    "description": "Un collier fin et délicat en plaqué or, orné d'un pendentif en forme de croissant de lune...",
-    "in_story": false
-  },
-  {
-    "id": "prod_5",
-    "nom": "Combinaison jean",
-    "prix": 8500,
-    "stock": 3,
-    "categorie": "Jeans",
-    "image": "images/robes/jeans.png",
-    "images": [
-      "images/robes/jeans.png"
-    ],
-    "description": "Affirmez votre style avec notre ensemble iconique en jean, parfait pour une allure décontractée mais sophistiquée. Cet ensemble comprend une chemise en denim oversize aux détails travaillés et un pantalon jean coupe droite qui sculpte la silhouette. Conçu dans un denim de qualité, il offre confort et durabilité, avec une texture authentique qui s'embellit avec le temps. Idéal pour un look quotidien tendance ou une sortie entre amis. Un classique indémodable revisité pour la femme moderne.",
-    "in_story": true
-  },
-  {
-    "id": "prod_6",
-    "nom": "Divine Jupe & Top",
-    "prix": 7000,
-    "stock": 10,
-    "categorie": "Robes",
-    "image": "images/robes/robevc.png",
-    "images": [
-      "images/robes/robevc.png",
-      "images/robes/ro2.jpg"
-    ],
-    "description": "Capturez l'essence de l'élégance moderne avec notre ensemble deux pièces chic et polyvalent. Composé d'un crop top drapé à col licou qui sublime le décolleté et d'une jupe longue fendue à la texture fluide, ornée d'un imprimé floral délicat. Idéal pour une soirée estivale, une escapade romantique ou un événement spécial. Son tissu léger et son design aérien garantissent un confort absolu et un style affirmé. Disponible en diverses tailles pour épouser parfaitement votre silhouette.",
-    "in_story": false
-  },
-  {
-    "id": "prod_7",
-    "nom": "Robe Corset",
-    "prix": 8500,
-    "stock": 100,
-    "categorie": "Robes",
-    "image": "images/robes/robe_mou_blanche.png",
-    "images": [
-      "images/robes/robe_mou_blanche.png",
-      "images/robes/robe_mou_noir.png",
-      "images/robes/robe_mou_rose.png"
-    ],
-    "description": "Cette robe longue met en valeur une silhouette élégante et audacieuse. Son design unique avec un corset lacé sur le devant et un décolleté plongeant, rehaussé par des bretelles croisées sophistiquées, en fait un choix parfait pour des soirées glamour. La texture du tissu, parsemée de subtils détails scintillants, ajoute une touche de raffinement. Idéale pour celles qui souhaitent allier charme et modernité.",
-    "in_story": true
-  }
-]
+{
+  "items": [
+    {
+      "id": "prod_1",
+      "nom": "Sac à main Pedro",
+      "prix": 14500,
+      "stock": 100,
+      "categorie": "Sacs",
+      "image": "images/sacs/sac_pedro_marron.jpg",
+      "description": "Ce sac élégant est un accessoire de choix...",
+      "in_story": false
+    },
+    {
+      "id": "prod_2",
+      "nom": "Sac PEDRA",
+      "prix": 12000,
+      "stock": 100,
+      "categorie": "Sacs",
+      "image": "images/sacs/sac_pedra.jpg",
+      "description": "Découvrez le sac PEDRA, un accessoire chic...",
+      "in_story": true
+    },
+    {
+      "id": "prod_3",
+      "nom": "Escarpins Roses Poudrés",
+      "prix": 72000,
+      "stock": 0,
+      "categorie": "Chaussures",
+      "image": "images/chaussures/chaussure1.jpg",
+      "description": "Ces escarpins en suédine rose poudré...",
+      "in_story": true
+    },
+    {
+      "id": "prod_4",
+      "nom": "Collier Lune Dorée",
+      "prix": 30000,
+      "stock": 12,
+      "categorie": "Accessoires",
+      "image": "images/accessoires/accessoire1.jpg",
+      "description": "Un collier fin et délicat...",
+      "in_story": false
+    },
+    {
+      "id": "prod_5",
+      "nom": "Combinaison jean",
+      "prix": 8500,
+      "stock": 3,
+      "categorie": "Jeans",
+      "image": "images/robes/jeans.png",
+      "description": "Affirmez votre style avec notre ensemble...",
+      "in_story": true
+    },
+    {
+      "id": "prod_6",
+      "nom": "Divine Jupe & Top",
+      "prix": 7000,
+      "stock": 10,
+      "categorie": "Robes",
+      "image": "images/robes/robevc.png",
+      "description": "Capturez l'essence de l'élégance...",
+      "in_story": false
+    },
+    {
+      "id": "prod_7",
+      "nom": "Robe Corset",
+      "prix": 8500,
+      "stock": 100,
+      "categorie": "Robes",
+      "image": "images/robes/robe_mou_blanche.png",
+      "description": "Cette robe longue met en valeur une silhouette...",
+      "in_story": true
+    }
+  ]
+}
