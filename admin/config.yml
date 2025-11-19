@@ -1,9 +1,7 @@
-backend:
+ackend:
   name: github
   repo: urbain7/Sandy-shop
   branch: main
-  base_url: https://github-oauth.sveltia.dev
-  auth_endpoint: auth
 
 media_folder: "images/uploads" # Où vont les nouvelles images
 public_folder: "images/uploads"
