@@ -15,12 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (product) {
                 const categoryCard = `
                     <div class="product-card">
-                        <!-- Le lien pointe vers la page produit du produit représentatif -->
                         <a href="produit.html?id=${product.id}" class="product-link">
-                            <img src="${product.image}" alt="${product.categorie}">
-                            <h3>${category}</h3> <!-- Afficher le nom de la catégorie -->
+                            <img src="${product.image}" alt="${product.categorie}" loading="lazy">
+                            <h3>${category}</h3>
                         </a>
-                        <!-- Le bouton "Découvrir" pointe vers la page produits avec le filtre de catégorie -->
                         <a href="produits.html?categorie=${encodeURIComponent(category)}" class="btn">Découvrir</a>
                     </div>
                 `;
@@ -42,18 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (storyProducts.length === 0) {
             const storiesSection = document.querySelector('.stories-section');
-            if (storiesSection) storiesSection.style.display = 'none'; // Masquer la section s'il n'y a pas de stories
+            if (storiesSection) storiesSection.style.display = 'none'; 
             return;
         }
 
         storyProducts.forEach(product => {
             const storyElement = document.createElement('div');
             storyElement.className = 'story-item';
-            storyElement.dataset.productId = product.id; // Stocker l'ID du produit pour le retrouver
+            storyElement.dataset.productId = product.id; 
 
             storyElement.innerHTML = `
                 <div class="story-circle">
-                    <img src="${product.image}" alt="${product.nom}">
+                    <img src="${product.image}" alt="${product.nom}" loading="lazy">
                     <span>${product.nom}</span>
                 </div>
             `;
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (product) {
                     let mediaElement = '';
                     if (product.story_video) {
-                        mediaElement = `<video src="${product.story_video}" autoplay muted loop playsinline controls></video>`; // Ajout de 'controls'
+                        mediaElement = `<video src="${product.story_video}" autoplay muted loop playsinline controls></video>`;
                     } else {
                         mediaElement = `<img src="${product.image}" alt="${product.nom}">`;
                     }
@@ -83,17 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Gestion de la fermeture de la visionneuse de story
         const closeViewer = () => {
             storyViewer.classList.remove('show');
-            // Arrêter la vidéo si elle est en cours de lecture
             const video = storyContent.querySelector('video');
             if (video) {
                 video.pause();
                 video.currentTime = 0;
             }
-            storyContent.innerHTML = ""; // Nettoyer le contenu
+            storyContent.innerHTML = ""; 
         };
 
         if(closeStoryBtn) closeStoryBtn.addEventListener('click', closeViewer);
-        // Fermer aussi si on clique en dehors de la story mais à l'intérieur de la visionneuse
         storyViewer.addEventListener('click', (e) => {
             if (e.target === storyViewer) {
                 closeViewer();
@@ -106,20 +102,24 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('data/produits.json');
             if (!response.ok) throw new Error('Could not fetch products.');
-            const products = await response.json();
+            
+            // --- C'EST ICI QUE J'AI FAIT LA CORRECTION ---
+            const data = await response.json();
+            // On vérifie si les produits sont dans 'items' (format CMS) ou direct (ancien format)
+            const products = data.items ? data.items : data;
+            // ---------------------------------------------
             
             handleStories(products);
             displayCategoryPreview(products);
 
         } catch (error) {
             console.error('Failed to initialize homepage sections:', error);
-            // Afficher des messages d'erreur si les données ne peuvent pas être chargées
             const storiesSection = document.querySelector('.stories-section');
-            const categoryPreviewSection = document.querySelector('.container:nth-of-type(2)'); // Section des catégories
+            const categoryPreviewSection = document.querySelector('.container:nth-of-type(2)');
             if (storiesSection) storiesSection.innerHTML = `<p class="error-message">Impossible de charger les stories pour le moment.</p>`;
             if (categoryPreviewSection) categoryPreviewSection.innerHTML += `<p class="error-message">Impossible de charger les catégories pour le moment.</p>`;
         }
     };
 
-    main(); // Exécuter la fonction principale au chargement du DOM
+    main(); 
 });
