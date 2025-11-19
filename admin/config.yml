@@ -1,9 +1,11 @@
 backend:
   name: github
-  repo: urbain7/Sandy-shop
+  repo: urbain7/Sandy-shop  # <--- VÉRIFIEZ QUE C'EST BIEN VOTRE NOM
   branch: main
 
-media_folder: "images/uploads" # Où vont les nouvelles images
+# Où Sveltia doit stocker les nouvelles images que vous uploadez
+media_folder: "images/uploads"
+# Ce qui sera écrit dans le fichier json (le chemin pour le site)
 public_folder: "images/uploads"
 
 collections:
@@ -12,17 +14,17 @@ collections:
     files:
       - name: "catalogue"
         label: "Catalogue Général"
-        file: "data/produits.json" # Le fichier qu'on modifie
+        file: "data/produits.json"  # <--- Le fichier qu'il va modifier
         fields:
           - name: "items"
             label: "Liste des produits"
             widget: "list"
             fields:
-              - {label: "ID Unique", name: "id", widget: "string"}
+              - {label: "ID (Unique, ex: prod_10)", name: "id", widget: "string"}
               - {label: "Nom du produit", name: "nom", widget: "string"}
-              - {label: "Prix (FCFA)", name: "prix", widget: "number"}
+              - {label: "Prix (Chiffre sans FCFA)", name: "prix", widget: "number"}
               - {label: "Stock", name: "stock", widget: "number", default: 1}
-              - {label: "Catégorie", name: "categorie", widget: "select", options: ["Sacs", "Chaussures", "Robes", "Accessoires", "Jeans"]}
+              - {label: "Catégorie", name: "categorie", widget: "select", options: ["Sacs", "Chaussures", "Robes", "Accessoires", "Jeans", "Ensembles"]}
               - {label: "Image", name: "image", widget: "image"}
               - {label: "Description", name: "description", widget: "text"}
-              - {label: "Afficher en Story ?", name: "in_story", widget: "boolean", default: false}
+              - {label: "En Story (Accueil) ?", name: "in_story", widget: "boolean", default: false}
