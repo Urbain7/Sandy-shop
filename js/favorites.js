@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const favoritesGrid = document.getElementById('favorites-grid');
-
     if (favoritesGrid) {
         loadFavoriteProducts();
     }
@@ -11,7 +10,6 @@ async function loadFavoriteProducts() {
     
     try {
         const likes = JSON.parse(localStorage.getItem('likes')) || {};
-        // Crée une liste des ID de produits qui sont "likés" (valeur à true)
         const likedProductIds = Object.keys(likes).filter(id => likes[id]);
 
         if (likedProductIds.length === 0) {
@@ -21,9 +19,12 @@ async function loadFavoriteProducts() {
 
         const response = await fetch('data/produits.json');
         if (!response.ok) throw new Error('Impossible de charger les produits.');
-        const allProducts = await response.json();
+        
+        // --- CORRECTION CMS ICI AUSSI ---
+        const data = await response.json();
+        const allProducts = data.items ? data.items : data;
+        // --------------------------------
 
-        // Filtre la liste complète des produits pour ne garder que ceux qui sont dans nos favoris
         const favoriteProducts = allProducts.filter(product => likedProductIds.includes(product.id));
 
         if (favoriteProducts.length === 0) {
@@ -41,21 +42,19 @@ async function loadFavoriteProducts() {
 
 function displayFavoriteProducts(products) {
     const favoritesGrid = document.getElementById('favorites-grid');
-    favoritesGrid.innerHTML = ''; // Nettoie la grille
+    favoritesGrid.innerHTML = ''; 
 
     products.forEach(product => {
-        // On réutilise la même structure de carte que sur la page des produits
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
-                <img src="${product.image}" alt="${product.nom}">
+                <img src="${product.image}" alt="${product.nom}" loading="lazy">
                 <h3>${product.nom}</h3>
             </a>
             <p class="product-price">${formatPrice(product.prix)}</p>
             <div class="product-actions">
                 <button class="btn add-to-cart" data-id="${product.id}">Ajouter au panier</button>
-                <!-- On affiche le bouton "like" déjà activé -->
                 <button class="like-btn liked" data-id="${product.id}">
                     ❤️ <span class="like-count">1</span>
                 </button>
@@ -64,7 +63,6 @@ function displayFavoriteProducts(products) {
         favoritesGrid.appendChild(productCard);
     });
 
-    // On attache les écouteurs d'événements pour que les boutons fonctionnent
     addEventListenersToFavoriteCards(products);
 }
 
@@ -87,19 +85,14 @@ function addEventListenersToFavoriteCards(products) {
         if (likeBtn) {
             likeBtn.addEventListener('click', () => {
                 let likes = JSON.parse(localStorage.getItem('likes')) || {};
-                
-                // Ici, cliquer sur le cœur le retire des favoris
                 delete likes[productId]; 
-                
                 localStorage.setItem('likes', JSON.stringify(likes));
                 
-                // Fait disparaître la carte de la page des favoris
                 const cardToRemove = likeBtn.closest('.product-card');
                 cardToRemove.style.transition = 'opacity 0.3s ease';
                 cardToRemove.style.opacity = '0';
                 setTimeout(() => {
                     cardToRemove.remove();
-                    // Si c'était le dernier favori, on affiche le message
                     if (document.querySelectorAll('#favorites-grid .product-card').length === 0) {
                         document.getElementById('favorites-grid').innerHTML = '<p class="empty-grid-message">Vous n\'avez encore aucun produit en favori.</p>';
                     }
