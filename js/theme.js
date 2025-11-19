@@ -19,3 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// Fermer le menu quand on clique sur un lien
+mobileNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileNav.classList.remove('open');
+    });
+});
