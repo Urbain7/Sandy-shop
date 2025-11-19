@@ -84,21 +84,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <div id="order-section" style="display: none;">
                 <h2>Valider la commande</h2>
-                <form id="order-form" action="https://formspree.io/f/xyzlydrz" method="POST">
-                    <label for="customer-name">Votre nom complet :</label>
-                    <input type="text" id="customer-name" name="nom_client" required>
+                <!-- DÉBUT DU FORMULAIRE MODIFIÉ -->
+<form id="order-form" action="https://formspree.io/f/xyzlydrz" method="POST">
+    
+    <!-- Champs visibles par le client -->
+    <label for="customer-name">Votre nom complet :</label>
+    <input type="text" id="customer-name" name="nom_client" required placeholder="Ex: Jean Dupont">
 
-                    <label for="customer-email">Votre email :</label>
-                    <input type="email" id="customer-email" name="email" required>
+    <label for="customer-email">Votre email :</label>
+    <input type="email" id="customer-email" name="email" required placeholder="Ex: jean@email.com">
 
-                    <input type="hidden" name="_subject" value="Nouvelle commande Sandy'Shop !">
-                    <input type="hidden" name="_next" value="https://urbain7.github.io/Sandy-shop/index.html">
+    <!-- CONFIGURATION FORMSPREE (Caché) -->
+    <!-- 1. Titre de l'email que vous recevez -->
+    <input type="hidden" name="_subject" value="Nouvelle commande Sandy'Shop !">
+    
+    <!-- 2. Redirection automatique vers votre site après la commande -->
+    <input type="hidden" name="_next" value="https://urbain7.github.io/Sandy-shop/">
 
-                    <input type="hidden" id="cart-content" name="contenu_panier">
-                    <input type="hidden" id="cart-total" name="total_commande">
-                    
-                    <button type="submit" class="btn">Passer la commande</button>
-                </form>
+    <!-- Champs techniques du panier (Cachés) -->
+    <input type="hidden" id="cart-content" name="contenu_panier">
+    <input type="hidden" id="cart-total" name="total_commande">
+
+    <button type="submit" class="btn">Valider la commande</button>
+</form>
+<!-- FIN DU FORMULAIRE MODIFIÉ -->
             </div>
             
             <div id="form-message" style="margin-top: 1rem;"></div>
