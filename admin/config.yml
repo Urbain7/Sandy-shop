@@ -1,4 +1,4 @@
-ackend:
+backend:
   name: github
   repo: urbain7/Sandy-shop
   branch: main
