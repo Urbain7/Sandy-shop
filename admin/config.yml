@@ -1,1 +1,27 @@
+backend:
+  name: git-gateway
+  branch: main # Vérifiez que votre branche principale s'appelle 'main' (parfois c'est 'master')
 
+media_folder: "assets/images" # Les images seront stockées ici
+public_folder: "assets/images" # Le chemin utilisé dans le code
+
+collections:
+  - name: "produits" # Nom de la collection
+    label: "Produits"
+    files:
+      - name: "catalogue"
+        label: "Catalogue Complet"
+        file: "data/produits.json" # Le fichier à modifier
+        fields:
+          - name: "items"
+            label: "Liste des Produits"
+            widget: "list"
+            fields:
+              - {label: "ID Unique (Ne pas toucher)", name: "id", widget: "uuid"}
+              - {label: "Nom du produit", name: "nom", widget: "string"}
+              - {label: "Prix (FCFA)", name: "prix", widget: "number", value_type: "int"}
+              - {label: "Stock", name: "stock", widget: "number", default: 1}
+              - {label: "Catégorie", name: "categorie", widget: "select", options: ["Sacs", "Chaussures", "Robes", "Accessoires", "Jeans"]}
+              - {label: "Image Principale", name: "image", widget: "image"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "En Story ?", name: "in_story", widget: "boolean", default: false, required: false}
