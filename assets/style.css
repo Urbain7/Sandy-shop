@@ -39,6 +39,15 @@ html.dark-mode { /* Thème Sombre */
 /* =============================== */
 /* Reset et Comportements Globaux  */
 /* =============================== */
+/* 1. Supprime le flash bleu au clic sur MOBILE (Tap Highlight) */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. Supprime le contour bleu/noir au clic sur ORDI (Focus Outline) */
+*:focus {
+    outline: none;
+}
 html { box-sizing: border-box; }
 *, *:before, *:after { box-sizing: inherit; }
 a, button, input, textarea, select, .like-btn, .thumbnail-images img { -webkit-tap-highlight-color: transparent; outline: none; }
