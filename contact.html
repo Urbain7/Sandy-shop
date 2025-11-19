@@ -75,23 +75,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h2>Contactez-nous</h2>
             <p>Une question ? Une suggestion ? N'hésitez pas à nous écrire.</p>
             
-            <!-- IMPORTANT: Remplacez VOTRE_CODE_UNIQUE par votre URL Formspree de CONTACT -->
-            <!-- Pour Formspree, remplacez meovqodk par votre propre code de formulaire. -->
-            <form action="https://formspree.io/f/meovqodk" method="POST">
-                <label for="name">Votre nom :</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="email">Votre email :</label>
-                <input type="email" id="email" name="email" required>
+            <!-- DÉBUT DU FORMULAIRE MODIFIÉ -->
+<form id="order-form" action="https://formspree.io/f/xyzlydrz" method="POST">
+    
+    <!-- Champs visibles par le client -->
+    <label for="customer-name">Votre nom complet :</label>
+    <input type="text" id="customer-name" name="nom_client" required placeholder="Ex: Jean Dupont">
 
-                <input type="hidden" name="_subject" value="Nouvelle commande Sandy'Shop !">
-                <input type="hidden" name="_next" value="https://urbain7.github.io/Sandy-shop/index.html">
-                
-                <label for="message">Votre message :</label>
-                <textarea id="message" name="message" rows="6" required></textarea>
+    <label for="customer-email">Votre email :</label>
+    <input type="email" id="customer-email" name="email" required placeholder="Ex: jean@email.com">
 
-                <button type="submit" class="btn">Envoyer</button>
-            </form>
+    <!-- CONFIGURATION FORMSPREE (Caché) -->
+    <!-- 1. Titre de l'email que vous recevez -->
+    <input type="hidden" name="_subject" value="Nouvelle commande Sandy'Shop !">
+    
+    <!-- 2. Redirection automatique vers votre site après la commande -->
+    <input type="hidden" name="_next" value="https://urbain7.github.io/Sandy-shop/">
+
+    <!-- Champs techniques du panier (Cachés) -->
+    <input type="hidden" id="cart-content" name="contenu_panier">
+    <input type="hidden" id="cart-total" name="total_commande">
+
+    <button type="submit" class="btn">Valider la commande</button>
+</form>
+<!-- FIN DU FORMULAIRE MODIFIÉ -->
         </div>
     </main>
 
