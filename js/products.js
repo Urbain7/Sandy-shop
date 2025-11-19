@@ -136,7 +136,6 @@ function displayProducts(products) {
             ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>`
             : `<button class="btn add-to-cart">Ajouter au panier</button>`;
         
-        // Ajout de loading="lazy" pour améliorer la performance
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}" loading="lazy">
@@ -180,7 +179,6 @@ function addEventListenersToCards(products) {
                     addToCart(productToAdd);
                     showToast(`${productToAdd.nom} ajouté au panier !`);
                     
-                    // Feedback visuel sur le bouton
                     const originalText = cartBtn.innerHTML;
                     cartBtn.innerHTML = 'Ajouté ✔';
                     cartBtn.disabled = true;
@@ -218,7 +216,6 @@ function displayRecommendations(currentProduct, allProducts) {
     shuffledRecommendations.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        // Ajout de loading="lazy" ici aussi
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}" loading="lazy">
@@ -381,20 +378,20 @@ async function initPanierPage() {
                 </tr>
             `;
             
-            // --- MODIFICATION: Format propre pour l'email Formspree ---
+            // --- FORMATAGE EMAIL PROPRE ---
             cartTextSummary += `• ${item.nom} (x${item.quantity}) : ${formatPrice(totalLigne)}\n`;
         });
 
         cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
         
-        // --- Ajout du total dans le résumé email ---
+        // --- TOTAL EMAIL ---
         cartTextSummary += `\n-----------------------------\nTOTAL À PAYER : ${formatPrice(totalGlobal)}`;
 
         cartContainer.innerHTML = cartHTML;
         cartContentInput.value = cartTextSummary;
         cartTotalInput.value = formatPrice(totalGlobal);
 
-        // --- Gestionnaires d'événements pour les quantités et la suppression ---
+        // Listeners pour quantité et suppression
         cartContainer.querySelectorAll('.cart-quantity-input').forEach(input => {
             input.addEventListener('change', async (e) => {
                 const productId = e.target.dataset.id;
@@ -431,7 +428,7 @@ async function initPanierPage() {
 
     renderCart();
 
-    // Gestion du bouton "Vider le panier"
+    // Vider le panier
     clearCartBtn.addEventListener('click', async () => {
         const confirmed = await showCustomConfirm("Voulez-vous vraiment vider votre panier ?");
         if (confirmed) {
@@ -441,16 +438,47 @@ async function initPanierPage() {
         }
     });
 
-    // Gestion de la soumission du formulaire de commande
+    // --- CORRECTION FORMSPREE (Méthode AJAX) ---
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
-        orderForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Empêche l'envoi immédiat pour laisser le temps au toast
-            showToast('Commande envoyée !');
-            setTimeout(() => {
-                localStorage.removeItem('cart'); // Vide le panier avant de partir
-                orderForm.submit(); // Envoie réellement le formulaire à Formspree
-            }, 1500);
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Empêche la soumission par défaut
+            
+            const submitBtn = orderForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            
+            submitBtn.textContent = "Envoi en cours...";
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(orderForm);
+                
+                // Envoi AJAX vers Formspree
+                const response = await fetch(orderForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    showToast('Commande validée avec succès !');
+                    localStorage.removeItem('cart'); // Vide le panier
+                    
+                    // Redirection forcée vers l'accueil
+                    setTimeout(() => {
+                        window.location.href = "https://urbain7.github.io/Sandy-shop/"; 
+                    }, 1500);
+                } else {
+                    throw new Error('Erreur Formspree');
+                }
+            } catch (error) {
+                console.error("Erreur commande:", error);
+                showToast("Erreur lors de l'envoi. Veuillez réessayer.");
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+            }
         });
     }
 }
