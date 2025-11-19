@@ -308,28 +308,3 @@ form button { background-color: var(--accent-color); color: white; border: none;
     .cart-items td:nth-of-type(5) .btn-secondary { flex-grow: 1; }
     .cart-total { text-align: center; font-size: 1.6rem; }
 }
-
-/* =========================== */
-/* MODIFICATION LOGO IMAGE     */
-/* =========================== */
-
-/* 1. Réglage de la taille du logo */
-.logo img {
-    height: 50px; /* Ajustez cette valeur selon la taille voulue (40px à 60px) */
-    width: auto;  /* Garde les proportions */
-    display: block;
-}
-
-/* 2. Suppression des styles de texte qui ne servent plus */
-.logo {
-    /* On enlève le font-size et font-weight car c'est maintenant une image */
-    display: flex;
-    align-items: center;
-}
-
-/* 3. MAGIE POUR LE MODE SOMBRE */
-/* Quand le site passe en mode sombre, on inverse les couleurs de l'image */
-/* Le noir devient blanc, et le rose reste lisible */
-html.dark-mode .logo img {
-    filter: invert(1) brightness(1.5); 
-}
