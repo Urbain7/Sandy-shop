@@ -32,13 +32,16 @@
     },
     {
       "id": "prod_4",
-      "nom": "Collier Lune Dorée",
-      "prix": 30000,
+      "nom": "Sac à main Ginventhi",
+      "prix": 12000,
       "stock": 12,
-      "categorie": "Accessoires",
-      "image": "images/accessoires/accessoire1.jpg",
-      "description": "Un collier fin et délicat...",
-      "in_story": false
+      "categorie": "Sacs",
+      "image": "/images/uploads/IMG-20251113-WA0207.jpg",
+      "images": [
+        "/images/uploads/IMG-20251113-WA0209 (1).jpg"
+      ],
+      "description": "Sac...",
+      "in_story": true
     },
     {
       "id": "prod_5",
