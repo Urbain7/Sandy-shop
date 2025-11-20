@@ -22,12 +22,12 @@
     },
     {
       "id": "prod_3",
-      "nom": "Escarpins Roses Poudrés",
-      "prix": 72000,
-      "stock": 0,
+      "nom": "Tapette Femme",
+      "prix": 9000,
+      "stock": 10,
       "categorie": "Chaussures",
-      "image": "images/chaussures/chaussure1.jpg",
-      "description": "Ces escarpins en suédine rose poudré...",
+      "image": "/images/uploads/IMG-20251113-WA0323 (1).jpg",
+      "description": "Chaussures...",
       "in_story": true
     },
     {
