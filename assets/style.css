@@ -317,3 +317,72 @@ form button { background-color: var(--accent-color); color: white; border: none;
     .cart-items td:nth-of-type(5) .btn-secondary { flex-grow: 1; }
     .cart-total { text-align: center; font-size: 1.6rem; }
 }
+/* =============================== */
+/* NOUVEAU : Boutons WhatsApp & Partage */
+/* =============================== */
+
+/* Le gros bouton "Commander sur WhatsApp" */
+.btn-whatsapp-order {
+    background-color: #25D366;
+    color: white;
+    font-weight: bold;
+    width: 100%; /* Prend toute la largeur */
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+}
+.btn-whatsapp-order:hover {
+    background-color: #128C7E;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+}
+
+/* La section de partage */
+.share-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--card-border-color);
+}
+.share-section p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+.share-buttons {
+    display: flex;
+    gap: 10px;
+}
+.btn-share {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.3s;
+}
+.share-wa {
+    background-color: #25D366;
+    color: white;
+}
+.share-fb {
+    background-color: #1877F2;
+    color: white;
+}
+.btn-share:hover { opacity: 0.9; }
+
+/* Page 404 */
+.error-page {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+.error-page h1 { font-size: 4rem; margin: 0; color: var(--accent-color); }
+.error-page p { font-size: 1.2rem; margin-bottom: 2rem; }
+
