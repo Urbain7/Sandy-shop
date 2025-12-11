@@ -29,7 +29,6 @@ function displaySkeletonCards() {
     for (let i = 0; i < 8; i++) {
         const skeletonCard = document.createElement('div');
         skeletonCard.className = 'product-card skeleton';
-        skeletonCard.innerHTML = `<div class="skeleton-img"></div><div class="skeleton-text long"></div><div class="skeleton-text short"></div>`;
         productList.appendChild(skeletonCard);
     }
 }
@@ -46,7 +45,7 @@ async function initProduitsPage() {
         const data = await response.json();
         const products = data.items ? data.items : data;
         
-        shuffleArray(products); // Mélange aléatoire
+        shuffleArray(products);
 
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
@@ -125,6 +124,11 @@ function displayProducts(products) {
         
         const productCard = document.createElement('div');
         productCard.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
+        
+        // --- ANIMATION AOS ---
+        // On ajoute l'attribut pour que la carte s'anime en apparaissant
+        productCard.setAttribute('data-aos', 'fade-up');
+
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}" loading="lazy">
@@ -136,6 +140,14 @@ function displayProducts(products) {
                 <button class="like-btn ${isLiked ? 'liked' : ''}">❤️ <span class="like-count">${likeCount}</span></button>
             </div>
         `;
+        
+        // --- ALERTE STOCK FAIBLE ---
+        if (product.stock > 0 && product.stock <= 3) {
+            const alertHTML = `<div class="stock-alert">🔥 Vite ! Plus que ${product.stock} en stock !</div>`;
+            const priceElement = productCard.querySelector('.product-price');
+            priceElement.insertAdjacentHTML('beforebegin', alertHTML);
+        }
+
         productList.appendChild(productCard);
     });
     addEventListenersToCards(products);
@@ -144,7 +156,6 @@ function displayProducts(products) {
 function addEventListenersToCards(products) {
     document.querySelectorAll('.product-actions').forEach(actions => {
         const productId = actions.dataset.id;
-        
         const likeBtn = actions.querySelector('.like-btn');
         if (likeBtn) {
             likeBtn.addEventListener('click', () => {
@@ -155,7 +166,6 @@ function addEventListenersToCards(products) {
                 likeBtn.querySelector('.like-count').textContent = likes[productId] ? 1 : 0;
             });
         }
-
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
@@ -174,7 +184,7 @@ function addEventListenersToCards(products) {
 }
 
 // =================================================================
-// 2. RECOMMANDATIONS
+// 2. RECOMMANDATIONS (Avec Animation)
 // =================================================================
 function displayRecommendations(currentProduct, allProducts) {
     const recommendationsSection = document.getElementById('recommendations-section');
@@ -195,6 +205,7 @@ function displayRecommendations(currentProduct, allProducts) {
     shuffledRecommendations.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
+        productCard.setAttribute('data-aos', 'fade-up'); // Animation ici aussi
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}" loading="lazy">
@@ -208,7 +219,7 @@ function displayRecommendations(currentProduct, allProducts) {
 }
 
 // =================================================================
-// 3. PAGE DÉTAIL (produit.html) - AVEC PARTAGE CORRIGÉ
+// 3. PAGE DÉTAIL (produit.html)
 // =================================================================
 
 async function initProduitDetailPage() {
@@ -224,11 +235,9 @@ async function initProduitDetailPage() {
         
         const data = await response.json();
         const allProducts = data.items ? data.items : data;
-        
-        // Utilisation de == pour permettre la correspondance string vs number
         const product = allProducts.find(p => p.id == productId);
 
-        if (!product) { container.innerHTML = "<p class='error-message'>Produit introuvable (ID incorrect).</p>"; return; }
+        if (!product) { container.innerHTML = "<p class='error-message'>Produit introuvable.</p>"; return; }
 
         document.title = `${product.nom} - Sandy'Shop`;
         const isOutOfStock = product.stock === 0;
@@ -236,7 +245,7 @@ async function initProduitDetailPage() {
         const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
         
         container.innerHTML = `
-            <div class="product-detail">
+            <div class="product-detail" data-aos="fade-in"> <!-- Animation de la fiche -->
                 <div class="product-gallery">
                     <div class="main-image"><img src="${product.image}" alt="${product.nom}" id="main-product-image"></div>
                     <div class="thumbnail-images">${productImages.map((img, index) => `<img src="${img}" alt="Vue ${index + 1}" class="${index === 0 ? 'active' : ''}">`).join('')}</div>
@@ -250,70 +259,47 @@ async function initProduitDetailPage() {
                     </div>
                     <p class="product-description">${product.description}</p>
                     ${cartButtonHTML}
-                    <!-- Les boutons WhatsApp et Partage seront injectés ici -->
                 </div>
             </div>
         `;
 
-        // --- INJECTION DES BOUTONS SPÉCIAUX ---
         const productInfoDiv = container.querySelector('.product-info');
         const descElement = productInfoDiv.querySelector('.product-description');
 
-        // 1. Bouton WhatsApp Direct
+        // Alerte Stock Faible sur la fiche détail aussi
+        if (product.stock > 0 && product.stock <= 3) {
+            const alertHTML = `<div class="stock-alert" style="font-size:1rem; margin-bottom:1rem;">🔥 Attention, il ne reste que ${product.stock} exemplaires !</div>`;
+            container.querySelector('h1').insertAdjacentHTML('afterend', alertHTML);
+        }
+
+        // Bouton WhatsApp
         if (!isOutOfStock) {
-            const waMessage = `Bonjour Sandy'Shop, je suis intéressé par : ${product.nom} (${formatPrice(product.prix)}). Est-il dispo ?`;
+            const waMessage = `Bonjour Sandy'Shop, je souhaite commander : ${product.nom} (${formatPrice(product.prix)}). Est-il dispo ?`;
             const waLink = `https://wa.me/22893899538?text=${encodeURIComponent(waMessage)}`;
-            const btnWaHTML = `
-                <a href="${waLink}" class="btn btn-whatsapp-order" target="_blank">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
-                    Commander sur WhatsApp
-                </a>
-            `;
+            const btnWaHTML = `<a href="${waLink}" class="btn btn-whatsapp-order" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>Commander sur WhatsApp</a>`;
             descElement.insertAdjacentHTML('afterend', btnWaHTML);
         }
 
-        // 2. Bouton Partage Natif (Image + Lien)
-        const shareSectionHTML = `
-            <div class="share-section">
-                <p>Ce produit pourrait plaire à une amie ?</p>
-                <button id="native-share-btn" class="btn-secondary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>
-                    Partager ce produit
-                </button>
-            </div>
-        `;
+        // Partage Natif
+        const shareSectionHTML = `<div class="share-section"><p>Ce produit pourrait plaire à une amie ?</p><button id="native-share-btn" class="btn-secondary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>Partager ce produit</button></div>`;
         productInfoDiv.insertAdjacentHTML('beforeend', shareSectionHTML);
 
-        // Activation du partage natif
         setTimeout(() => {
             const shareBtn = document.getElementById('native-share-btn');
             if(shareBtn) {
                 shareBtn.addEventListener('click', async () => {
-                    const shareData = {
-                        title: `Sandy'Shop - ${product.nom}`,
-                        text: `Regarde ce produit : ${product.nom} (${formatPrice(product.prix)})`,
-                        url: window.location.href
-                    };
+                    const shareData = { title: `Sandy'Shop - ${product.nom}`, text: `Regarde ce produit : ${product.nom} (${formatPrice(product.prix)})`, url: window.location.href };
                     try {
-                        // On tente de récupérer l'image pour la partager
                         const imgFetch = await fetch(product.image);
                         const blob = await imgFetch.blob();
                         const file = new File([blob], "produit.jpg", { type: blob.type });
-
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            await navigator.share({ files: [file], title: shareData.title, text: shareData.text, url: shareData.url });
-                        } else {
-                            await navigator.share(shareData);
-                        }
-                    } catch (err) {
-                        // Fallback : WhatsApp classique si le partage natif échoue
-                        window.open(`whatsapp://send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`);
-                    }
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: shareData.title, text: shareData.text, url: shareData.url }); }
+                        else { await navigator.share(shareData); }
+                    } catch (err) { window.open(`whatsapp://send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`); }
                 });
             }
         }, 500);
 
-        // Interaction Galerie
         const mainImage = document.getElementById('main-product-image');
         const thumbnails = container.querySelectorAll('.thumbnail-images img');
         thumbnails.forEach(thumb => {
@@ -324,7 +310,6 @@ async function initProduitDetailPage() {
             });
         });
         
-        // Panier
         if (!isOutOfStock) {
             const addToCartBtn = container.querySelector('.add-to-cart-detail');
             const quantityInput = container.querySelector('#product-quantity');
@@ -342,7 +327,7 @@ async function initProduitDetailPage() {
 
     } catch (error) {
         console.error("Erreur Détail Produit:", error);
-        container.innerHTML = `<p class="error-message">Erreur lors du chargement du produit.<br><small>${error.message}</small></p>`;
+        container.innerHTML = `<p class="error-message">Erreur lors du chargement.</p>`;
     }
 }
 
@@ -370,8 +355,7 @@ async function initPanierPage() {
 
         cartHeader.style.display = 'flex';
         orderSection.style.display = 'block';
-
-        let cartHTML = `<table class="cart-items"><thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th><th>Actions</th></tr></thead><tbody>`;
+        let cartHTML = `<table class="cart-items" data-aos="fade-up"><thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Total</th><th>Actions</th></tr></thead><tbody>`;
         let totalGlobal = 0;
         let cartTextSummary = "";
 
@@ -381,10 +365,7 @@ async function initPanierPage() {
             cartHTML += `<tr><td data-label="Produit">${item.nom}</td><td data-label="Prix">${formatPrice(item.prix)}</td><td data-label="Quantité"><input type="number" class="cart-quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="99"></td><td data-label="Total">${formatPrice(totalLigne)}</td><td data-label="Actions"><button class="btn-secondary remove-from-cart-btn" data-id="${item.id}">Supprimer</button></td></tr>`;
             cartTextSummary += `• ${item.nom} (x${item.quantity}) : ${formatPrice(totalLigne)}\n`;
         });
-
         cartHTML += `</tbody></table><div class="cart-total">Total : ${formatPrice(totalGlobal)}</div>`;
-        cartTextSummary += `\n-----------------------------\nTOTAL À PAYER : ${formatPrice(totalGlobal)}`;
-
         cartContainer.innerHTML = cartHTML;
         if(cartContentInput) cartContentInput.value = cartTextSummary;
         if(cartTotalInput) cartTotalInput.value = formatPrice(totalGlobal);
@@ -400,7 +381,6 @@ async function initPanierPage() {
                 } else { updateCartItemQuantity(productId, newQuantity); renderCart(); }
             });
         });
-
         cartContainer.querySelectorAll('.remove-from-cart-btn').forEach(button => {
             button.addEventListener('click', async (e) => {
                 const productId = e.target.dataset.id;
