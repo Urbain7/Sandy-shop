@@ -3,12 +3,13 @@ backend:
   repo: urbain7/Sandy-shop
   branch: main
 
-# Dossier où les images uploadées seront stockées sur GitHub
+# Dossier où les images uploadées seront stockées
 media_folder: "images/uploads"
-# Chemin que le site utilisera pour afficher les images
+# Chemin pour l'affichage sur le site
 public_folder: "images/uploads"
 
 collections:
+  # COLLECTION 1 : LES PRODUITS
   - name: "produits"
     label: "Produits"
     files:
@@ -22,17 +23,15 @@ collections:
             collapsed: false
             summary: "{{fields.nom}} - {{fields.prix}} FCFA"
             fields:
-              # 1. Identifiant unique (Important pour le panier)
               - label: "ID (Unique, ex: prod_10)"
                 name: "id"
                 widget: "string"
 
-              # 2. Informations de base
               - label: "Nom du produit"
                 name: "nom"
                 widget: "string"
 
-              - label: "Prix (Chiffre uniquement, sans 'FCFA')"
+              - label: "Prix (Chiffre sans FCFA)"
                 name: "prix"
                 widget: "number"
                 value_type: "int"
@@ -54,29 +53,31 @@ collections:
                   - "Ensembles"
                   - "Cosmétiques"
 
-              # 3. Gestion des images (Principale + Galerie)
-              - label: "Image Principale (Celle qu'on voit partout)"
+              # Image principale (Vignette)
+              - label: "Image Principale"
                 name: "image"
                 widget: "image"
                 choose_url: false
 
-              - label: "Galerie photos (Optionnel : Vue de dos, zoom...)"
+              # Galerie d'images supplémentaires
+              - label: "Galerie photos (Optionnel : Dos, Zoom...)"
                 name: "images"
                 widget: "list"
                 collapsed: true
-                summary: "Image supplémentaire"
+                summary: "Photo supplémentaire"
                 field: {label: "Photo", widget: "image"}
 
-              # 4. Description et options d'affichage
               - label: "Description détaillée"
                 name: "description"
                 widget: "text"
 
-              - label: "Afficher en Story (Rond sur l'accueil) ?"
+              - label: "Afficher en Story (Accueil) ?"
                 name: "in_story"
                 widget: "boolean"
                 default: false
-- name: "avis"
+
+  # COLLECTION 2 : LES AVIS CLIENTS
+  - name: "avis"
     label: "Avis Clients (Témoignages)"
     files:
       - name: "liste_avis"
@@ -84,9 +85,8 @@ collections:
         file: "data/avis.json"
         fields:
           - name: "items"
-            label: "Les Avis"
+            label: "Les Avis Publiés"
             widget: "list"
             fields:
               - {label: "Nom du client", name: "nom", widget: "string"}
-              - {label: "Message", name: "message", widget: "text"}
-                
+              - {label: "Message / Témoignage", name: "message", widget: "text"}
