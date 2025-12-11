@@ -108,6 +108,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <button type="submit" class="btn">Valider la commande</button>
 </form>
+
+          <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--card-border-color);">
+
+            <h3>Donnez votre avis !</h3>
+            <p>Vous avez commandé chez nous ? Dites-nous ce que vous en pensez.</p>
+            
+            <form action="https://formspree.io/f/xyzlydrz" method="POST">
+                <!-- Changez le sujet pour reconnaître le mail -->
+                <input type="hidden" name="_subject" value="Nouvel Avis Client Sandy'Shop">
+                <input type="hidden" name="_next" value="https://sandy-shop.vercel.app/contact.html">
+
+                <label for="avis-nom">Votre Prénom :</label>
+                <input type="text" id="avis-nom" name="nom_client" required placeholder="Ex: Sarah">
+
+                <label for="avis-message">Votre Avis :</label>
+                <textarea id="avis-message" name="message" rows="3" required placeholder="J'ai adoré ma commande..."></textarea>
+
+                <button type="submit" class="btn btn-secondary">Envoyer mon avis</button>
+            </form>
 <!-- FIN DU FORMULAIRE MODIFIÉ -->
         </div>
     </main>
