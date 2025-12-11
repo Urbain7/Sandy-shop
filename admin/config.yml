@@ -76,3 +76,17 @@ collections:
                 name: "in_story"
                 widget: "boolean"
                 default: false
+- name: "avis"
+    label: "Avis Clients (Témoignages)"
+    files:
+      - name: "liste_avis"
+        label: "Liste des Avis"
+        file: "data/avis.json"
+        fields:
+          - name: "items"
+            label: "Les Avis"
+            widget: "list"
+            fields:
+              - {label: "Nom du client", name: "nom", widget: "string"}
+              - {label: "Message", name: "message", widget: "text"}
+                
