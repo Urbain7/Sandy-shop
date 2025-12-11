@@ -1,24 +1,29 @@
 /* =============================== */
 /* Style global et variables       */
 /* =============================== */
-:root { /* Thème Clair */
-    --background-color: #fff;
+:root { /* Thème Clair - Modifié pour être plus doux */
+    --background-color: #f4f6f8; /* Un gris-bleuté très pâle, moderne et reposant */
     --text-color: #333;
     --header-bg-color: #333;
     --header-text-color: #f0f0f0;
-    --card-bg-color: #fff;
-    --card-border-color: #eee;
-    --input-bg-color: #fff;
-    --input-border-color: #ddd;
-    --accent-color: #d1a3a4;
+    
+    --card-bg-color: #ffffff;    /* Les cartes restent blanches pour le contraste */
+    --card-border-color: #e1e4e8; /* Bordures un peu plus visibles */
+    
+    --input-bg-color: #ffffff;
+    --input-border-color: #ccc;
+    
+    --accent-color: #d1a3a4;     /* Votre couleur rose actuelle */
     --secondary-color: #333;
+    
     --btn-main-bg: var(--secondary-color);
     --btn-main-text: #fff;
     --btn-secondary-bg: transparent;
     --btn-secondary-border: var(--input-border-color);
     --btn-secondary-text: var(--secondary-color);
 }
-html.dark-mode { /* Thème Sombre */
+
+html.dark-mode { /* Thème Sombre (Inchangé) */
     --background-color: #1a1a1a;
     --text-color: #f0f0f0;
     --header-bg-color: #111;
