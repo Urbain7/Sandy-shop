@@ -347,22 +347,56 @@ async function initProduitDetailPage() {
             const descElement = productInfoDiv.querySelector('.product-description');
             descElement.insertAdjacentHTML('afterend', btnWaHTML);
         }
-
-        // 2. Section de Partage (Envoyer à une amie)
-        const currentUrl = window.location.href;
-        const shareHTML = `
+        // 2. Section de Partage (Natif Mobile)
+        const shareSectionHTML = `
             <div class="share-section">
                 <p>Ce produit pourrait plaire à une amie ?</p>
-                <div class="share-buttons">
-                    <a href="whatsapp://send?text=Coucou, regarde ce que j'ai trouvé chez Sandy'Shop : ${currentUrl}" class="btn-share share-wa">
-                        Envoyer sur WhatsApp
-                    </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=${currentUrl}" target="_blank" class="btn-share share-fb">
-                        Facebook
-                    </a>
-                </div>
+                <button id="native-share-btn" class="btn-secondary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+                    </svg>
+                    Partager ce produit
+                </button>
             </div>
         `;
+        
+        productInfoDiv.insertAdjacentHTML('beforeend', shareSectionHTML);
+
+        // La logique intelligente du partage
+        const shareBtn = document.getElementById('native-share-btn');
+        shareBtn.addEventListener('click', async () => {
+            const shareData = {
+                title: `Sandy'Shop - ${product.nom}`,
+                text: `Regarde ce produit magnifique : ${product.nom} (${formatPrice(product.prix)})`,
+                url: window.location.href
+            };
+
+            try {
+                // On essaie de partager l'image si le navigateur le permet
+                const response = await fetch(product.image);
+                const blob = await response.blob();
+                const file = new File([blob], "produit.jpg", { type: blob.type });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: shareData.title,
+                        text: shareData.text,
+                        url: shareData.url
+                    });
+                } else {
+                    // Si on ne peut pas partager l'image (ordi), on partage juste le lien
+                    await navigator.share(shareData);
+                }
+            } catch (err) {
+                console.log("Partage impossible ou annulé", err);
+                // Si tout échoue (vieux navigateur), on ouvre WhatsApp à l'ancienne
+                window.open(`whatsapp://send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`);
+            }
+        });
+
+        
+        
         // Insertion en bas de la fiche
         productInfoDiv.insertAdjacentHTML('beforeend', shareHTML);
         // --- FIN NOUVEAU ---
