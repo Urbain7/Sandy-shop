@@ -1,33 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Fonction pour afficher un aperçu des catégories sur la page d'accueil
-    const displayCategoryPreview = (products) => {
-        const categoryPreview = document.getElementById('category-preview');
-        if (!categoryPreview) return;
+    // 1. Initialiser la page d'accueil
+    const main = async () => {
+        try {
+            // Charger les produits pour les Stories et Catégories
+            const response = await fetch('data/produits.json');
+            if (!response.ok) throw new Error('Erreur produits');
+            const data = await response.json();
+            const products = data.items ? data.items : data;
+            
+            handleStories(products);
+            displayCategoryPreview(products);
+            
+            // NOUVEAU : Charger les Avis
+            loadTestimonials();
 
-        // Limiter à 4 catégories principales
-        const categories = [...new Set(products.map(p => p.categorie))].slice(0, 4);
-        categoryPreview.innerHTML = ''; // Nettoyer le contenu existant
-
-        categories.forEach(category => {
-            // Trouver un produit représentatif pour la catégorie (le premier trouvé)
-            const product = products.find(p => p.categorie === category);
-            if (product) {
-                const categoryCard = `
-                    <div class="product-card">
-                        <a href="produit.html?id=${product.id}" class="product-link">
-                            <img src="${product.image}" alt="${product.categorie}" loading="lazy">
-                            <h3>${category}</h3>
-                        </a>
-                        <a href="produits.html?categorie=${encodeURIComponent(category)}" class="btn">Découvrir</a>
-                    </div>
-                `;
-                categoryPreview.innerHTML += categoryCard;
-            }
-        });
+        } catch (error) {
+            console.error('Erreur chargement:', error);
+        }
     };
 
-    // Fonction pour gérer l'affichage et l'interaction des stories
+    // 2. Fonction pour les Stories
     const handleStories = (products) => {
         const storiesContainer = document.getElementById('stories-container');
         const storyViewer = document.getElementById('story-viewer');
@@ -37,10 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!storiesContainer || !storyViewer) return;
 
         const storyProducts = products.filter(p => p.in_story === true);
-
         if (storyProducts.length === 0) {
-            const storiesSection = document.querySelector('.stories-section');
-            if (storiesSection) storiesSection.style.display = 'none'; 
+            document.querySelector('.stories-section').style.display = 'none'; 
             return;
         }
 
@@ -48,76 +39,76 @@ document.addEventListener('DOMContentLoaded', () => {
             const storyElement = document.createElement('div');
             storyElement.className = 'story-item';
             storyElement.dataset.productId = product.id; 
-
-            storyElement.innerHTML = `
-                <div class="story-circle">
-                    <img src="${product.image}" alt="${product.nom}" loading="lazy">
-                    <span>${product.nom}</span>
-                </div>
-            `;
+            storyElement.innerHTML = `<div class="story-circle"><img src="${product.image}" alt="${product.nom}" loading="lazy"><span>${product.nom}</span></div>`;
             storiesContainer.appendChild(storyElement);
         });
 
-        // Gestion de l'ouverture de la visionneuse de story
         storiesContainer.addEventListener('click', (e) => {
             const storyItem = e.target.closest('.story-item');
             if (storyItem) {
-                const productId = storyItem.dataset.productId;
-                const product = products.find(p => p.id == productId);
-
+                const product = products.find(p => p.id == storyItem.dataset.productId);
                 if (product) {
-                    let mediaElement = '';
-                    if (product.story_video) {
-                        mediaElement = `<video src="${product.story_video}" autoplay muted loop playsinline controls></video>`;
-                    } else {
-                        mediaElement = `<img src="${product.image}" alt="${product.nom}">`;
-                    }
-                    storyContent.innerHTML = `${mediaElement}<a href="produit.html?id=${product.id}" class="btn">Voir le produit</a>`;
+                    storyContent.innerHTML = `<img src="${product.image}" alt="${product.nom}"><a href="produit.html?id=${product.id}" class="btn">Voir le produit</a>`;
                     storyViewer.classList.add('show');
                 }
             }
         });
 
-        // Gestion de la fermeture de la visionneuse de story
-        const closeViewer = () => {
-            storyViewer.classList.remove('show');
-            const video = storyContent.querySelector('video');
-            if (video) {
-                video.pause();
-                video.currentTime = 0;
-            }
-            storyContent.innerHTML = ""; 
-        };
-
+        const closeViewer = () => { storyViewer.classList.remove('show'); storyContent.innerHTML = ""; };
         if(closeStoryBtn) closeStoryBtn.addEventListener('click', closeViewer);
-        storyViewer.addEventListener('click', (e) => {
-            if (e.target === storyViewer) {
-                closeViewer();
+        storyViewer.addEventListener('click', (e) => { if (e.target === storyViewer) closeViewer(); });
+    };
+
+    // 3. Fonction pour les Catégories
+    const displayCategoryPreview = (products) => {
+        const categoryPreview = document.getElementById('category-preview');
+        if (!categoryPreview) return;
+        // Mélanger pour ne pas toujours montrer les mêmes
+        const shuffled = products.sort(() => 0.5 - Math.random());
+        const categories = [...new Set(shuffled.map(p => p.categorie))].slice(0, 4);
+        
+        categoryPreview.innerHTML = '';
+        categories.forEach(category => {
+            const product = products.find(p => p.categorie === category);
+            if (product) {
+                categoryPreview.innerHTML += `
+                    <div class="product-card" data-aos="fade-up">
+                        <a href="produit.html?id=${product.id}" class="product-link">
+                            <img src="${product.image}" alt="${category}" loading="lazy">
+                            <h3>${category}</h3>
+                        </a>
+                        <a href="produits.html?categorie=${encodeURIComponent(category)}" class="btn">Découvrir</a>
+                    </div>
+                `;
             }
         });
     };
 
-    // Fonction principale qui initialise toutes les sections de la page d'accueil
-    const main = async () => {
-        try {
-            const response = await fetch('data/produits.json');
-            if (!response.ok) throw new Error('Could not fetch products.');
-            
-            // --- C'EST ICI QUE J'AI FAIT LA CORRECTION ---
-            const data = await response.json();
-            // On vérifie si les produits sont dans 'items' (format CMS) ou direct (ancien format)
-            const products = data.items ? data.items : data;
-            // ---------------------------------------------
-            
-            handleStories(products);
-            displayCategoryPreview(products);
+    // 4. NOUVEAU : Fonction pour charger les Avis dynamiques
+    const loadTestimonials = async () => {
+        const container = document.querySelector('.testimonials-grid');
+        if (!container) return;
 
-        } catch (error) {
-            console.error('Failed to initialize homepage sections:', error);
-            const storiesSection = document.querySelector('.stories-section');
-            const categoryPreviewSection = document.querySelector('.container:nth-of-type(2)');
-            if (storiesSection) storiesSection.innerHTML = `<p class="error-message">Impossible de charger les stories pour le moment.</p>`;
-            if (categoryPreviewSection) categoryPreviewSection.innerHTML += `<p class="error-message">Impossible de charger les catégories pour le moment.</p>`;
+        try {
+            const response = await fetch('data/avis.json');
+            if (!response.ok) return; // Si pas de fichier, on garde le HTML par défaut
+            
+            const data = await response.json();
+            const avis = data.items ? data.items : data;
+
+            if (avis.length > 0) {
+                container.innerHTML = ''; // On vide les faux avis
+                avis.forEach(item => {
+                    container.innerHTML += `
+                        <div class="testimonial-card" data-aos="fade-up">
+                            <p class="testimonial-text">"${item.message}"</p>
+                            <span class="testimonial-author">— ${item.nom}</span>
+                        </div>
+                    `;
+                });
+            }
+        } catch (e) {
+            console.log("Pas d'avis chargés");
         }
     };
 
