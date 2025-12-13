@@ -12,15 +12,18 @@
         .container { max-width: 1200px; margin: 0 auto; }
         h1 { margin-bottom: 2rem; text-align: center; }
         
-        /* Cartes chiffres clés */
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .kpi-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
-        .kpi-title { font-size: 0.9rem; color: #666; }
-        .kpi-value { font-size: 2.5rem; font-weight: bold; color: #333; margin-top: 0.5rem; }
-        .kpi-value.money { color: #27ae60; }
-        .kpi-value.alert { color: #e74c3c; }
+        .kpi-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 5px solid transparent; }
+        
+        .kpi-title { font-size: 0.9rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .kpi-value { font-size: 2.2rem; font-weight: bold; color: #333; margin-top: 0.5rem; }
+        
+        /* Couleurs des cartes */
+        .card-stock { border-left-color: #3498db; }
+        .card-value { border-left-color: #f1c40f; }
+        .card-sales { border-left-color: #27ae60; } /* Vert pour les ventes */
+        .card-alert { border-left-color: #e74c3c; }
 
-        /* Sections Graphique et Tableaux */
         .dashboard-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
         .chart-container, .table-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         
@@ -28,7 +31,7 @@
         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; }
         th { color: #888; font-weight: 500; font-size: 0.9rem; }
         
-        .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; }
+        .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: white; }
         .btn-back:hover { background: #eee; }
 
         @media (max-width: 768px) { .dashboard-row { grid-template-columns: 1fr; } }
@@ -37,34 +40,40 @@
 <body>
 
     <div class="container">
-        <h1>Tableau de Bord Sandy'Shop</h1>
+        <h1>📊 Pilotez votre Business</h1>
 
         <!-- 1. Chiffres Clés -->
         <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-title">Produits en Catalogue</div>
+            <!-- NOUVEAU : Chiffre d'affaires -->
+            <div class="kpi-card card-sales">
+                <div class="kpi-title">Chiffre d'Affaires (Ventes)</div>
+                <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
+            </div>
+
+            <div class="kpi-card card-value">
+                <div class="kpi-title">Valeur Stock (Restant)</div>
+                <div class="kpi-value" id="stock-value">0</div>
+            </div>
+
+            <div class="kpi-card card-stock">
+                <div class="kpi-title">Produits en ligne</div>
                 <div class="kpi-value" id="total-products">0</div>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-title">Valeur Totale du Stock (FCFA)</div>
-                <div class="kpi-value money" id="total-value">0</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-title">Stock Faible (&le;3)</div>
-                <div class="kpi-value alert" id="low-stock-count">0</div>
+
+            <div class="kpi-card card-alert">
+                <div class="kpi-title">Alertes Stock (&le;3)</div>
+                <div class="kpi-value" id="low-stock-count" style="color: #e74c3c;">0</div>
             </div>
         </div>
 
         <div class="dashboard-row">
-            <!-- 2. Graphique Catégories -->
             <div class="chart-container">
-                <h3 style="text-align: center;">Répartition par Catégorie</h3>
+                <h3 style="text-align: center;">Vos Stocks par Catégorie</h3>
                 <canvas id="categoryChart"></canvas>
             </div>
 
-            <!-- 3. Alertes Stock -->
             <div class="table-container">
-                <h3 style="color: #e74c3c;">⚠️ À commander d'urgence</h3>
+                <h3 style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
                 <table>
                     <thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead>
                     <tbody id="low-stock-list"></tbody>
@@ -78,49 +87,55 @@
     </div>
 
     <script>
-        // Fonction pour formater les prix
-        function formatPrice(price) { return Number(price).toLocaleString('fr-FR'); }
+        function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
 
         async function loadStats() {
             try {
-                const response = await fetch('data/produits.json');
-                if (!response.ok) throw new Error("Impossible de charger les données");
-                
-                const data = await response.json();
-                const products = data.items ? data.items : data;
+                // 1. Charger les PRODUITS
+                const prodResponse = await fetch('data/produits.json');
+                const prodData = await prodResponse.json();
+                const products = prodData.items ? prodData.items : prodData;
 
-                // --- CALCULS ---
+                // 2. Charger les VENTES (Si le fichier existe)
+                let totalSales = 0;
+                try {
+                    const salesResponse = await fetch('data/ventes.json');
+                    if (salesResponse.ok) {
+                        const salesData = await salesResponse.json();
+                        const sales = salesData.items ? salesData.items : salesData;
+                        // Calculer la somme des ventes
+                        totalSales = sales.reduce((sum, sale) => sum + sale.montant, 0);
+                    }
+                } catch (e) { console.log("Pas encore de ventes enregistrées"); }
+
+                // --- CALCULS STOCKS ---
                 const totalProducts = products.length;
-                
-                // Calcul de la valeur du stock (Prix x Quantité pour chaque produit)
-                const totalValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
-                
-                // Produits à stock faible (3 ou moins)
+                const stockValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
                 const lowStockItems = products.filter(p => p.stock <= 3 && p.stock > 0);
                 
-                // Compter les catégories pour le graphique
                 const categoriesCount = {};
                 products.forEach(p => {
                     categoriesCount[p.categorie] = (categoriesCount[p.categorie] || 0) + 1;
                 });
 
                 // --- AFFICHAGE ---
+                document.getElementById('total-sales').textContent = formatPrice(totalSales); // Affiche le CA
                 document.getElementById('total-products').textContent = totalProducts;
-                document.getElementById('total-value').textContent = formatPrice(totalValue);
+                document.getElementById('stock-value').textContent = formatPrice(stockValue);
                 document.getElementById('low-stock-count').textContent = lowStockItems.length;
 
-                // Remplir le tableau d'alerte
+                // Tableau Alertes
                 const listContainer = document.getElementById('low-stock-list');
                 listContainer.innerHTML = '';
                 if (lowStockItems.length === 0) {
-                    listContainer.innerHTML = '<tr><td colspan="3">Aucun produit en rupture ! 🎉</td></tr>';
+                    listContainer.innerHTML = '<tr><td colspan="3">Tout va bien ! 🎉</td></tr>';
                 } else {
                     lowStockItems.forEach(p => {
                         listContainer.innerHTML += `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`;
                     });
                 }
 
-                // Dessiner le graphique (Camembert)
+                // Graphique
                 const ctx = document.getElementById('categoryChart').getContext('2d');
                 new Chart(ctx, {
                     type: 'doughnut',
@@ -135,7 +150,6 @@
 
             } catch (error) {
                 console.error("Erreur stats:", error);
-                document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>Impossible de charger les statistiques. Vérifiez le fichier produits.json</h2>";
             }
         }
 
