@@ -36,6 +36,14 @@ collections:
                 widget: "number"
                 value_type: "int"
 
+                # --- NOUVEAU CHAMP ---
+              - label: "Prix d'Achat (Secret - Pour calculer votre bénéfice)"
+                name: "prix_achat"
+                widget: "number"
+                default: 0
+                required: false
+                hint: "Combien avez-vous acheté ce produit ? Laissez 0 si inconnu."
+
               - label: "Stock disponible"
                 name: "stock"
                 widget: "number"
