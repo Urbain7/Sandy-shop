@@ -137,57 +137,92 @@ function removeFromCart(productId) {
 // Assure que l'icône du panier est à jour dès que la page est chargée
 document.addEventListener('DOMContentLoaded', updateCartIcon);
 /* =============================== */
-/* GESTION DES COOKIES (Automatique) */
+/* GESTION DES COOKIES & ANALYTICS */
 /* =============================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. On vérifie si l'utilisateur a déjà accepté
-    const cookiesAccepted = localStorage.getItem("cookiesAccepted");
+    const consent = localStorage.getItem("cookieConsent"); // 'accepted' ou 'refused'
 
-    // 2. Si non, on crée et affiche la bannière
-    if (!cookiesAccepted) {
+    // 1. Si déjà accepté, on charge Google Analytics tout de suite
+    if (consent === "accepted") {
+        loadGoogleAnalytics();
+    }
+    
+    // 2. Si aucun choix n'a encore été fait, on affiche la bannière
+    if (!consent) {
         createCookieBanner();
     }
     
-    // 3. Gestion du lien "Gérer les cookies" dans le footer
-    // On remplace le comportement de CookieYes par le nôtre
+    // 3. Lien "Gérer les cookies" du pied de page
     const manageLink = document.querySelector('.cky-banner-element');
     if(manageLink) {
         manageLink.addEventListener('click', (e) => {
             e.preventDefault();
-            createCookieBanner(); // Réouvre la bannière
+            createCookieBanner();
         });
     }
 });
 
 function createCookieBanner() {
-    // Si la bannière existe déjà, on ne la recrée pas, on l'affiche juste
     let banner = document.getElementById('cookie-banner');
-    
     if (!banner) {
         banner = document.createElement('div');
         banner.id = 'cookie-banner';
         banner.innerHTML = `
             <div class="cookie-text">
-                <strong>🍪 On utilise des cookies !</strong><br>
-                Nous utilisons des cookies pour analyser le trafic (Google Analytics) et améliorer votre expérience sur Sandy'Shop.
+                <strong>🍪 Cookies & Confidentialité</strong><br>
+                Nous utilisons des cookies pour analyser le trafic et améliorer votre expérience. Acceptez-vous le suivi statistique ?
             </div>
             <div class="cookie-buttons">
+                <button id="decline-cookies" class="btn-secondary" style="background:#fff; color:#333; border:1px solid #ccc;">Refuser</button>
                 <button id="accept-cookies" class="btn">Accepter</button>
             </div>
         `;
         document.body.appendChild(banner);
-        
-        // Action du bouton Accepter
+
+        // --- ACTION : ACCEPTER ---
         document.getElementById('accept-cookies').addEventListener('click', () => {
-            localStorage.setItem("cookiesAccepted", "true");
-            banner.classList.remove('show');
-            setTimeout(() => banner.remove(), 500); // Supprime du code après animation
+            localStorage.setItem("cookieConsent", "accepted");
+            loadGoogleAnalytics(); // On lance le tracking
+            closeBanner(banner);
+        });
+
+        // --- ACTION : REFUSER ---
+        document.getElementById('decline-cookies').addEventListener('click', () => {
+            localStorage.setItem("cookieConsent", "refused");
+            // On NE lance PAS le tracking
+            closeBanner(banner);
         });
     }
+    setTimeout(() => banner.classList.add('show'), 100);
+}
 
-    // Petit délai pour l'animation d'entrée
-    setTimeout(() => {
-        banner.classList.add('show');
-    }, 100);
+function closeBanner(banner) {
+    banner.classList.remove('show');
+    setTimeout(() => banner.remove(), 500);
+}
+
+// Fonction qui insère le code Google (GTM) dynamiquement
+function loadGoogleAnalytics() {
+    // On vérifie si le script est déjà là pour ne pas le mettre 2 fois
+    if (document.getElementById('gtm-script')) return;
+
+    // Création du script principal GTM
+    const script = document.createElement('script');
+    script.id = 'gtm-script';
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-59W7JKXZ'; // Votre ID GTM
+
+    // Le petit script de démarrage GTM
+    const inlineScript = document.createElement('script');
+    inlineScript.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GTM-59W7JKXZ');
+    `;
+
+    document.head.appendChild(script);
+    document.head.appendChild(inlineScript);
+    console.log("Google Analytics activé ✅");
 }
