@@ -90,3 +90,19 @@ collections:
             fields:
               - {label: "Nom du client", name: "nom", widget: "string"}
               - {label: "Message / Témoignage", name: "message", widget: "text"}
+              # COLLECTION 3 : JOURNAL DES VENTES
+  - name: "ventes"
+    label: "Journal des Ventes"
+    files:
+      - name: "historique_ventes"
+        label: "Historique"
+        file: "data/ventes.json"
+        fields:
+          - name: "items"
+            label: "Liste des ventes réalisées"
+            widget: "list"
+            fields:
+              - {label: "Date", name: "date", widget: "datetime", format: "DD/MM/YYYY", date_format: "DD/MM/YYYY", time_format: false}
+              - {label: "Produit vendu", name: "produit", widget: "string", hint: "Ex: Robe Rouge"}
+              - {label: "Montant encaissé (FCFA)", name: "montant", widget: "number", value_type: "int"}
+              - {label: "Canal", name: "canal", widget: "select", options: ["WhatsApp", "Appel", "Facebook", "Autre"]}
