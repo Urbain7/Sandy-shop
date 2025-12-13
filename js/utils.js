@@ -136,3 +136,58 @@ function removeFromCart(productId) {
 
 // Assure que l'icône du panier est à jour dès que la page est chargée
 document.addEventListener('DOMContentLoaded', updateCartIcon);
+/* =============================== */
+/* GESTION DES COOKIES (Automatique) */
+/* =============================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. On vérifie si l'utilisateur a déjà accepté
+    const cookiesAccepted = localStorage.getItem("cookiesAccepted");
+
+    // 2. Si non, on crée et affiche la bannière
+    if (!cookiesAccepted) {
+        createCookieBanner();
+    }
+    
+    // 3. Gestion du lien "Gérer les cookies" dans le footer
+    // On remplace le comportement de CookieYes par le nôtre
+    const manageLink = document.querySelector('.cky-banner-element');
+    if(manageLink) {
+        manageLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            createCookieBanner(); // Réouvre la bannière
+        });
+    }
+});
+
+function createCookieBanner() {
+    // Si la bannière existe déjà, on ne la recrée pas, on l'affiche juste
+    let banner = document.getElementById('cookie-banner');
+    
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'cookie-banner';
+        banner.innerHTML = `
+            <div class="cookie-text">
+                <strong>🍪 On utilise des cookies !</strong><br>
+                Nous utilisons des cookies pour analyser le trafic (Google Analytics) et améliorer votre expérience sur Sandy'Shop.
+            </div>
+            <div class="cookie-buttons">
+                <button id="accept-cookies" class="btn">Accepter</button>
+            </div>
+        `;
+        document.body.appendChild(banner);
+        
+        // Action du bouton Accepter
+        document.getElementById('accept-cookies').addEventListener('click', () => {
+            localStorage.setItem("cookiesAccepted", "true");
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500); // Supprime du code après animation
+        });
+    }
+
+    // Petit délai pour l'animation d'entrée
+    setTimeout(() => {
+        banner.classList.add('show');
+    }, 100);
+}
