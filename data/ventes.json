@@ -5,6 +5,12 @@
       "produit": "robe rouge",
       "montant": 15000,
       "canal": "WhatsApp"
+    },
+    {
+      "date": "29/11/2025",
+      "produit": "sac zed",
+      "montant": 29000,
+      "canal": "Appel"
     }
   ]
 }
