@@ -11,50 +11,47 @@
         body { font-family: 'Poppins', sans-serif; background: #f4f6f8; margin: 0; padding: 2rem; color: #333; transition: 0.3s; }
         .container { max-width: 1200px; margin: 0 auto; }
         
-        /* En-tête avec Switch */
+        /* En-tête */
         .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        h1 { margin: 0; }
+        h1 { margin: 0; font-size: 1.8rem; }
         
         /* Switch Mode Marge */
-        .switch-container { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 20px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .switch-label { font-size: 0.9rem; font-weight: 500; color: #666; cursor: pointer; }
-        .toggle-switch { position: relative; width: 50px; height: 26px; }
+        .switch-container { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .switch-label { font-size: 0.85rem; font-weight: 500; color: #666; cursor: pointer; }
+        .toggle-switch { position: relative; width: 40px; height: 22px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #8e44ad; } /* Violet pour le bénéfice */
-        input:checked + .slider:before { transform: translateX(24px); }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #8e44ad; }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-        /* Grille des cartes */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .kpi-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 5px solid transparent; transition: all 0.3s ease; }
+        /* KPI Cards */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .kpi-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; }
+        .kpi-title { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .kpi-value { font-size: 1.8rem; font-weight: bold; color: #333; }
         
-        .kpi-title { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .kpi-value { font-size: 2rem; font-weight: bold; color: #333; }
-        
-        /* Couleurs standards */
         .card-stock { border-left-color: #3498db; }
         .card-value { border-left-color: #f1c40f; }
         .card-sales { border-left-color: #27ae60; }
         .card-alert { border-left-color: #e74c3c; }
-        
-        /* Couleurs SECRETES (Bénéfice) */
-        .card-profit { border-left-color: #8e44ad; background-color: #fcf4ff; display: none; } /* Caché par défaut */
+        .card-profit { border-left-color: #8e44ad; background-color: #fcf4ff; display: none; }
 
-        .dashboard-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-        .chart-container, .table-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        /* Graphiques & Tableaux */
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .full-width { grid-column: 1 / -1; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; }
-        th { color: #888; font-weight: 500; font-size: 0.9rem; }
+        .chart-container, .table-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section-title { margin-top: 0; font-size: 1.1rem; color: #444; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        th { color: #888; font-weight: 500; }
         
         .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: white; }
         .btn-back:hover { background: #eee; }
 
-        @media (max-width: 768px) { 
-            .dashboard-row { grid-template-columns: 1fr; } 
-            .header-dashboard { flex-direction: column; align-items: flex-start; }
-        }
+        @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -62,60 +59,62 @@
     <div class="container">
         <div class="header-dashboard">
             <h1>📊 Pilotez votre Business</h1>
-            
-            <!-- LE BOUTON D'ACTIVATION -->
             <div class="switch-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="profit-toggle">
                     <span class="slider"></span>
                 </label>
-                <label for="profit-toggle" class="switch-label">Voir mes bénéfices 🤫</label>
+                <label for="profit-toggle" class="switch-label">Mode Expert (Marge) 🤫</label>
             </div>
         </div>
 
-        <!-- 1. Chiffres Clés -->
+        <!-- 1. KPI (Chiffres clés) -->
         <div class="kpi-grid">
-            <!-- Ventes -->
             <div class="kpi-card card-sales">
-                <div class="kpi-title">Chiffre d'Affaires</div>
+                <div class="kpi-title">Chiffre d'Affaires Total</div>
                 <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
             </div>
-
-            <!-- SECRET : Bénéfice réalisé -->
             <div class="kpi-card card-profit" id="card-profit-realized">
                 <div class="kpi-title">Bénéfice Net (Encaissé)</div>
                 <div class="kpi-value" id="profit-realized" style="color: #8e44ad;">0</div>
             </div>
-
-            <!-- Valeur Stock -->
             <div class="kpi-card card-value">
                 <div class="kpi-title">Valeur Stock (Vente)</div>
                 <div class="kpi-value" id="stock-value">0</div>
             </div>
-
-            <!-- SECRET : Bénéfice Potentiel -->
             <div class="kpi-card card-profit" id="card-profit-potential">
                 <div class="kpi-title">Bénéfice Potentiel (Stock)</div>
                 <div class="kpi-value" id="profit-potential" style="color: #8e44ad;">0</div>
             </div>
-
-            <!-- Alertes -->
             <div class="kpi-card card-alert">
                 <div class="kpi-title">Alertes Stock (&le;3)</div>
                 <div class="kpi-value" id="low-stock-count" style="color: #e74c3c;">0</div>
             </div>
         </div>
 
-        <div class="dashboard-row">
+        <!-- 2. NOUVEAU : Évolution Temporelle -->
+        <div class="charts-row">
+            <div class="chart-container full-width">
+                <h3 class="section-title">📈 Évolution des Ventes (Mensuel)</h3>
+                <div style="height: 300px;">
+                    <canvas id="evolutionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Détails et Répartition -->
+        <div class="charts-row">
             <div class="chart-container">
-                <h3 style="text-align: center;">Vos Stocks par Catégorie</h3>
-                <canvas id="categoryChart"></canvas>
+                <h3 class="section-title">📦 Stocks par Catégorie</h3>
+                <div style="height: 250px; display:flex; justify-content:center;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
             </div>
 
             <div class="table-container">
-                <h3 style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
+                <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
                 <table>
-                    <thead><tr><th>Produit</th><th>Stock</th><th>Prix Vente</th></tr></thead>
+                    <thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead>
                     <tbody id="low-stock-list"></tbody>
                 </table>
             </div>
@@ -129,15 +128,12 @@
     <script>
         function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
 
-        // --- GESTION DU MODE SECRET ---
+        // --- Gestion du Mode Secret ---
         const toggle = document.getElementById('profit-toggle');
-        
-        // 1. Vérifier si l'utilisateur l'avait activé avant
         const isProfitMode = localStorage.getItem('showProfit') === 'true';
         toggle.checked = isProfitMode;
         toggleProfitDisplay(isProfitMode);
 
-        // 2. Écouter le clic
         toggle.addEventListener('change', (e) => {
             const checked = e.target.checked;
             localStorage.setItem('showProfit', checked);
@@ -145,23 +141,21 @@
         });
 
         function toggleProfitDisplay(show) {
-            const profitCards = document.querySelectorAll('.card-profit');
-            profitCards.forEach(card => {
-                card.style.display = show ? 'block' : 'none';
-            });
+            document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none');
         }
-        // ------------------------------
 
+        // --- Chargement des données ---
         async function loadStats() {
             try {
-                // Charger les PRODUITS
+                // Produits
                 const prodResponse = await fetch('data/produits.json');
                 const prodData = await prodResponse.json();
                 const products = prodData.items ? prodData.items : prodData;
 
-                // Charger les VENTES
+                // Ventes
                 let totalSales = 0;
-                let realizedProfit = 0; // Bénéfice sur ce qui est déjà vendu
+                let realizedProfit = 0;
+                let salesByMonth = {}; // Pour stocker les ventes par mois
 
                 try {
                     const salesResponse = await fetch('data/ventes.json');
@@ -172,68 +166,107 @@
                         sales.forEach(sale => {
                             totalSales += sale.montant;
                             
-                            // Calcul Bénéfice Réalisé : On cherche le prix d'achat du produit vendu
-                            // Note : On utilise le prix d'achat ACTUEL du produit dans la base
+                            // Calcul Bénéfice
                             const productInfo = products.find(p => p.nom === sale.produit);
                             if (productInfo && productInfo.prix_achat > 0) {
-                                const margeUnitaire = sale.montant - productInfo.prix_achat; // Simplifié (si qté=1)
-                                realizedProfit += margeUnitaire;
+                                realizedProfit += (sale.montant - productInfo.prix_achat);
+                            }
+
+                            // --- NOUVEAU : Regroupement par mois ---
+                            // On suppose que la date est au format "DD/MM/YYYY" dans l'admin
+                            // On la transforme en clé de tri "YYYY-MM"
+                            if (sale.date) {
+                                // Découpage de la date (compatible format ISO ou Slash)
+                                let dateObj = new Date(sale.date); // Essaie le format standard
+                                if (isNaN(dateObj)) {
+                                    // Si format DD/MM/YYYY
+                                    const parts = sale.date.split('/');
+                                    if(parts.length === 3) dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                                }
+                                
+                                if (!isNaN(dateObj)) {
+                                    const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+                                    salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + sale.montant;
+                                }
                             }
                         });
                     }
-                } catch (e) { console.log("Pas de ventes"); }
+                } catch (e) { console.log("Pas de ventes ou erreur lecture"); }
 
-                // --- CALCULS ---
+                // --- CALCULS STOCKS ---
                 const stockValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
-                
-                // Calcul Bénéfice Potentiel (Ce qu'on gagnera si on vend tout le stock)
                 const potentialProfit = products.reduce((sum, p) => {
                     const buyPrice = p.prix_achat || 0;
-                    if (buyPrice > 0) {
-                        return sum + ((p.prix - buyPrice) * p.stock);
-                    }
-                    return sum;
+                    return buyPrice > 0 ? sum + ((p.prix - buyPrice) * p.stock) : sum;
                 }, 0);
-
                 const lowStockItems = products.filter(p => p.stock <= 3 && p.stock > 0);
-                
                 const categoriesCount = {};
                 products.forEach(p => { categoriesCount[p.categorie] = (categoriesCount[p.categorie] || 0) + 1; });
 
-                // --- AFFICHAGE ---
+                // --- INJECTION HTML ---
                 document.getElementById('total-sales').textContent = formatPrice(totalSales);
                 document.getElementById('stock-value').textContent = formatPrice(stockValue);
                 document.getElementById('low-stock-count').textContent = lowStockItems.length;
-                
-                // Affichage des secrets
                 document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
                 document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
 
-                // Tableau Alertes
+                // Liste Ruptures
                 const listContainer = document.getElementById('low-stock-list');
-                listContainer.innerHTML = '';
-                if (lowStockItems.length === 0) {
-                    listContainer.innerHTML = '<tr><td colspan="3">Tout va bien ! 🎉</td></tr>';
-                } else {
-                    lowStockItems.forEach(p => {
-                        listContainer.innerHTML += `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`;
-                    });
-                }
+                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
+                    lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
-                // Graphique
-                const ctx = document.getElementById('categoryChart').getContext('2d');
-                new Chart(ctx, {
+                // --- GRAPHIQUE 1 : CAMEMBERT CATÉGORIES ---
+                new Chart(document.getElementById('categoryChart').getContext('2d'), {
                     type: 'doughnut',
                     data: {
                         labels: Object.keys(categoriesCount),
                         datasets: [{
                             data: Object.values(categoriesCount),
-                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'],
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                            borderWidth: 0
                         }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
+                });
+
+                // --- GRAPHIQUE 2 : ÉVOLUTION VENTES (LIGNE) ---
+                // Trier les mois par ordre chronologique
+                const sortedMonths = Object.keys(salesByMonth).sort();
+                const salesValues = sortedMonths.map(m => salesByMonth[m]);
+                
+                // Formater les labels (ex: "2025-12" -> "Déc 2025")
+                const monthLabels = sortedMonths.map(m => {
+                    const [y, mo] = m.split('-');
+                    const date = new Date(y, mo - 1);
+                    return date.toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
+                });
+
+                new Chart(document.getElementById('evolutionChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [{
+                            label: "Chiffre d'Affaires (FCFA)",
+                            data: salesValues,
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4, // Courbe arrondie
+                            pointRadius: 5,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#27ae60'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, grid: { color: '#f0f0f0' } }, x: { grid: { display: false } } },
+                        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => formatPrice(c.raw) } } }
                     }
                 });
 
-            } catch (error) { console.error("Erreur stats:", error); }
+            } catch (error) { console.error("Erreur:", error); }
         }
 
         loadStats();
