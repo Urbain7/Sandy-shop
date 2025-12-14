@@ -58,13 +58,13 @@
 
     <div class="container">
         <div class="header-dashboard">
-            <h1>📊 Pilotez votre Business</h1>
+            <h1>Pilotez votre Business</h1>
             <div class="switch-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="profit-toggle">
                     <span class="slider"></span>
                 </label>
-                <label for="profit-toggle" class="switch-label">Mode Expert (Marge) 🤫</label>
+                <label for="profit-toggle" class="switch-label">Mode Expert (Marge) </label>
             </div>
         </div>
 
@@ -95,7 +95,7 @@
         <!-- 2. NOUVEAU : Évolution Temporelle -->
         <div class="charts-row">
             <div class="chart-container full-width">
-                <h3 class="section-title">📈 Évolution des Ventes (Mensuel)</h3>
+                <h3 class="section-title">Évolution des Ventes (Mensuel)</h3>
                 <div style="height: 300px;">
                     <canvas id="evolutionChart"></canvas>
                 </div>
@@ -105,7 +105,7 @@
         <!-- 3. Détails et Répartition -->
         <div class="charts-row">
             <div class="chart-container">
-                <h3 class="section-title">📦 Stocks par Catégorie</h3>
+                <h3 class="section-title">Stocks par Catégorie</h3>
                 <div style="height: 250px; display:flex; justify-content:center;">
                     <canvas id="categoryChart"></canvas>
                 </div>
@@ -212,7 +212,7 @@
 
                 // Liste Ruptures
                 const listContainer = document.getElementById('low-stock-list');
-                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
+                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK </td></tr>' : 
                     lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
                 // --- GRAPHIQUE 1 : CAMEMBERT CATÉGORIES ---
