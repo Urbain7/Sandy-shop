@@ -152,17 +152,22 @@ collections:
           - {label: "Couleur de fond", name: "couleur", widget: "color", default: "#e74c3c"}
 
   # --- 2. INSPIRATIONS (Alternative au Blog) ---
-  - name: "looks"
+ - name: "looks"
     label: "✨ Inspirations / Lookbook"
-    folder: "data/looks"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - {label: "Titre du Look", name: "titre", widget: "string"}
-      - {label: "Photo du Look complet", name: "image", widget: "image"}
-      - {label: "Description courte", name: "description", widget: "text"}
-      - {label: "Produits associés (Noms)", name: "produits", widget: "list", field: {label: "Nom du produit", widget: "string"}}
-
+    files:
+      - name: "liste_looks"
+        label: "Liste des Looks"
+        file: "data/looks.json"
+        fields:
+          - name: "items"
+            label: "Les Looks"
+            widget: "list"
+            fields:
+              - {label: "Titre", name: "titre", widget: "string"}
+              - {label: "Photo", name: "image", widget: "image"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Produits utilisés", name: "produits", widget: "list", field: {widget: "string"}}
+              
   # --- 3. FAQ (Questions Fréquentes) ---
   - name: "faq"
     label: "❓ FAQ (Foire Aux Questions)"
