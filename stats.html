@@ -3,15 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - Sandy'Shop</title>
+    <title>Accès Sécurisé - Sandy'Shop</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Poppins', sans-serif; background: #f4f6f8; margin: 0; padding: 2rem; color: #333; transition: 0.3s; }
-        .container { max-width: 1200px; margin: 0 auto; }
         
-        /* En-tête */
+        /* --- ECRAN DE CONNEXION --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #333; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .login-box {
+            background: white; padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .login-box h2 { margin-top: 0; color: #333; }
+        .login-box input {
+            width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem;
+        }
+        .login-btn {
+            background: #d1a3a4; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;
+        }
+        .login-btn:hover { background: #b08d8e; }
+        .error-msg { color: red; font-size: 0.9rem; display: none; margin-top: 10px; }
+
+        /* --- CONTENU DU DASHBOARD (Caché par défaut) --- */
+        #dashboard-content { display: none; }
+
+        .container { max-width: 1200px; margin: 0 auto; }
         .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
         h1 { margin: 0; font-size: 1.8rem; }
         
@@ -25,7 +46,6 @@
         input:checked + .slider { background-color: #8e44ad; }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        /* KPI Cards */
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .kpi-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; }
         .kpi-title { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
@@ -37,26 +57,35 @@
         .card-alert { border-left-color: #e74c3c; }
         .card-profit { border-left-color: #8e44ad; background-color: #fcf4ff; display: none; }
 
-        /* Graphiques & Tableaux */
         .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
         .full-width { grid-column: 1 / -1; }
-        
         .chart-container, .table-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .section-title { margin-top: 0; font-size: 1.1rem; color: #444; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
 
         table { width: 100%; border-collapse: collapse; }
         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         th { color: #888; font-weight: 500; }
-        
         .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: white; }
         .btn-back:hover { background: #eee; }
-
         @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <!-- 🔒 ECRAN DE CONNEXION -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Espace Privé</h2>
+            <p>Veuillez entrer le mot de passe.</p>
+            <input type="password" id="password-input" placeholder="Mot de passe">
+            <button class="login-btn" onclick="checkPassword()">Valider</button>
+            <p class="error-msg" id="error-msg">Mot de passe incorrect</p>
+            <a href="index.html" style="display:block; margin-top:15px; color:#999; font-size:0.8rem; text-decoration:none;">← Retour au site</a>
+        </div>
+    </div>
+
+    <!-- 📊 CONTENU DU TABLEAU DE BORD -->
+    <div id="dashboard-content" class="container">
         <div class="header-dashboard">
             <h1>Pilotez votre Business</h1>
             <div class="switch-container">
@@ -64,11 +93,10 @@
                     <input type="checkbox" id="profit-toggle">
                     <span class="slider"></span>
                 </label>
-                <label for="profit-toggle" class="switch-label">Mode Expert (Marge) </label>
+                <label for="profit-toggle" class="switch-label">Mode Expert (Marge)</label>
             </div>
         </div>
 
-        <!-- 1. KPI (Chiffres clés) -->
         <div class="kpi-grid">
             <div class="kpi-card card-sales">
                 <div class="kpi-title">Chiffre d'Affaires Total</div>
@@ -92,35 +120,26 @@
             </div>
         </div>
 
-        <!-- 2. NOUVEAU : Évolution Temporelle -->
         <div class="charts-row">
             <div class="chart-container full-width">
                 <h3 class="section-title">Évolution des Ventes (Mensuel)</h3>
-                <div style="height: 300px;">
-                    <canvas id="evolutionChart"></canvas>
-                </div>
+                <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
 
-        <!-- 3. Détails et Répartition -->
         <div class="charts-row">
             <div class="chart-container">
                 <h3 class="section-title">Stocks par Catégorie</h3>
-                <div style="height: 250px; display:flex; justify-content:center;">
-                    <canvas id="categoryChart"></canvas>
-                </div>
+                <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
-
             <div class="table-container">
                 <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
-                <table>
-                    <thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead>
-                    <tbody id="low-stock-list"></tbody>
-                </table>
+                <table><thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead><tbody id="low-stock-list"></tbody></table>
             </div>
         </div>
         
         <div style="text-align: center;">
+            <button onclick="logout()" class="btn-back" style="background:#333; color:white; border:none; cursor:pointer;">Se déconnecter</button>
             <a href="index.html" class="btn-back">← Retour au site</a>
         </div>
     </div>
@@ -128,34 +147,71 @@
     <script>
         function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
 
-        // --- Gestion du Mode Secret ---
+        // --- 🔐 GESTION DU MOT DE PASSE ---
+        
+        // CHOISISSEZ VOTRE MOT DE PASSE ICI (Entre les guillemets)
+        const MY_PASSWORD = "admin123"; 
+
+        const loginOverlay = document.getElementById('login-overlay');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const passInput = document.getElementById('password-input');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Vérifier si déjà connecté (Session)
+        if (sessionStorage.getItem('isStatsAuth') === 'true') {
+            showDashboard();
+        }
+
+        function checkPassword() {
+            if (passInput.value === MY_PASSWORD) {
+                sessionStorage.setItem('isStatsAuth', 'true');
+                showDashboard();
+            } else {
+                errorMsg.style.display = 'block';
+                passInput.value = '';
+            }
+        }
+
+        // Permettre la validation avec la touche Entrée
+        passInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") checkPassword();
+        });
+
+        function showDashboard() {
+            loginOverlay.style.display = 'none';
+            dashboardContent.style.display = 'block';
+            loadStats(); // On charge les données seulement si le mot de passe est bon
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isStatsAuth');
+            location.reload();
+        }
+
+        // --- LOGIQUE DASHBOARD ---
         const toggle = document.getElementById('profit-toggle');
         const isProfitMode = localStorage.getItem('showProfit') === 'true';
         toggle.checked = isProfitMode;
         toggleProfitDisplay(isProfitMode);
 
         toggle.addEventListener('change', (e) => {
-            const checked = e.target.checked;
-            localStorage.setItem('showProfit', checked);
-            toggleProfitDisplay(checked);
+            localStorage.setItem('showProfit', e.target.checked);
+            toggleProfitDisplay(e.target.checked);
         });
 
         function toggleProfitDisplay(show) {
             document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none');
         }
 
-        // --- Chargement des données ---
         async function loadStats() {
             try {
-                // Produits
                 const prodResponse = await fetch('data/produits.json');
                 const prodData = await prodResponse.json();
                 const products = prodData.items ? prodData.items : prodData;
 
-                // Ventes
                 let totalSales = 0;
                 let realizedProfit = 0;
-                let salesByMonth = {}; // Pour stocker les ventes par mois
+                let salesByMonth = {}; 
 
                 try {
                     const salesResponse = await fetch('data/ventes.json');
@@ -165,25 +221,16 @@
                         
                         sales.forEach(sale => {
                             totalSales += sale.montant;
-                            
-                            // Calcul Bénéfice
                             const productInfo = products.find(p => p.nom === sale.produit);
                             if (productInfo && productInfo.prix_achat > 0) {
                                 realizedProfit += (sale.montant - productInfo.prix_achat);
                             }
-
-                            // --- NOUVEAU : Regroupement par mois ---
-                            // On suppose que la date est au format "DD/MM/YYYY" dans l'admin
-                            // On la transforme en clé de tri "YYYY-MM"
                             if (sale.date) {
-                                // Découpage de la date (compatible format ISO ou Slash)
-                                let dateObj = new Date(sale.date); // Essaie le format standard
+                                let dateObj = new Date(sale.date);
                                 if (isNaN(dateObj)) {
-                                    // Si format DD/MM/YYYY
                                     const parts = sale.date.split('/');
                                     if(parts.length === 3) dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
                                 }
-                                
                                 if (!isNaN(dateObj)) {
                                     const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
                                     salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + sale.montant;
@@ -191,9 +238,8 @@
                             }
                         });
                     }
-                } catch (e) { console.log("Pas de ventes ou erreur lecture"); }
+                } catch (e) { console.log("Pas de ventes"); }
 
-                // --- CALCULS STOCKS ---
                 const stockValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
                 const potentialProfit = products.reduce((sum, p) => {
                     const buyPrice = p.prix_achat || 0;
@@ -203,42 +249,30 @@
                 const categoriesCount = {};
                 products.forEach(p => { categoriesCount[p.categorie] = (categoriesCount[p.categorie] || 0) + 1; });
 
-                // --- INJECTION HTML ---
                 document.getElementById('total-sales').textContent = formatPrice(totalSales);
                 document.getElementById('stock-value').textContent = formatPrice(stockValue);
                 document.getElementById('low-stock-count').textContent = lowStockItems.length;
                 document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
                 document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
 
-                // Liste Ruptures
                 const listContainer = document.getElementById('low-stock-list');
-                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK </td></tr>' : 
+                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
                     lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
-                // --- GRAPHIQUE 1 : CAMEMBERT CATÉGORIES ---
                 new Chart(document.getElementById('categoryChart').getContext('2d'), {
                     type: 'doughnut',
                     data: {
                         labels: Object.keys(categoriesCount),
-                        datasets: [{
-                            data: Object.values(categoriesCount),
-                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
-                            borderWidth: 0
-                        }]
+                        datasets: [{ data: Object.values(categoriesCount), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'], borderWidth: 0 }]
                     },
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
                 });
 
-                // --- GRAPHIQUE 2 : ÉVOLUTION VENTES (LIGNE) ---
-                // Trier les mois par ordre chronologique
                 const sortedMonths = Object.keys(salesByMonth).sort();
                 const salesValues = sortedMonths.map(m => salesByMonth[m]);
-                
-                // Formater les labels (ex: "2025-12" -> "Déc 2025")
                 const monthLabels = sortedMonths.map(m => {
                     const [y, mo] = m.split('-');
-                    const date = new Date(y, mo - 1);
-                    return date.toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
+                    return new Date(y, mo - 1).toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
                 });
 
                 new Chart(document.getElementById('evolutionChart').getContext('2d'), {
@@ -246,30 +280,14 @@
                     data: {
                         labels: monthLabels,
                         datasets: [{
-                            label: "Chiffre d'Affaires (FCFA)",
-                            data: salesValues,
-                            borderColor: '#27ae60',
-                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4, // Courbe arrondie
-                            pointRadius: 5,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#27ae60'
+                            label: "Chiffre d'Affaires (FCFA)", data: salesValues, borderColor: '#27ae60', backgroundColor: 'rgba(39, 174, 96, 0.1)', borderWidth: 3, fill: true, tension: 0.4, pointRadius: 5
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, grid: { color: '#f0f0f0' } }, x: { grid: { display: false } } },
-                        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => formatPrice(c.raw) } } }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
                 });
 
             } catch (error) { console.error("Erreur:", error); }
         }
-
-        loadStats();
     </script>
 </body>
 </html>
