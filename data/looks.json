@@ -1,1 +1,13 @@
-{ "articles": [] }
+{
+  "items": [
+    {
+      "titre": "sac top",
+      "image": "/images/uploads/IMG-20251113-WA0209 (1).jpg",
+      "description": "avec ce sac, vous..",
+      "produits": [
+        "robe"
+      ]
+    }
+  ],
+  "articles": []
+}
