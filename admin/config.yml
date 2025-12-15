@@ -138,3 +138,55 @@ collections:
               - {label: "Produit vendu", name: "produit", widget: "string", hint: "Ex: Robe Rouge"}
               - {label: "Montant encaissé (FCFA)", name: "montant", widget: "number", value_type: "int"}
               - {label: "Canal", name: "canal", widget: "select", options: ["WhatsApp", "Appel", "Facebook", "Autre"]}
+    # --- 1. COMPTE À REBOURS (FLASH SALE) ---
+  - name: "promo"
+    label: "🔥 Promo Flash (Compte à rebours)"
+    files:
+      - name: "config_promo"
+        label: "Configurer la Promo"
+        file: "data/promo.json"
+        fields:
+          - {label: "Activer la promo ?", name: "active", widget: "boolean", default: false}
+          - {label: "Titre de la promo", name: "titre", widget: "string", default: "Vente Flash Tabaski !"}
+          - {label: "Date de fin", name: "date_fin", widget: "datetime"}
+          - {label: "Couleur de fond", name: "couleur", widget: "color", default: "#e74c3c"}
+
+  # --- 2. INSPIRATIONS (Alternative au Blog) ---
+  - name: "looks"
+    label: "✨ Inspirations / Lookbook"
+    folder: "data/looks"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titre du Look", name: "titre", widget: "string"}
+      - {label: "Photo du Look complet", name: "image", widget: "image"}
+      - {label: "Description courte", name: "description", widget: "text"}
+      - {label: "Produits associés (Noms)", name: "produits", widget: "list", field: {label: "Nom du produit", widget: "string"}}
+
+  # --- 3. FAQ (Questions Fréquentes) ---
+  - name: "faq"
+    label: "❓ FAQ (Foire Aux Questions)"
+    files:
+      - name: "liste_faq"
+        label: "Liste des Questions"
+        file: "data/faq.json"
+        fields:
+          - name: "items"
+            label: "Questions"
+            widget: "list"
+            fields:
+              - {label: "Question", name: "question", widget: "string"}
+              - {label: "Réponse", name: "reponse", widget: "text"}
+
+  # --- 4. POPUP VIP ---
+  - name: "popup"
+    label: "🎁 Popup VIP WhatsApp"
+    files:
+      - name: "config_popup"
+        label: "Configurer le Popup"
+        file: "data/popup.json"
+        fields:
+          - {label: "Activer ?", name: "active", widget: "boolean", default: true}
+          - {label: "Titre", name: "titre", widget: "string", default: "Rejoignez le Club VIP !"}
+          - {label: "Texte", name: "texte", widget: "text", default: "Soyez les premières informées des nouveaux arrivages."}
+          - {label: "Lien du Groupe WhatsApp", name: "lien", widget: "string"}
