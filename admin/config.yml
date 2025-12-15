@@ -3,15 +3,13 @@ backend:
   repo: urbain7/Sandy-shop
   branch: main
 
-# Dossier où les images uploadées seront stockées
 media_folder: "images/uploads"
-# Chemin pour l'affichage sur le site
 public_folder: "images/uploads"
 
 collections:
- # --- NOUVEAU : CONFIGURATION DU DESIGN ---
+  # 1. CONFIGURATION DU DESIGN
   - name: "config"
-    label: "Design & Couleurs"
+    label: "🎨 Design & Couleurs"
     files:
       - name: "design"
         label: "Personnaliser le site"
@@ -27,15 +25,16 @@ collections:
               - { label: "⚡ Électricien & BTP (Bleu & Jaune)", value: "btp" }
               - { label: "🌿 Nature & Bio (Vert & Beige)", value: "nature" }
               - { label: "💎 Bijouterie Luxe (Noir & Or)", value: "luxe" }
-              - { label: "🎨 Personnalisé (Utiliser la couleur ci-dessous)", value: "perso" }
+              - { label: "🎨 Personnalisé", value: "perso" }
           
           - label: "Couleur Personnalisée (Si 'Personnalisé' choisi)"
             name: "couleur_perso"
             widget: "color"
             default: "#d1a3a4"
-  # COLLECTION 1 : LES PRODUITS
+
+  # 2. PRODUITS
   - name: "produits"
-    label: "Produits"
+    label: "📦 Produits"
     files:
       - name: "catalogue"
         label: "Catalogue Général"
@@ -47,133 +46,77 @@ collections:
             collapsed: false
             summary: "{{fields.nom}} - {{fields.prix}} FCFA"
             fields:
-              - label: "ID (Unique, ex: prod_10)"
-                name: "id"
-                widget: "string"
-
-              - label: "Nom du produit"
-                name: "nom"
-                widget: "string"
-
-              - label: "Prix (Chiffre sans FCFA)"
-                name: "prix"
-                widget: "number"
-                value_type: "int"
-
-                # --- NOUVEAU CHAMP ---
-              - label: "Prix d'Achat (Secret - Pour calculer votre bénéfice)"
-                name: "prix_achat"
-                widget: "number"
-                default: 0
-                required: false
-                hint: "Combien avez-vous acheté ce produit ? Laissez 0 si inconnu."
-
-              - label: "Stock disponible"
-                name: "stock"
-                widget: "number"
-                default: 1
-
-              - label: "Catégorie"
-                name: "categorie"
-                widget: "select"
-                options: 
-                  - "Sacs"
-                  - "Chaussures"
-                  - "Robes"
-                  - "Accessoires"
-                  - "Jeans"
-                  - "Ensembles"
-                  - "Cosmétiques"
-
-              # Image principale (Vignette)
-              - label: "Image Principale"
-                name: "image"
-                widget: "image"
-                choose_url: false
-
-              # Galerie d'images supplémentaires
-              - label: "Galerie photos (Optionnel : Dos, Zoom...)"
+              - {label: "ID (Unique)", name: "id", widget: "string"}
+              - {label: "Nom", name: "nom", widget: "string"}
+              - {label: "Prix Vente", name: "prix", widget: "number", value_type: "int"}
+              - {label: "Prix Achat (Marge)", name: "prix_achat", widget: "number", default: 0, required: false}
+              - {label: "Stock", name: "stock", widget: "number", default: 1}
+              - {label: "Catégorie", name: "categorie", widget: "select", options: ["Sacs", "Chaussures", "Robes", "Accessoires", "Jeans", "Ensembles", "Cosmétiques", "Bagues", "Colliers"]}
+              - {label: "Image Principale", name: "image", widget: "image"}
+              - label: "Galerie"
                 name: "images"
                 widget: "list"
                 collapsed: true
-                summary: "Photo supplémentaire"
                 field: {label: "Photo", widget: "image"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "En Story ?", name: "in_story", widget: "boolean", default: false}
 
-              - label: "Description détaillée"
-                name: "description"
-                widget: "text"
-
-              - label: "Afficher en Story (Accueil) ?"
-                name: "in_story"
-                widget: "boolean"
-                default: false
-
-  # COLLECTION 2 : LES AVIS CLIENTS
+  # 3. AVIS CLIENTS
   - name: "avis"
-    label: "Avis Clients (Témoignages)"
+    label: "⭐️ Avis Clients"
     files:
       - name: "liste_avis"
         label: "Liste des Avis"
         file: "data/avis.json"
         fields:
           - name: "items"
-            label: "Les Avis Publiés"
+            label: "Avis"
             widget: "list"
             fields:
-              - {label: "Nom du client", name: "nom", widget: "string"}
-              - {label: "Message / Témoignage", name: "message", widget: "text"}
-              # COLLECTION 3 : JOURNAL DES VENTES
+              - {label: "Nom", name: "nom", widget: "string"}
+              - {label: "Message", name: "message", widget: "text"}
+
+  # 4. JOURNAL DES VENTES
   - name: "ventes"
-    label: "Journal des Ventes"
+    label: "💰 Journal des Ventes"
     files:
       - name: "historique_ventes"
         label: "Historique"
         file: "data/ventes.json"
         fields:
           - name: "items"
-            label: "Liste des ventes réalisées"
+            label: "Ventes"
             widget: "list"
             fields:
               - {label: "Date", name: "date", widget: "datetime", format: "DD/MM/YYYY", date_format: "DD/MM/YYYY", time_format: false}
-              - {label: "Produit vendu", name: "produit", widget: "string", hint: "Ex: Robe Rouge"}
-              - {label: "Montant encaissé (FCFA)", name: "montant", widget: "number", value_type: "int"}
+              - {label: "Produit", name: "produit", widget: "string"}
+              - {label: "Montant (FCFA)", name: "montant", widget: "number", value_type: "int"}
               - {label: "Canal", name: "canal", widget: "select", options: ["WhatsApp", "Appel", "Facebook", "Autre"]}
-    # --- 1. COMPTE À REBOURS (FLASH SALE) ---
-  - name: "promo"
-    label: "🔥 Promo Flash (Compte à rebours)"
+
+  # 5. MARKETING (Promo, FAQ, Popup...)
+  - name: "marketing"
+    label: "📢 Marketing & Outils"
     files:
       - name: "config_promo"
-        label: "Configurer la Promo"
+        label: "🔥 Promo Flash"
         file: "data/promo.json"
         fields:
-          - {label: "Activer la promo ?", name: "active", widget: "boolean", default: false}
-          - {label: "Titre de la promo", name: "titre", widget: "string", default: "Vente Flash Tabaski !"}
-          - {label: "Date de fin", name: "date_fin", widget: "datetime"}
-          - {label: "Couleur de fond", name: "couleur", widget: "color", default: "#e74c3c"}
+          - {label: "Activer ?", name: "active", widget: "boolean", default: false}
+          - {label: "Titre", name: "titre", widget: "string", default: "Vente Flash !"}
+          - {label: "Fin le", name: "date_fin", widget: "datetime"}
+          - {label: "Couleur fond", name: "couleur", widget: "color", default: "#e74c3c"}
 
-  # --- 2. INSPIRATIONS (Alternative au Blog) ---
- - name: "looks"
-    label: "✨ Inspirations / Lookbook"
-    files:
-      - name: "liste_looks"
-        label: "Liste des Looks"
-        file: "data/looks.json"
+      - name: "config_popup"
+        label: "🎁 Popup VIP"
+        file: "data/popup.json"
         fields:
-          - name: "items"
-            label: "Les Looks"
-            widget: "list"
-            fields:
-              - {label: "Titre", name: "titre", widget: "string"}
-              - {label: "Photo", name: "image", widget: "image"}
-              - {label: "Description", name: "description", widget: "text"}
-              - {label: "Produits utilisés", name: "produits", widget: "list", field: {widget: "string"}}
-              
-  # --- 3. FAQ (Questions Fréquentes) ---
-  - name: "faq"
-    label: "❓ FAQ (Foire Aux Questions)"
-    files:
+          - {label: "Activer ?", name: "active", widget: "boolean", default: false}
+          - {label: "Titre", name: "titre", widget: "string"}
+          - {label: "Texte", name: "texte", widget: "text"}
+          - {label: "Lien WhatsApp", name: "lien", widget: "string"}
+
       - name: "liste_faq"
-        label: "Liste des Questions"
+        label: "❓ FAQ"
         file: "data/faq.json"
         fields:
           - name: "items"
@@ -183,15 +126,15 @@ collections:
               - {label: "Question", name: "question", widget: "string"}
               - {label: "Réponse", name: "reponse", widget: "text"}
 
-  # --- 4. POPUP VIP ---
-  - name: "popup"
-    label: "🎁 Popup VIP WhatsApp"
-    files:
-      - name: "config_popup"
-        label: "Configurer le Popup"
-        file: "data/popup.json"
+      - name: "liste_looks"
+        label: "✨ Inspirations (Looks)"
+        file: "data/looks.json"
         fields:
-          - {label: "Activer ?", name: "active", widget: "boolean", default: true}
-          - {label: "Titre", name: "titre", widget: "string", default: "Rejoignez le Club VIP !"}
-          - {label: "Texte", name: "texte", widget: "text", default: "Soyez les premières informées des nouveaux arrivages."}
-          - {label: "Lien du Groupe WhatsApp", name: "lien", widget: "string"}
+          - name: "items"
+            label: "Looks"
+            widget: "list"
+            fields:
+              - {label: "Titre", name: "titre", widget: "string"}
+              - {label: "Photo", name: "image", widget: "image"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Produits", name: "produits", widget: "list", field: {widget: "string"}}
