@@ -1,77 +1,81 @@
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        // 1. Lire la configuration depuis le fichier JSON
+        // 1. Lire la configuration
         const response = await fetch('data/design.json');
         if (!response.ok) return;
         const config = await response.json();
 
-        // 2. Définir les Palettes de Couleurs (Hexadécimal)
+        // 2. Définir les Palettes (Seulement pour le mode CLAIR)
         const palettes = {
             'mode': {
-                primary: '#d1a3a4',   // Rose poudré
-                bg: '#f4f6f8',        // Gris perle
-                text: '#333333'
+                primary: '#d1a3a4',
+                lightBg: '#f4f6f8', // Gris perle
+                lightText: '#333333'
             },
             'cuisine': {
-                primary: '#e67e22',   // Orange vif
-                bg: '#fff5e6',        // Crème
-                text: '#2c3e50'
+                primary: '#e67e22',
+                lightBg: '#fff5e6', // Crème
+                lightText: '#2c3e50'
             },
             'btp': {
-                primary: '#007bff',   // Bleu chantier
-                bg: '#f0f8ff',        // Bleu très pâle
-                text: '#000000'
+                primary: '#007bff',
+                lightBg: '#f0f8ff', // Bleu très pâle
+                lightText: '#000000'
             },
             'nature': {
-                primary: '#27ae60',   // Vert feuille
-                bg: '#f1f8e9',        // Vert très pâle
-                text: '#1e3a1e'
+                primary: '#27ae60',
+                lightBg: '#f1f8e9', // Vert très pâle
+                lightText: '#1e3a1e'
             },
             'luxe': {
-                primary: '#d4af37',   // Or
-                bg: '#111111',        // Noir (Mode sombre forcé)
-                text: '#f0f0f0'
+                // Le thème Luxe est spécial (Noir tout le temps)
+                primary: '#d4af37',
+                lightBg: '#111111', 
+                lightText: '#f0f0f0',
+                isDark: true 
             }
         };
 
         let selectedColors;
 
-        // 3. Appliquer le choix
+        // 3. Choix de la palette
         if (config.theme === 'perso') {
-            // Si mode personnalisé
             selectedColors = {
                 primary: config.couleur_perso || '#333',
-                bg: '#f4f6f8',
-                text: '#333'
+                lightBg: '#f4f6f8',
+                lightText: '#333'
             };
         } else {
-            // Si pré-réglage
             selectedColors = palettes[config.theme] || palettes['mode'];
         }
 
-        // 4. Injecter les couleurs dans le CSS du site
+        // 4. Application des couleurs
         const root = document.documentElement;
         
-        // Couleur d'accent (Boutons, Prix, Titres)
+        // A. La couleur principale (Boutons, Prix...) s'applique tout le temps
         root.style.setProperty('--accent-color', selectedColors.primary);
         root.style.setProperty('--btn-main-bg', selectedColors.primary);
         
-        // Cas spécial pour le thème Luxe (Fond noir)
-        if (config.theme === 'luxe') {
-            root.style.setProperty('--background-color', '#111');
-            root.style.setProperty('--card-bg-color', '#222');
-            root.style.setProperty('--text-color', '#fff');
-            root.style.setProperty('--card-border-color', '#333');
-            root.classList.add('dark-mode'); // Force les icônes en blanc
-        } else {
-            // Thèmes clairs normaux
-            root.style.setProperty('--background-color', selectedColors.bg);
-            root.style.setProperty('--text-color', selectedColors.text);
-            root.style.setProperty('--card-bg-color', '#ffffff');
-            root.classList.remove('dark-mode');
+        // B. Cas Spécial : Thème Luxe (Force le mode sombre)
+        if (selectedColors.isDark) {
+            document.documentElement.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark'); // On force la sauvegarde
+            // On cache le bouton de switch car ce thème est uniquement sombre
+            const toggleBtn = document.getElementById('theme-toggle');
+            if(toggleBtn) toggleBtn.style.display = 'none';
+        } 
+        else {
+            // C. Cas Normal : On définit les variables du mode CLAIR
+            // On ne touche PAS à --background-color directement, on remplit une variable tampon
+            root.style.setProperty('--theme-light-bg', selectedColors.lightBg);
+            root.style.setProperty('--theme-light-text', selectedColors.lightText);
+            
+            // Si ce n'est pas le thème Luxe, on s'assure que le bouton switch est visible
+            const toggleBtn = document.getElementById('theme-toggle');
+            if(toggleBtn) toggleBtn.style.display = 'block';
         }
 
     } catch (e) {
-        console.error("Erreur chargement thème:", e);
+        console.error("Erreur thème:", e);
     }
 });
