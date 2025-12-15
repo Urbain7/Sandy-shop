@@ -11,7 +11,7 @@ public_folder: "images/uploads"
 collections:
  # --- NOUVEAU : CONFIGURATION DU DESIGN ---
   - name: "config"
-    label: "🎨 Design & Couleurs"
+    label: "Design & Couleurs"
     files:
       - name: "design"
         label: "Personnaliser le site"
