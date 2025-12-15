@@ -9,6 +9,30 @@ media_folder: "images/uploads"
 public_folder: "images/uploads"
 
 collections:
+ # --- NOUVEAU : CONFIGURATION DU DESIGN ---
+  - name: "config"
+    label: "🎨 Design & Couleurs"
+    files:
+      - name: "design"
+        label: "Personnaliser le site"
+        file: "data/design.json"
+        fields:
+          - label: "Choisir l'ambiance (Palette)"
+            name: "theme"
+            widget: "select"
+            default: "mode"
+            options:
+              - { label: "👗 Mode & Accessoires (Rose Poudré)", value: "mode" }
+              - { label: "🍔 Cuisine & Resto (Rouge & Orange)", value: "cuisine" }
+              - { label: "⚡ Électricien & BTP (Bleu & Jaune)", value: "btp" }
+              - { label: "🌿 Nature & Bio (Vert & Beige)", value: "nature" }
+              - { label: "💎 Bijouterie Luxe (Noir & Or)", value: "luxe" }
+              - { label: "🎨 Personnalisé (Utiliser la couleur ci-dessous)", value: "perso" }
+          
+          - label: "Couleur Personnalisée (Si 'Personnalisé' choisi)"
+            name: "couleur_perso"
+            widget: "color"
+            default: "#d1a3a4"
   # COLLECTION 1 : LES PRODUITS
   - name: "produits"
     label: "Produits"
