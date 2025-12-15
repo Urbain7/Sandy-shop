@@ -1,1 +1,9 @@
-{ "articles": [] }
+{
+  "items": [
+    {
+      "question": "vous livrez à kara",
+      "reponse": "oui"
+    }
+  ],
+  "articles": []
+}
