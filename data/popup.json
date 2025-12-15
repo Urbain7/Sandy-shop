@@ -1,1 +1,7 @@
-{ "actif": false }
+{
+  "active": true,
+  "titre": "exclusivité",
+  "texte": "rejoins notre groupe pour ne rien rater",
+  "lien": "https://chat.whatsapp.com/BXY5TIuu6tzJzp7hpHNe6p?mode=hqrc",
+  "actif": false
+}
