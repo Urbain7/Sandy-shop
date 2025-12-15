@@ -1,44 +1,49 @@
 /* =============================== */
 /* Style global et variables       */
 /* =============================== */
-:root { /* Thème Clair - Modifié pour être plus doux */
-    --background-color: #f4f6f8; /* Un gris-bleuté très pâle, moderne et reposant */
-    --text-color: #333;
+:root { 
+    /* 1. Variables par défaut (si le JS plante) */
+    --theme-light-bg: #f4f6f8;
+    --theme-light-text: #333333;
+    --accent-color: #d1a3a4;
+
+    /* 2. Application du mode CLAIR */
+    --background-color: var(--theme-light-bg); /* On utilise la couleur du moteur */
+    --text-color: var(--theme-light-text);
+    
     --header-bg-color: #333;
     --header-text-color: #f0f0f0;
     
-    --card-bg-color: #ffffff;    /* Les cartes restent blanches pour le contraste */
-    --card-border-color: #e1e4e8; /* Bordures un peu plus visibles */
-    
+    --card-bg-color: #ffffff;
+    --card-border-color: #e1e4e8;
     --input-bg-color: #ffffff;
     --input-border-color: #ccc;
     
-    --accent-color: #d1a3a4;     /* Votre couleur rose actuelle */
     --secondary-color: #333;
     
-    --btn-main-bg: var(--secondary-color);
+    --btn-main-bg: var(--accent-color);
     --btn-main-text: #fff;
     --btn-secondary-bg: transparent;
     --btn-secondary-border: var(--input-border-color);
     --btn-secondary-text: var(--secondary-color);
 }
 
-html.dark-mode { /* Thème Sombre (Inchangé) */
-    --background-color: #1a1a1a;
-    --text-color: #f0f0f0;
-    --header-bg-color: #111;
+/* 3. Application du mode SOMBRE (Écrase le mode clair) */
+html.dark-mode { 
+    --background-color: #1a1a1a !important; /* !important pour forcer le noir */
+    --text-color: #f0f0f0 !important;
+    
+    --header-bg-color: #000;
     --header-text-color: #f0f0f0;
+    
     --card-bg-color: #2a2a2a;
     --card-border-color: #444;
+    
     --input-bg-color: #333;
     --input-border-color: #555;
-    --accent-color: #d1a3a4;
+    
     --secondary-color: #f0f0f0;
-    --btn-main-bg: var(--accent-color);
     --btn-main-text: #1a1a1a;
-    --btn-secondary-bg: transparent;
-    --btn-secondary-border: var(--input-border-color);
-    --btn-secondary-text: var(--secondary-color);
 }
 
 /* =============================== */
