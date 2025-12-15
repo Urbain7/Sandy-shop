@@ -7,10 +7,13 @@
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- MOTEUR DE THÈME (Pour avoir les couleurs du site) -->
     <script src="js/theme-engine.js"></script>
 
     <style>
         :root {
+            /* Valeurs par défaut */
             --background-color: #f4f6f8;
             --card-bg-color: #ffffff;
             --text-color: #333333;
@@ -83,7 +86,7 @@
     <!-- 🔒 LOGIN -->
     <div id="login-overlay">
         <div class="login-box">
-            <h2>Accès Business</h2>
+            <h2>🔐 Accès Business</h2>
             <p>Mot de passe requis</p>
             <input type="password" id="password-input" placeholder="Entrez le code...">
             <button class="login-btn" onclick="checkPassword()">Accéder</button>
@@ -95,16 +98,17 @@
     <!-- 📊 DASHBOARD -->
     <div id="dashboard-content" class="container">
         <div class="header-dashboard">
-            <h1>Analyse & Performance</h1>
+            <h1>📊 Analyse & Performance</h1>
             <div class="switch-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="profit-toggle">
                     <span class="slider"></span>
                 </label>
-                <label for="profit-toggle" class="switch-label">Mode Expert (Marge)</label>
+                <label for="profit-toggle" class="switch-label">Mode Expert (Marge) 🤫</label>
             </div>
         </div>
 
+        <!-- KPI GRID -->
         <div class="kpi-grid">
             <div class="kpi-card card-sales">
                 <div class="kpi-title">Chiffre d'Affaires Total</div>
@@ -128,28 +132,29 @@
             </div>
         </div>
 
-        <!-- GRAPHIQUE ÉVOLUTION (Ligne) -->
+        <!-- GRAPHIQUE ÉVOLUTION (CA) -->
         <div class="charts-row">
             <div class="chart-container full-width">
-                <h3 class="section-title">Évolution du Chiffre d'Affaires (Mensuel)</h3>
+                <h3 class="section-title">📈 Évolution du Chiffre d'Affaires (Mensuel)</h3>
                 <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
 
         <div class="charts-row">
-            <!-- NOUVEAU : TOP PRODUITS (Barres horizontales) -->
+            <!-- TOP 5 PRODUITS (QUANTITÉ) -->
             <div class="chart-container">
-                <h3 class="section-title">Top 5 Produits (Meilleures Ventes)</h3>
+                <h3 class="section-title">🏆 Top 5 Produits (Volume Ventes)</h3>
                 <div style="height: 250px;"><canvas id="topProductsChart"></canvas></div>
             </div>
 
-            <!-- STOCK PAR CATÉGORIE (Camembert) -->
+            <!-- STOCK PAR CATÉGORIE -->
             <div class="chart-container">
-                <h3 class="section-title">Répartition du Stock</h3>
+                <h3 class="section-title">📦 Répartition du Stock</h3>
                 <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
         </div>
 
+        <!-- TABLEAU RUPTURES -->
         <div class="charts-row">
             <div class="table-container full-width">
                 <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes (Stock faible)</h3>
@@ -167,7 +172,7 @@
         function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
 
         // --- 🔐 LOGIN ---
-        const MY_PASSWORD = "admin123"; // CHANGEZ VOTRE MOT DE PASSE ICI
+        const MY_PASSWORD = "admin123"; // CHANGEZ LE MOT DE PASSE ICI
 
         const loginOverlay = document.getElementById('login-overlay');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -204,7 +209,7 @@
 
                 let totalSales = 0, realizedProfit = 0;
                 let salesByMonth = {}; 
-                let salesByProduct = {}; // Pour le Top Produits
+                let salesByProduct = {}; // Compteur de QUANTITÉ
 
                 try {
                     const salesResponse = await fetch('data/ventes.json');
@@ -220,7 +225,7 @@
                             const productInfo = products.find(p => p.nom === sale.produit);
                             if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
 
-                            // Agrégation par Mois
+                            // Agrégation par Mois (CA)
                             if (sale.date) {
                                 let dateObj = new Date(sale.date);
                                 if (isNaN(dateObj)) {
@@ -233,9 +238,10 @@
                                 }
                             }
 
-                            // Agrégation par Produit (Pour le TOP 5)
+                            // Agrégation par Produit (QUANTITÉ)
+                            // On ajoute +1 à chaque fois que le produit apparaît dans la liste des ventes
                             const pName = sale.produit || "Inconnu";
-                            salesByProduct[pName] = (salesByProduct[pName] || 0) + amount;
+                            salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
                         });
                     }
                 } catch (e) { console.log("Pas de ventes"); }
@@ -261,7 +267,7 @@
                 listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
                     lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
-                // --- CHART 1 : ÉVOLUTION MENSUELLE ---
+                // --- CHART 1 : ÉVOLUTION MENSUELLE (CA) ---
                 const sortedMonths = Object.keys(salesByMonth).sort();
                 new Chart(document.getElementById('evolutionChart').getContext('2d'), {
                     type: 'line',
@@ -271,34 +277,35 @@
                             return new Date(y, mo - 1).toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
                         }),
                         datasets: [{
-                            label: "CA Mensuel", data: sortedMonths.map(m => salesByMonth[m]),
+                            label: "Chiffre d'Affaires (FCFA)", data: sortedMonths.map(m => salesByMonth[m]),
                             borderColor: '#27ae60', backgroundColor: 'rgba(39, 174, 96, 0.1)', borderWidth: 3, fill: true, tension: 0.4
                         }]
                     },
                     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
                 });
 
-                // --- CHART 2 : TOP 5 PRODUITS (NOUVEAU) ---
+                // --- CHART 2 : TOP 5 PRODUITS (QUANTITÉ VENDUE) ---
+                // On trie par le nombre de ventes (quantité), du plus grand au plus petit
                 const sortedProducts = Object.entries(salesByProduct)
-                    .sort((a, b) => b[1] - a[1]) // Tri décroissant par CA
-                    .slice(0, 5); // Garder les 5 premiers
+                    .sort((a, b) => b[1] - a[1]) 
+                    .slice(0, 5); 
 
                 new Chart(document.getElementById('topProductsChart').getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: sortedProducts.map(item => item[0]), // Noms
+                        labels: sortedProducts.map(item => item[0]), // Noms des produits
                         datasets: [{
-                            label: "Chiffre d'Affaires généré",
-                            data: sortedProducts.map(item => item[1]), // Montants
+                            label: "Nombre d'unités vendues", // Label corrigé
+                            data: sortedProducts.map(item => item[1]), // Quantité
                             backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'],
                             borderRadius: 5
                         }]
                     },
                     options: {
-                        indexAxis: 'y', // Barres horizontales pour lire les noms facilement
+                        indexAxis: 'y', // Barres horizontales
                         responsive: true, maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
-                        scales: { x: { grid: { display: false } } }
+                        scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } // Force les nombres entiers (pas de 1.5 vente)
                     }
                 });
 
@@ -316,4 +323,4 @@
         }
     </script>
 </body>
-</html>
+                                                                                      </html>
