@@ -3,43 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accès Sécurisé - Sandy'Shop</title>
+    <title>Tableau de Bord - Sandy'Shop</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="js/theme-engine.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 1. ON CHARGE LE MOTEUR DE THÈME ICI -->
+    <script src="js/theme-engine.js"></script>
+
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f4f6f8; margin: 0; padding: 2rem; color: #333; transition: 0.3s; }
+        /* 2. ON UTILISE LES VARIABLES (var(--...)) AU LIEU DES COULEURS FIXES */
+        
+        :root {
+            /* Valeurs par défaut au cas où le script charge mal */
+            --background-color: #f4f6f8;
+            --card-bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #d1a3a4;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--background-color); /* Dynamique */
+            margin: 0; 
+            padding: 2rem; 
+            color: var(--text-color); /* Dynamique */
+            transition: 0.3s; 
+        }
         
         /* --- ECRAN DE CONNEXION --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #333; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center;
         }
         .login-box {
-            background: white; padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px;
+            background: var(--card-bg-color); 
+            padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: var(--text-color);
         }
-        .login-box h2 { margin-top: 0; color: #333; }
+        .login-box h2 { margin-top: 0; }
         .login-box input {
             width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem;
+            background: var(--background-color); color: var(--text-color);
         }
         .login-btn {
-            background: #d1a3a4; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;
+            background: var(--accent-color); /* Le bouton prend la couleur du thème ! */
+            color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;
         }
-        .login-btn:hover { background: #b08d8e; }
-        .error-msg { color: red; font-size: 0.9rem; display: none; margin-top: 10px; }
+        .login-btn:hover { opacity: 0.9; }
+        .error-msg { color: #e74c3c; font-size: 0.9rem; display: none; margin-top: 10px; }
 
-        /* --- CONTENU DU DASHBOARD (Caché par défaut) --- */
+        /* --- DASHBOARD --- */
         #dashboard-content { display: none; }
-
         .container { max-width: 1200px; margin: 0 auto; }
         .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
         h1 { margin: 0; font-size: 1.8rem; }
         
-        /* Switch Mode Marge */
-        .switch-container { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .switch-label { font-size: 0.85rem; font-weight: 500; color: #666; cursor: pointer; }
+        .switch-container { display: flex; align-items: center; gap: 10px; background: var(--card-bg-color); padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .switch-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); cursor: pointer; opacity: 0.8; }
+        
+        /* Cartes KPI */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .kpi-card { 
+            background: var(--card-bg-color); /* Dynamique */
+            padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            text-align: center; border-left: 4px solid transparent; 
+            color: var(--text-color);
+        }
+        .kpi-title { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .kpi-value { font-size: 1.8rem; font-weight: bold; }
+        
+        /* Les couleurs sémantiques (Bon/Mauvais) restent fixes car c'est universel */
+        .card-stock { border-left-color: #3498db; }
+        .card-value { border-left-color: #f1c40f; }
+        .card-sales { border-left-color: #27ae60; }
+        .card-alert { border-left-color: #e74c3c; }
+        .card-profit { border-left-color: #8e44ad; background-color: rgba(142, 68, 173, 0.1); display: none; }
+
+        /* Graphiques & Tableaux */
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .full-width { grid-column: 1 / -1; }
+        
+        .chart-container, .table-container { 
+            background: var(--card-bg-color); 
+            padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+        .section-title { margin-top: 0; font-size: 1.1rem; opacity: 0.9; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+
+        table { width: 100%; border-collapse: collapse; color: var(--text-color); }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        th { opacity: 0.6; font-weight: 500; }
+        
+        /* Boutons de retour */
+        .btn-back { 
+            display: inline-block; margin-top: 2rem; text-decoration: none; 
+            color: var(--text-color); border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; 
+            transition: 0.3s; background: var(--card-bg-color); 
+        }
+        .btn-back:hover { opacity: 0.8; }
+
+        /* Toggle Switch CSS */
         .toggle-switch { position: relative; width: 40px; height: 22px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -47,27 +111,6 @@
         input:checked + .slider { background-color: #8e44ad; }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .kpi-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; }
-        .kpi-title { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .kpi-value { font-size: 1.8rem; font-weight: bold; color: #333; }
-        
-        .card-stock { border-left-color: #3498db; }
-        .card-value { border-left-color: #f1c40f; }
-        .card-sales { border-left-color: #27ae60; }
-        .card-alert { border-left-color: #e74c3c; }
-        .card-profit { border-left-color: #8e44ad; background-color: #fcf4ff; display: none; }
-
-        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-        .full-width { grid-column: 1 / -1; }
-        .chart-container, .table-container { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .section-title { margin-top: 0; font-size: 1.1rem; color: #444; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
-
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        th { color: #888; font-weight: 500; }
-        .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: white; }
-        .btn-back:hover { background: #eee; }
         @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -76,25 +119,25 @@
     <!-- 🔒 ECRAN DE CONNEXION -->
     <div id="login-overlay">
         <div class="login-box">
-            <h2>Espace Privé</h2>
+            <h2>🔐 Espace Privé</h2>
             <p>Veuillez entrer le mot de passe.</p>
             <input type="password" id="password-input" placeholder="Mot de passe">
             <button class="login-btn" onclick="checkPassword()">Valider</button>
             <p class="error-msg" id="error-msg">Mot de passe incorrect</p>
-            <a href="index.html" style="display:block; margin-top:15px; color:#999; font-size:0.8rem; text-decoration:none;">← Retour au site</a>
+            <a href="index.html" style="display:block; margin-top:15px; opacity:0.7; font-size:0.8rem; text-decoration:none; color: inherit;">← Retour au site</a>
         </div>
     </div>
 
     <!-- 📊 CONTENU DU TABLEAU DE BORD -->
     <div id="dashboard-content" class="container">
         <div class="header-dashboard">
-            <h1>Pilotez votre Business</h1>
+            <h1>📊 Pilotez votre Business</h1>
             <div class="switch-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="profit-toggle">
                     <span class="slider"></span>
                 </label>
-                <label for="profit-toggle" class="switch-label">Mode Expert (Marge)</label>
+                <label for="profit-toggle" class="switch-label">Mode Expert (Marge) 🤫</label>
             </div>
         </div>
 
@@ -123,14 +166,14 @@
 
         <div class="charts-row">
             <div class="chart-container full-width">
-                <h3 class="section-title">Évolution des Ventes (Mensuel)</h3>
+                <h3 class="section-title">📈 Évolution des Ventes (Mensuel)</h3>
                 <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
 
         <div class="charts-row">
             <div class="chart-container">
-                <h3 class="section-title">Stocks par Catégorie</h3>
+                <h3 class="section-title">📦 Stocks par Catégorie</h3>
                 <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
             <div class="table-container">
@@ -140,7 +183,7 @@
         </div>
         
         <div style="text-align: center;">
-            <button onclick="logout()" class="btn-back" style="background:#333; color:white; border:none; cursor:pointer;">Se déconnecter</button>
+            <button onclick="logout()" class="btn-back" style="background:var(--accent-color); color:white; border:none; cursor:pointer;">🔒 Se déconnecter</button>
             <a href="index.html" class="btn-back">← Retour au site</a>
         </div>
     </div>
@@ -149,8 +192,6 @@
         function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
 
         // --- 🔐 GESTION DU MOT DE PASSE ---
-        
-        // CHOISISSEZ VOTRE MOT DE PASSE ICI (Entre les guillemets)
         const MY_PASSWORD = "admin123"; 
 
         const loginOverlay = document.getElementById('login-overlay');
@@ -158,7 +199,6 @@
         const passInput = document.getElementById('password-input');
         const errorMsg = document.getElementById('error-msg');
 
-        // Vérifier si déjà connecté (Session)
         if (sessionStorage.getItem('isStatsAuth') === 'true') {
             showDashboard();
         }
@@ -173,7 +213,6 @@
             }
         }
 
-        // Permettre la validation avec la touche Entrée
         passInput.addEventListener("keypress", function(event) {
             if (event.key === "Enter") checkPassword();
         });
@@ -181,7 +220,7 @@
         function showDashboard() {
             loginOverlay.style.display = 'none';
             dashboardContent.style.display = 'block';
-            loadStats(); // On charge les données seulement si le mot de passe est bon
+            loadStats();
         }
 
         function logout() {
@@ -291,4 +330,4 @@
         }
     </script>
 </body>
-</html>
+                </html>
