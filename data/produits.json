@@ -4,6 +4,7 @@
       "id": "prod_1",
       "nom": "Sac à main Pedro",
       "prix": 14500,
+      "prix_achat": null,
       "stock": 100,
       "categorie": "Sacs",
       "image": "images/sacs/sac_pedro_marron.jpg",
