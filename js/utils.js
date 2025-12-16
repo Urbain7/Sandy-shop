@@ -199,15 +199,19 @@ function createCookieBanner() {
 }
 
 // --- NOUVELLE FONCTION DE COMPTAGE ---
+// --- NOUVELLE FONCTION DE COMPTAGE (API V2) ---
 function countNewVisitor() {
-    // On utilise un service gratuit externe pour compter
-    // Clé unique : sandyshop-visiteurs-uniques
-    fetch('https://api.countapi.xyz/hit/sandyshop-togo-v1/visites')
+    // On utilise un espace de nom unique pour votre boutique
+    // Remplacez 'sandyshop-v1' par un nom unique si besoin
+    const namespace = 'sandyshop-v1'; 
+    const key = 'visites';
+
+    fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
         .then(response => response.json())
         .then(data => {
-            console.log("Nouveau visiteur compté :", data.value);
+            console.log("Nouveau visiteur compté :", data.count);
         })
-        .catch(err => console.log("Erreur compteur"));
+        .catch(err => console.log("Erreur compteur (Bloqueur de pub ?)", err));
 }
 
 function closeBanner(banner) {
