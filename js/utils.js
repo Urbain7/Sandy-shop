@@ -170,8 +170,8 @@ function createCookieBanner() {
         banner.id = 'cookie-banner';
         banner.innerHTML = `
             <div class="cookie-text">
-                <strong>🍪 Cookies & Confidentialité</strong><br>
-                Nous utilisons des cookies pour analyser le trafic et améliorer votre expérience. Acceptez-vous le suivi statistique ?
+                <strong>🍪 Bienvenue chez Sandy'Shop !</strong><br>
+                En continuant, vous acceptez notre politique de confidentialité.
             </div>
             <div class="cookie-buttons">
                 <button id="decline-cookies" class="btn-secondary" style="background:#fff; color:#333; border:1px solid #ccc;">Refuser</button>
@@ -183,18 +183,31 @@ function createCookieBanner() {
         // --- ACTION : ACCEPTER ---
         document.getElementById('accept-cookies').addEventListener('click', () => {
             localStorage.setItem("cookieConsent", "accepted");
-            loadGoogleAnalytics(); // On lance le tracking
+            loadGoogleAnalytics(); 
+            countNewVisitor(); // COMPTE LE VISITEUR
             closeBanner(banner);
         });
 
         // --- ACTION : REFUSER ---
         document.getElementById('decline-cookies').addEventListener('click', () => {
             localStorage.setItem("cookieConsent", "refused");
-            // On NE lance PAS le tracking
+            countNewVisitor(); // COMPTE LE VISITEUR (Même s'il refuse, c'est un visiteur)
             closeBanner(banner);
         });
     }
     setTimeout(() => banner.classList.add('show'), 100);
+}
+
+// --- NOUVELLE FONCTION DE COMPTAGE ---
+function countNewVisitor() {
+    // On utilise un service gratuit externe pour compter
+    // Clé unique : sandyshop-visiteurs-uniques
+    fetch('https://api.countapi.xyz/hit/sandyshop-togo-v1/visites')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Nouveau visiteur compté :", data.value);
+        })
+        .catch(err => console.log("Erreur compteur"));
 }
 
 function closeBanner(banner) {
