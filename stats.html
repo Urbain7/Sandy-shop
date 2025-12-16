@@ -89,7 +89,7 @@
     <!-- 🔒 LOGIN -->
     <div id="login-overlay">
         <div class="login-box">
-            <h2>Accès Business</h2>
+            <h2>🔐 Accès Business</h2>
             <p>Mot de passe requis</p>
             <input type="password" id="password-input" placeholder="Entrez le code...">
             <button class="login-btn" onclick="checkPassword()">Accéder</button>
@@ -98,10 +98,10 @@
         </div>
     </div>
 
-    <!--  DASHBOARD -->
+    <!-- 📊 DASHBOARD -->
     <div id="dashboard-content" class="container">
         <div class="header-dashboard">
-            <h1>Analyse & Performance</h1>
+            <h1>📊 Analyse & Performance</h1>
             <div class="switch-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="profit-toggle">
@@ -118,7 +118,7 @@
                 <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
             </div>
             
-            <!-- Visiteurs Uniques (Nouveau) -->
+            <!-- Visiteurs Uniques (CORRIGÉ) -->
             <div class="kpi-card card-visitors">
                 <div class="kpi-title">Visiteurs Uniques (Cookies)</div>
                 <div class="kpi-value" id="unique-visitors" style="color: #9b59b6;">0</div>
@@ -152,7 +152,7 @@
         <!-- GRAPHIQUE ÉVOLUTION (Ligne) -->
         <div class="charts-row">
             <div class="chart-container full-width">
-                <h3 class="section-title">Évolution du Chiffre d'Affaires (Mensuel)</h3>
+                <h3 class="section-title">📈 Évolution du Chiffre d'Affaires (Mensuel)</h3>
                 <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
@@ -160,13 +160,13 @@
         <div class="charts-row">
             <!-- TOP 5 PRODUITS (QUANTITÉ) -->
             <div class="chart-container">
-                <h3 class="section-title"> Top 5 Produits (Volume Ventes)</h3>
+                <h3 class="section-title">🏆 Top 5 Produits (Unités Vendues)</h3>
                 <div style="height: 250px;"><canvas id="topProductsChart"></canvas></div>
             </div>
 
             <!-- STOCK PAR CATÉGORIE -->
             <div class="chart-container">
-                <h3 class="section-title"> Répartition du Stock</h3>
+                <h3 class="section-title">📦 Répartition du Stock</h3>
                 <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
         </div>
@@ -215,15 +215,22 @@
         toggle.addEventListener('change', (e) => { localStorage.setItem('showProfit', e.target.checked); toggleProfitDisplay(e.target.checked); });
         function toggleProfitDisplay(show) { document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none'); }
 
-        // --- VISITEURS UNIQUES (API EXTERNE) ---
+        // --- VISITEURS UNIQUES (API V2 FIABLE) ---
         async function loadVisitorCount() {
             try {
-                // Lecture seule du compteur
-                const response = await fetch('https://api.countapi.xyz/get/sandyshop-togo-v1/visites');
+                const namespace = 'sandyshop-v1';
+                const key = 'visites';
+                // Lecture simple sans incrémentation
+                const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`);
                 const data = await response.json();
-                document.getElementById('unique-visitors').textContent = data.value || 0;
+                
+                if (data && data.count) {
+                    document.getElementById('unique-visitors').textContent = data.count;
+                } else {
+                    document.getElementById('unique-visitors').textContent = "0";
+                }
             } catch (e) {
-                console.log("Erreur compteur visiteurs");
+                console.log("Erreur lecture visiteurs");
                 document.getElementById('unique-visitors').textContent = "-";
             }
         }
@@ -271,6 +278,7 @@
                             }
 
                             // Agrégation par Produit (QUANTITÉ)
+                            // On ajoute +1 (1 unité) et non le prix
                             const pName = sale.produit || "Inconnu";
                             salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
                         });
@@ -325,7 +333,7 @@
                     data: {
                         labels: sortedProducts.map(item => item[0]), // Noms
                         datasets: [{
-                            label: "Nombre d'unités vendues",
+                            label: "Unités vendues", // Label corrigé
                             data: sortedProducts.map(item => item[1]), // Quantités
                             backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'],
                             borderRadius: 5
@@ -335,7 +343,7 @@
                         indexAxis: 'y', 
                         responsive: true, maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
-                        scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } }
+                        scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } // Nombres entiers
                     }
                 });
 
@@ -353,4 +361,4 @@
         }
     </script>
 </body>
-            </html>
+</html>
