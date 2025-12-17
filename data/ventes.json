@@ -11,6 +11,12 @@
       "produit": "sac zed",
       "montant": 29000,
       "canal": "Appel"
+    },
+    {
+      "date": "19/12/2024",
+      "produit": "jupe jean",
+      "montant": 2000,
+      "canal": "WhatsApp"
     }
   ]
 }
