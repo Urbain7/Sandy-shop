@@ -17,6 +17,12 @@
       "produit": "jupe jean",
       "montant": 2000,
       "canal": "WhatsApp"
+    },
+    {
+      "date": "17/12/2025",
+      "produit": "Sac à main Pedro",
+      "montant": 14500,
+      "canal": "WhatsApp"
     }
   ]
 }
