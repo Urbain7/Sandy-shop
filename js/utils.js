@@ -32,7 +32,7 @@ function formatPrice(price) {
 /**
  * Affiche une boîte de dialogue de confirmation personnalisée.
  * @param {string} message Le message à afficher.
- * @returns {Promise<boolean>} Une promesse qui se résout à `true` si l'utilisateur confirme, `false` sinon.
+ * @returns {Promise<boolean>} Une promesse qui se résout à `true` si l'utilisateur confirme.
  */
 function showCustomConfirm(message) {
     return new Promise(resolve => {
@@ -41,7 +41,6 @@ function showCustomConfirm(message) {
         const okBtn = document.getElementById('custom-confirm-ok');
         const cancelBtn = document.getElementById('custom-confirm-cancel');
 
-        // Si la modal n'est pas trouvée, on utilise la confirmation par défaut du navigateur
         if (!modal || !msgElement || !okBtn || !cancelBtn) {
             resolve(confirm(message));
             return;
@@ -52,32 +51,29 @@ function showCustomConfirm(message) {
 
         const handleOk = () => {
             modal.classList.remove('show');
-            cancelBtn.removeEventListener('click', handleCancel); // Nettoie l'autre écouteur
+            cancelBtn.removeEventListener('click', handleCancel);
             resolve(true);
         };
         
         const handleCancel = () => {
             modal.classList.remove('show');
-            okBtn.removeEventListener('click', handleOk); // Nettoie l'autre écouteur
+            okBtn.removeEventListener('click', handleOk);
             resolve(false);
         };
 
-        // Utilise { once: true } pour s'assurer que les écouteurs sont automatiquement retirés après usage
         okBtn.addEventListener('click', handleOk, { once: true });
         cancelBtn.addEventListener('click', handleCancel, { once: true });
     });
 }
 
 /**
- * Met à jour l'icône du panier dans l'en-tête en affichant le nombre total d'articles.
+ * Met à jour l'icône du panier dans l'en-tête.
  */
 function updateCartIcon() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartIcon = document.getElementById('cart-item-count');
     if (cartIcon) {
-        // Calcule la somme des quantités de tous les articles dans le panier
         const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
         if (totalItems > 0) {
             cartIcon.textContent = totalItems;
             cartIcon.classList.add('visible');
@@ -88,9 +84,7 @@ function updateCartIcon() {
 }
 
 /**
- * Ajoute un produit au panier dans le localStorage.
- * @param {object} product L'objet produit à ajouter.
- * @param {number} quantity La quantité à ajouter (par défaut: 1).
+ * Ajoute un produit au panier.
  */
 function addToCart(product, quantity = 1) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -101,41 +95,40 @@ function addToCart(product, quantity = 1) {
         cart.push({ ...product, quantity: quantity });
     }
     localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartIcon(); // Met à jour l'icône après l'ajout
+    updateCartIcon();
 }
 
 /**
- * Met à jour la quantité d'un produit spécifique dans le panier.
- * @param {string} productId L'ID du produit.
- * @param {number} newQuantity La nouvelle quantité.
+ * Met à jour la quantité d'un produit.
  */
 function updateCartItemQuantity(productId, newQuantity) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let itemIndex = cart.findIndex(item => item.id === productId);
     if (itemIndex > -1) {
         if (newQuantity <= 0) {
-            cart.splice(itemIndex, 1); // Supprime l'article si la quantité est 0 ou moins
+            cart.splice(itemIndex, 1);
         } else {
             cart[itemIndex].quantity = newQuantity;
         }
         localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartIcon(); // Met à jour l'icône après la modification
+        updateCartIcon();
     }
 }
 
 /**
  * Supprime un produit du panier.
- * @param {string} productId L'ID du produit à supprimer.
  */
 function removeFromCart(productId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart = cart.filter(item => item.id !== productId);
     localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartIcon(); // Met à jour l'icône après la suppression
+    updateCartIcon();
 }
 
-// Assure que l'icône du panier est à jour dès que la page est chargée
+// Initialisation au chargement
 document.addEventListener('DOMContentLoaded', updateCartIcon);
+
+
 /* =============================== */
 /* GESTION DES COOKIES & ANALYTICS */
 /* =============================== */
@@ -170,8 +163,8 @@ function createCookieBanner() {
         banner.id = 'cookie-banner';
         banner.innerHTML = `
             <div class="cookie-text">
-                <strong>🍪 Bienvenue chez Sandy'Shop !</strong><br>
-                En continuant, vous acceptez notre politique de confidentialité.
+                <strong> Cookies & Confidentialité</strong><br>
+                Nous utilisons des cookies pour analyser le trafic et améliorer votre expérience.
             </div>
             <div class="cookie-buttons">
                 <button id="decline-cookies" class="btn-secondary" style="background:#fff; color:#333; border:1px solid #ccc;">Refuser</button>
@@ -183,35 +176,20 @@ function createCookieBanner() {
         // --- ACTION : ACCEPTER ---
         document.getElementById('accept-cookies').addEventListener('click', () => {
             localStorage.setItem("cookieConsent", "accepted");
-            loadGoogleAnalytics(); 
-            countNewVisitor(); // COMPTE LE VISITEUR
+            loadGoogleAnalytics(); // On lance le tracking
+            countNewVisitor();     // On compte le visiteur unique
             closeBanner(banner);
         });
 
         // --- ACTION : REFUSER ---
         document.getElementById('decline-cookies').addEventListener('click', () => {
             localStorage.setItem("cookieConsent", "refused");
-            countNewVisitor(); // COMPTE LE VISITEUR (Même s'il refuse, c'est un visiteur)
+            countNewVisitor();     // On compte quand même le visiteur (anonyme)
+            // On NE lance PAS le tracking Google
             closeBanner(banner);
         });
     }
     setTimeout(() => banner.classList.add('show'), 100);
-}
-
-// --- NOUVELLE FONCTION DE COMPTAGE ---
-// --- NOUVELLE FONCTION DE COMPTAGE (API V2) ---
-function countNewVisitor() {
-    // On utilise un espace de nom unique pour votre boutique
-    // Remplacez 'sandyshop-v1' par un nom unique si besoin
-    const namespace = 'sandyshop-v1'; 
-    const key = 'visites';
-
-    fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Nouveau visiteur compté :", data.count);
-        })
-        .catch(err => console.log("Erreur compteur (Bloqueur de pub ?)", err));
 }
 
 function closeBanner(banner) {
@@ -221,16 +199,13 @@ function closeBanner(banner) {
 
 // Fonction qui insère le code Google (GTM) dynamiquement
 function loadGoogleAnalytics() {
-    // On vérifie si le script est déjà là pour ne pas le mettre 2 fois
     if (document.getElementById('gtm-script')) return;
 
-    // Création du script principal GTM
     const script = document.createElement('script');
     script.id = 'gtm-script';
     script.async = true;
     script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-59W7JKXZ'; // Votre ID GTM
 
-    // Le petit script de démarrage GTM
     const inlineScript = document.createElement('script');
     inlineScript.innerHTML = `
         window.dataLayer = window.dataLayer || [];
@@ -242,4 +217,19 @@ function loadGoogleAnalytics() {
     document.head.appendChild(script);
     document.head.appendChild(inlineScript);
     console.log("Google Analytics activé ✅");
+}
+
+// --- NOUVELLE FONCTION DE COMPTAGE (API V2) ---
+function countNewVisitor() {
+    // Espace de nom et clé (Identiques à ceux de stats.html)
+    const namespace = 'sandyshop-v1'; 
+    const key = 'visites';
+
+    // On appelle l'URL avec "/up" pour ajouter +1
+    fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Nouveau visiteur compté :", data.count);
+        })
+        .catch(err => console.log("Erreur compteur (Bloqueur de pub ?)", err));
 }
