@@ -1,31 +1,65 @@
-/**
- * Affiche une notification toast personnalisée.
- */
-function showToast(message) {
-    const toast = document.getElementById('toast-notification');
-    if (toast) {
-        toast.textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+/* =============================== */
+/* GESTION DES DEVISES (AFRIQUE)   */
+/* =============================== */
+
+// Taux de change (Base : 1 FCFA)
+// Modifiez ces valeurs selon le taux du jour
+const EXCHANGE_RATES = {
+    'XOF': { rate: 1, symbol: 'FCFA', name: 'Franc CFA (UEMOA/CEMAC)' },
+    'NGN': { rate: 2.6, symbol: '₦', name: 'Naira (Nigeria)' },      // 1000 FCFA = ~2600 NGN
+    'GHS': { rate: 0.022, symbol: '₵', name: 'Cedi (Ghana)' },       // 1000 FCFA = ~22 GHS
+    'KES': { rate: 0.25, symbol: 'KSh', name: 'Shilling (Kenya)' },
+    'MAD': { rate: 0.016, symbol: 'DH', name: 'Dirham (Maroc)' },
+    'EUR': { rate: 0.00152, symbol: '€', name: 'Euro' },
+    'USD': { rate: 0.00165, symbol: '$', name: 'Dollar US' }
+};
+
+// Fonction pour changer la devise
+function setCurrency(currencyCode) {
+    if (EXCHANGE_RATES[currencyCode]) {
+        localStorage.setItem('selectedCurrency', currencyCode);
+        location.reload(); // On recharge pour appliquer partout
     }
 }
 
-/**
- * Formate un nombre en FCFA.
- */
-function formatPrice(price) {
-    const priceNumber = Number(price);
-    if (isNaN(priceNumber)) {
-        return 'Prix non disponible';
-    }
-    return priceNumber.toLocaleString('fr-FR') + ' FCFA';
+// Fonction principale de formatage
+function formatPrice(priceInFCFA) {
+    const priceNumber = Number(priceInFCFA);
+    if (isNaN(priceNumber)) return 'Prix non disponible';
+
+    // Récupérer la devise choisie (ou XOF par défaut)
+    const currency = localStorage.getItem('selectedCurrency') || 'XOF';
+    const rateData = EXCHANGE_RATES[currency];
+
+    // Conversion
+    const convertedPrice = priceNumber * rateData.rate;
+
+    // Formatage propre (arrondi et séparateurs de milliers)
+    return convertedPrice.toLocaleString('fr-FR', { 
+        style: 'decimal', 
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 0
+    }) + ' ' + rateData.symbol;
 }
 
 /**
- * Boîte de dialogue de confirmation.
+ * Génère le sélecteur de devise (à placer dans le HTML)
  */
+function renderCurrencySelector() {
+    const current = localStorage.getItem('selectedCurrency') || 'XOF';
+    let options = '';
+    for (const [code, data] of Object.entries(EXCHANGE_RATES)) {
+        const selected = code === current ? 'selected' : '';
+        options += `<option value="${code}" ${selected}>${data.symbol} - ${code}</option>`;
+    }
+    return `
+        <select id="currency-selector" onchange="setCurrency(this.value)" class="currency-select">
+            ${options}
+        </select>
+    `;
+}
+
+// ... (La suite du fichier showToast, showCustomConfirm etc. reste inchangée)
 function showCustomConfirm(message) {
     return new Promise(resolve => {
         const modal = document.getElementById('custom-confirm-modal');
