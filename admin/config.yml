@@ -7,6 +7,27 @@ media_folder: "images/uploads"
 public_folder: "images/uploads"
 
 collections:
+collections:
+  # --- NOUVEAU : PARAMÈTRES GÉNÉRAUX ---
+  - name: "settings"
+    label: "⚙️ Paramètres Boutique"
+    files:
+      - name: "config_generale"
+        label: "Configuration Générale"
+        file: "data/settings.json"
+        fields:
+          - label: "Symbole de la Devise (ex: FCFA, $, €, ₦)"
+            name: "currencySymbol"
+            widget: "string"
+            default: "FCFA"
+          
+          - label: "Position de la devise"
+            name: "currencyPosition"
+            widget: "select"
+            options: 
+              - {label: "Après le prix (ex: 10 000 FCFA)", value: "after"}
+              - {label: "Avant le prix (ex: $100)", value: "before"}
+            default: "after"
   # 1. CONFIGURATION DU DESIGN
   - name: "config"
     label: "🎨 Design & Couleurs"
