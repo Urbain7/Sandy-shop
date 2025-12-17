@@ -29,6 +29,7 @@ function displaySkeletonCards() {
     for (let i = 0; i < 8; i++) {
         const skeletonCard = document.createElement('div');
         skeletonCard.className = 'product-card skeleton';
+        skeletonCard.innerHTML = `<div class="skeleton-img"></div><div class="skeleton-text long"></div><div class="skeleton-text short"></div>`;
         productList.appendChild(skeletonCard);
     }
 }
@@ -45,7 +46,7 @@ async function initProduitsPage() {
         const data = await response.json();
         const products = data.items ? data.items : data;
         
-        shuffleArray(products);
+        shuffleArray(products); // Mélange
 
         const categoryFilter = document.getElementById('category-filter');
         const searchInput = document.getElementById('search-input');
@@ -124,9 +125,6 @@ function displayProducts(products) {
         
         const productCard = document.createElement('div');
         productCard.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
-        
-        // --- ANIMATION AOS ---
-        // On ajoute l'attribut pour que la carte s'anime en apparaissant
         productCard.setAttribute('data-aos', 'fade-up');
 
         productCard.innerHTML = `
@@ -141,7 +139,7 @@ function displayProducts(products) {
             </div>
         `;
         
-        // --- ALERTE STOCK FAIBLE ---
+        // Alerte Stock Faible
         if (product.stock > 0 && product.stock <= 3) {
             const alertHTML = `<div class="stock-alert">🔥 Vite ! Plus que ${product.stock} en stock !</div>`;
             const priceElement = productCard.querySelector('.product-price');
@@ -150,12 +148,17 @@ function displayProducts(products) {
 
         productList.appendChild(productCard);
     });
+    
     addEventListenersToCards(products);
+    
+    // Rafraîchir AOS
+    if (typeof AOS !== 'undefined') AOS.refresh();
 }
 
 function addEventListenersToCards(products) {
     document.querySelectorAll('.product-actions').forEach(actions => {
         const productId = actions.dataset.id;
+        
         const likeBtn = actions.querySelector('.like-btn');
         if (likeBtn) {
             likeBtn.addEventListener('click', () => {
@@ -166,6 +169,7 @@ function addEventListenersToCards(products) {
                 likeBtn.querySelector('.like-count').textContent = likes[productId] ? 1 : 0;
             });
         }
+
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
@@ -184,7 +188,7 @@ function addEventListenersToCards(products) {
 }
 
 // =================================================================
-// 2. RECOMMANDATIONS (Avec Animation)
+// 2. RECOMMANDATIONS
 // =================================================================
 function displayRecommendations(currentProduct, allProducts) {
     const recommendationsSection = document.getElementById('recommendations-section');
@@ -205,7 +209,7 @@ function displayRecommendations(currentProduct, allProducts) {
     shuffledRecommendations.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        productCard.setAttribute('data-aos', 'fade-up'); // Animation ici aussi
+        productCard.setAttribute('data-aos', 'fade-up');
         productCard.innerHTML = `
             <a href="produit.html?id=${product.id}" class="product-link">
                 <img src="${product.image}" alt="${product.nom}" loading="lazy">
@@ -244,15 +248,41 @@ async function initProduitDetailPage() {
         const cartButtonHTML = isOutOfStock ? `<button class="btn out-of-stock-btn" disabled>Épuisé</button>` : `<button class="btn add-to-cart-detail">Ajouter au panier</button>`;
         const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
         
+        // --- GESTION DES TAILLES ---
+        let sizesHTML = '';
+        if (product.tailles) {
+            const sizesList = product.tailles.split(',').map(s => s.trim());
+            sizesHTML = `
+                <div class="product-sizes">
+                    <label>Taille :</label>
+                    <div class="size-options">
+                        ${sizesList.map((size, i) => `
+                            <input type="radio" name="size" id="size-${i}" value="${size}" ${i===0 ? 'checked' : ''}>
+                            <label for="size-${i}" class="size-box">${size}</label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- RENDU HTML ---
         container.innerHTML = `
-            <div class="product-detail" data-aos="fade-in"> <!-- Animation de la fiche -->
+            <div class="product-detail" data-aos="fade-in">
                 <div class="product-gallery">
-                    <div class="main-image"><img src="${product.image}" alt="${product.nom}" id="main-product-image"></div>
+                    <!-- IMAGE AVEC ZOOM -->
+                    <div class="main-image-container" id="img-container">
+                        <img src="${product.image}" alt="${product.nom}" id="main-product-image" class="zoom-image">
+                    </div>
                     <div class="thumbnail-images">${productImages.map((img, index) => `<img src="${img}" alt="Vue ${index + 1}" class="${index === 0 ? 'active' : ''}">`).join('')}</div>
                 </div>
+                
                 <div class="product-info">
                     <h1>${product.nom}</h1>
                     <p class="product-price">${formatPrice(product.prix)}</p>
+                    
+                    <!-- TAILLES -->
+                    ${sizesHTML}
+
                     <div class="product-options">
                         <label>Quantité :</label>
                         <input type="number" id="product-quantity" value="1" min="1" max="${product.stock || 99}" style="width:60px; padding:0.5rem; text-align:center;" ${isOutOfStock ? 'disabled' : ''}>
@@ -266,13 +296,13 @@ async function initProduitDetailPage() {
         const productInfoDiv = container.querySelector('.product-info');
         const descElement = productInfoDiv.querySelector('.product-description');
 
-        // Alerte Stock Faible sur la fiche détail aussi
+        // Stock Faible
         if (product.stock > 0 && product.stock <= 3) {
             const alertHTML = `<div class="stock-alert" style="font-size:1rem; margin-bottom:1rem;">🔥 Attention, il ne reste que ${product.stock} exemplaires !</div>`;
             container.querySelector('h1').insertAdjacentHTML('afterend', alertHTML);
         }
 
-        // Bouton WhatsApp
+        // --- BOUTON WHATSAPP ---
         if (!isOutOfStock) {
             const waMessage = `Bonjour Sandy'Shop, je souhaite commander : ${product.nom} (${formatPrice(product.prix)}). Est-il dispo ?`;
             const waLink = `https://wa.me/22893899538?text=${encodeURIComponent(waMessage)}`;
@@ -280,7 +310,7 @@ async function initProduitDetailPage() {
             descElement.insertAdjacentHTML('afterend', btnWaHTML);
         }
 
-        // Partage Natif
+        // --- PARTAGE NATIF ---
         const shareSectionHTML = `<div class="share-section"><p>Ce produit pourrait plaire à une amie ?</p><button id="native-share-btn" class="btn-secondary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>Partager ce produit</button></div>`;
         productInfoDiv.insertAdjacentHTML('beforeend', shareSectionHTML);
 
@@ -300,6 +330,7 @@ async function initProduitDetailPage() {
             }
         }, 500);
 
+        // --- GALERIE ---
         const mainImage = document.getElementById('main-product-image');
         const thumbnails = container.querySelectorAll('.thumbnail-images img');
         thumbnails.forEach(thumb => {
@@ -309,14 +340,45 @@ async function initProduitDetailPage() {
                 thumb.classList.add('active');
             });
         });
+
+        // --- ZOOM (PC) ---
+        const imgContainer = document.getElementById('img-container');
+        if (window.innerWidth > 768 && imgContainer) {
+            imgContainer.addEventListener("mousemove", (e) => {
+                const rect = imgContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                mainImage.style.transformOrigin = `${x}px ${y}px`;
+                mainImage.style.transform = "scale(2)";
+            });
+            imgContainer.addEventListener("mouseleave", () => {
+                mainImage.style.transformOrigin = "center center";
+                mainImage.style.transform = "scale(1)";
+            });
+        }
         
+        // --- AJOUT PANIER (AVEC TAILLE) ---
         if (!isOutOfStock) {
             const addToCartBtn = container.querySelector('.add-to-cart-detail');
             const quantityInput = container.querySelector('#product-quantity');
             addToCartBtn.addEventListener('click', () => {
                 const quantity = parseInt(quantityInput.value) || 1;
-                addToCart(product, quantity);
-                showToast(`${quantity} ${product.nom} ajouté(s) au panier !`);
+                
+                // Gestion taille
+                let selectedSize = '';
+                const sizeInput = container.querySelector('input[name="size"]:checked');
+                if (sizeInput) selectedSize = sizeInput.value;
+
+                // Création ID unique pour la taille
+                const productForCart = { 
+                    ...product, 
+                    id: product.id + (selectedSize ? '-' + selectedSize : ''), 
+                    nom: product.nom + (selectedSize ? ` (Taille: ${selectedSize})` : '') 
+                };
+
+                addToCart(productForCart, quantity);
+                showToast(`${quantity} ${product.nom} ajouté(s) !`);
+                
                 const originalText = addToCartBtn.innerHTML;
                 addToCartBtn.innerHTML = 'Ajouté ✔';
                 addToCartBtn.disabled = true;
