@@ -3,275 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - Sandy'Shop</title>
+    <title>Détails du Produit - Sandy'Shop</title>
+    <meta name="description" content="Découvrez nos articles de mode, chaussures et accessoires tendances à Lomé.">
+
+    <!-- Open Graph (Pour que le lien soit joli sur WhatsApp/Facebook) -->
+    <meta property="og:image" content="images/ban.jpg">
+    <meta property="og:title" content="Sandy'Shop - Boutique en Ligne">
+    <meta property="og:description" content="Mode, chaussures et accessoires tendances.">
+
+    <!-- Favicon & Fonts -->
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- CHART.JS -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- MOTEUR DE THÈME -->
+
+    <!-- Styles CSS + Animation AOS -->
+    <link rel="stylesheet" href="assets/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Scripts Essentiels (Thème + Compteur Auto) -->
     <script src="js/theme-engine.js"></script>
-    <!-- NOUVEAU COMPTEUR (BUSUANZI) -->
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-    <style>
-        :root { --background-color: #f4f6f8; --card-bg-color: #ffffff; --text-color: #333333; --accent-color: #d1a3a4; }
-        body { font-family: 'Poppins', sans-serif; background: var(--background-color); margin: 0; padding: 2rem; color: var(--text-color); transition: 0.3s; }
-        
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--card-bg-color); padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: var(--text-color); }
-        .login-box input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; background: var(--background-color); color: var(--text-color); }
-        .login-btn { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
-        .error-msg { color: #e74c3c; font-size: 0.9rem; display: none; margin-top: 10px; }
-
-        #dashboard-content { display: none; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        h1 { margin: 0; font-size: 1.8rem; }
-        
-        .switch-container { display: flex; align-items: center; gap: 10px; background: var(--card-bg-color); padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .switch-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); cursor: pointer; opacity: 0.8; }
-        .toggle-switch { position: relative; width: 40px; height: 22px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #8e44ad; }
-        input:checked + .slider:before { transform: translateX(18px); }
-
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .kpi-card { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; color: var(--text-color); }
-        .kpi-title { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .kpi-value { font-size: 1.8rem; font-weight: bold; }
-        
-        .card-stock { border-left-color: #3498db; }
-        .card-value { border-left-color: #f1c40f; }
-        .card-sales { border-left-color: #27ae60; }
-        .card-alert { border-left-color: #e74c3c; }
-        .card-visitors { border-left-color: #9b59b6; }
-        .card-profit { border-left-color: #8e44ad; background-color: rgba(142, 68, 173, 0.1); display: none; }
-
-        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-        .full-width { grid-column: 1 / -1; }
-        .chart-container, .table-container { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .section-title { margin-top: 0; font-size: 1.1rem; opacity: 0.9; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
-        table { width: 100%; border-collapse: collapse; color: var(--text-color); }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        th { opacity: 0.6; font-weight: 500; }
-        .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: var(--text-color); border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: var(--card-bg-color); }
-        .btn-back:hover { opacity: 0.8; }
-        @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
-    </style>
+    <script>
+        // Anti-flash pour le mode sombre
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') { document.documentElement.classList.add('dark-mode'); }
+    </script>
 </head>
 <body>
 
-    <!-- 🔒 LOGIN -->
-    <div id="login-overlay">
-        <div class="login-box">
-            <h2>Accès Business</h2>
-            <p>Mot de passe requis</p>
-            <input type="password" id="password-input" placeholder="Entrez le code...">
-            <button class="login-btn" onclick="checkPassword()">Accéder</button>
-            <p class="error-msg" id="error-msg">Code incorrect</p>
-            <a href="index.html" style="display:block; margin-top:15px; opacity:0.7; font-size:0.8rem; text-decoration:none; color: inherit;">← Retour au site</a>
-        </div>
-    </div>
+    <!-- Notification Toast -->
+    <div id="toast-notification" class="toast"></div>
 
-    <!-- 📊 DASHBOARD -->
-    <div id="dashboard-content" class="container">
-        <div class="header-dashboard">
-            <h1>Analyse & Performance</h1>
-            <div class="switch-container">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="profit-toggle">
-                    <span class="slider"></span>
-                </label>
-                <label for="profit-toggle" class="switch-label">Mode Expert (Marge)</label>
+    <!-- HEADER -->
+    <header>
+        <div class="header-main">
+            <a href="index.html" class="logo">Sandy'Shop</a>
+
+            <nav class="nav-desktop">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="produits.html">Produits</a></li>
+                    <li><a href="favoris.html">Favoris</a></li>
+                    <li><a href="panier.html" class="nav-cart-link">Panier <span id="cart-item-count" class="cart-count">0</span></a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                <button id="theme-toggle" class="theme-toggle-btn">
+                    <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.59a.75.75 0 011.061 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.894 17.894a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.061zM12 18.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zM5.106 17.894a.75.75 0 010-1.06l1.59-1.591a.75.75 0 111.06 1.06l-1.59 1.59a.75.75 0 01-1.06 0zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zM6.106 5.106a.75.75 0 011.06 0l1.591 1.59a.75.75 0 01-1.06 1.06l-1.59-1.591a.75.75 0 010-1.06z"/></svg>
+                    <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 004.463-.948a.75.75 0 01.981.632A11.25 11.25 0 0112 21a11.25 11.25 0 01-11.25-11.25 11.25 11.25 0 019.528-11.25z" clip-rule="evenodd" /></svg>
+                </button>
+                <button id="mobile-menu-btn" class="mobile-menu-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></svg>
+                </button>
             </div>
         </div>
+        <nav id="nav-mobile" class="nav-mobile">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="produits.html">Produits</a></li>
+                <li><a href="favoris.html">Favoris</a></li>
+                <li><a href="panier.html">Panier</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="kpi-grid">
-            <div class="kpi-card card-sales">
-                <div class="kpi-title">Chiffre d'Affaires</div>
-                <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
-            </div>
-            
-            <!-- NOUVEAU COMPTEUR ROBUSTE -->
-            <div class="kpi-card card-visitors">
-                <div class="kpi-title">Visiteurs (Total Site)</div>
-                <div class="kpi-value" style="color: #9b59b6;">
-                    <!-- Cette balise span sera remplie automatiquement par le script -->
-                    <span id="busuanzi_value_site_uv">...</span>
-                </div>
-            </div>
-
-            <div class="kpi-card card-profit" id="card-profit-realized">
-                <div class="kpi-title">Bénéfice Net</div>
-                <div class="kpi-value" id="profit-realized" style="color: #8e44ad;">0</div>
-            </div>
-
-            <div class="kpi-card card-value">
-                <div class="kpi-title">Valeur Stock</div>
-                <div class="kpi-value" id="stock-value">0</div>
-            </div>
-
-            <div class="kpi-card card-profit" id="card-profit-potential">
-                <div class="kpi-title">Bénéfice Potentiel</div>
-                <div class="kpi-value" id="profit-potential" style="color: #8e44ad;">0</div>
-            </div>
-
-            <div class="kpi-card card-alert">
-                <div class="kpi-title">Alertes Stock (&le;3)</div>
-                <div class="kpi-value" id="low-stock-count" style="color: #e74c3c;">0</div>
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- Conteneur qui sera rempli par JS (Image, Prix, Boutons...) -->
+        <div id="product-detail-container" class="container">
+            <!-- Squelette de chargement en attendant le JS -->
+            <div class="skeleton" style="margin-top: 2rem;">
+                <div class="skeleton-img" style="height: 400px;"></div>
+                <div class="skeleton-text long"></div>
+                <div class="skeleton-text short"></div>
             </div>
         </div>
 
-        <div class="charts-row">
-            <div class="chart-container full-width">
-                <h3 class="section-title">Évolution CA (Mensuel)</h3>
-                <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
+        <!-- Section Recommandations (Cachée par défaut) -->
+        <section id="recommendations-section" class="container" style="display: none; margin-top: 4rem;">
+            <h2>Vous pourriez aussi aimer...</h2>
+            <div class="product-grid" id="recommendations-grid">
+                <!-- Les produits recommandés seront injectés ici -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-copyright">&copy; 2025 Sandy'Shop. Tous droits réservés.</div>
+            <div class="footer-links">
+                <a href="mentions-legales.html">Mentions Légales</a><span class="footer-separator">|</span>
+                <a href="conditions-vente.html">Conditions de Vente</a><span class="footer-separator">|</span>
+                <a href="#" class="cky-banner-element">Gérer les cookies</a><span class="footer-separator">|</span>
+                <a href="https://www.facebook.com/share/1AeckzYGTy/?mibextid=wwXIfr">Facebook</a><span class="footer-separator">|</span>
+                <a href="https://www.instagram.com/sandyamg22?igsh=Ymd2M283Z3U5cXlj&utm_source=qr">Instagram</a>
             </div>
         </div>
+    </footer>
 
-        <div class="charts-row">
-            <div class="chart-container">
-                <h3 class="section-title">Top 5 Produits (Ventes)</h3>
-                <div style="height: 250px;"><canvas id="topProductsChart"></canvas></div>
-            </div>
-            <div class="chart-container">
-                <h3 class="section-title">Répartition Stock</h3>
-                <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
-            </div>
-        </div>
-
-        <div class="charts-row">
-            <div class="table-container full-width">
-                <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
-                <table><thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead><tbody id="low-stock-list"></tbody></table>
-            </div>
-        </div>
-        
-        <div style="text-align: center;">
-            <button onclick="logout()" class="btn-back" style="background:var(--accent-color); color:white; border:none; cursor:pointer;">🔒 Se déconnecter</button>
-            <a href="index.html" class="btn-back">← Retour au site</a>
-        </div>
-    </div>
-
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/22893899538" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="28" height="28" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 221.9-99.6 221.9-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.8 0-67.6-9.5-97.2-26.7l-7-4.1-72.5 19 19.3-71.1-4.5-7.4c-18.5-30.4-28.2-65.3-28.2-101.7 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.8-16.2-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4-37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+    </a>
+    
+    <!-- Scripts Logiques -->
+    <script src="js/utils.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/theme.js"></script>
+    
+    <!-- Initialisation Animation AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
-
-        // --- 🔐 LOGIN ---
-        const MY_PASSWORD = "admin123"; 
-        const loginOverlay = document.getElementById('login-overlay');
-        const dashboardContent = document.getElementById('dashboard-content');
-        const passInput = document.getElementById('password-input');
-        const errorMsg = document.getElementById('error-msg');
-
-        if (sessionStorage.getItem('isStatsAuth') === 'true') showDashboard();
-
-        function checkPassword() {
-            if (passInput.value === MY_PASSWORD) {
-                sessionStorage.setItem('isStatsAuth', 'true');
-                showDashboard();
-            } else { errorMsg.style.display = 'block'; passInput.value = ''; }
-        }
-        passInput.addEventListener("keypress", (e) => { if (e.key === "Enter") checkPassword(); });
-        function showDashboard() { loginOverlay.style.display = 'none'; dashboardContent.style.display = 'block'; loadStats(); }
-        function logout() { sessionStorage.removeItem('isStatsAuth'); location.reload(); }
-
-        const toggle = document.getElementById('profit-toggle');
-        const isProfitMode = localStorage.getItem('showProfit') === 'true';
-        toggle.checked = isProfitMode;
-        toggleProfitDisplay(isProfitMode);
-        toggle.addEventListener('change', (e) => { localStorage.setItem('showProfit', e.target.checked); toggleProfitDisplay(e.target.checked); });
-        function toggleProfitDisplay(show) { document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none'); }
-
-        // --- DATA ---
-        async function loadStats() {
-            try {
-                const [prodData, salesData] = await Promise.all([
-                    fetch('data/produits.json').then(res => res.json()),
-                    fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] }))
-                ]);
-
-                const products = prodData.items ? prodData.items : prodData;
-                const sales = salesData.items ? salesData.items : salesData;
-                
-                let totalSales = 0, realizedProfit = 0;
-                let salesByMonth = {}; 
-                let salesByProduct = {};
-
-                sales.forEach(sale => {
-                    const amount = sale.montant || 0;
-                    totalSales += amount;
-                    const productInfo = products.find(p => p.nom === sale.produit);
-                    if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
-                    if (sale.date) {
-                        let dateObj = new Date(sale.date);
-                        if (isNaN(dateObj)) {
-                            const parts = sale.date.split('/');
-                            if(parts.length === 3) dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-                        }
-                        if (!isNaN(dateObj)) {
-                            const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-                            salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + amount;
-                        }
-                    }
-                    const pName = sale.produit || "Inconnu";
-                    salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
-                });
-
-                const stockValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
-                const potentialProfit = products.reduce((sum, p) => {
-                    const buyPrice = p.prix_achat || 0;
-                    return buyPrice > 0 ? sum + ((p.prix - buyPrice) * p.stock) : sum;
-                }, 0);
-                const lowStockItems = products.filter(p => p.stock <= 3 && p.stock > 0);
-                const categoriesCount = {};
-                products.forEach(p => { categoriesCount[p.categorie] = (categoriesCount[p.categorie] || 0) + 1; });
-
-                document.getElementById('total-sales').textContent = formatPrice(totalSales);
-                document.getElementById('stock-value').textContent = formatPrice(stockValue);
-                document.getElementById('low-stock-count').textContent = lowStockItems.length;
-                document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
-                document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
-                const listContainer = document.getElementById('low-stock-list');
-                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
-                    lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
-
-                const sortedMonths = Object.keys(salesByMonth).sort();
-                new Chart(document.getElementById('evolutionChart').getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels: sortedMonths.map(m => {
-                            const [y, mo] = m.split('-');
-                            return new Date(y, mo - 1).toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
-                        }),
-                        datasets: [{ label: "CA", data: sortedMonths.map(m => salesByMonth[m]), borderColor: '#27ae60', backgroundColor: 'rgba(39, 174, 96, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
-                });
-
-                const sortedProducts = Object.entries(salesByProduct).sort((a, b) => b[1] - a[1]).slice(0, 5); 
-                new Chart(document.getElementById('topProductsChart').getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: sortedProducts.map(item => item[0]),
-                        datasets: [{ label: "Unités", data: sortedProducts.map(item => item[1]), backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'], borderRadius: 5 }]
-                    },
-                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } }
-                });
-
-                new Chart(document.getElementById('categoryChart').getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: Object.keys(categoriesCount),
-                        datasets: [{ data: Object.values(categoriesCount), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'], borderWidth: 0 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
-                });
-
-            } catch (error) { console.error("Erreur:", error); }
-        }
+      AOS.init();
     </script>
 </body>
-  </html>
+</html>
