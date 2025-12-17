@@ -25,6 +25,12 @@
     <script>
       if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); }); }
     </script>
+    <script>
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+    }
+</script>
 </head>
 <body>
     <div id="toast-notification" class="toast"></div>
