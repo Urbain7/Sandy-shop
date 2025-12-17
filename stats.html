@@ -8,43 +8,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/theme-engine.js"></script>
-    
-    <!-- LE SCRIPT MAGIQUE (Busuanzi) -->
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     <style>
-        :root { --background-color: #f4f6f8; --card-bg-color: #ffffff; --text-color: #333333; --accent-color: #d1a3a4; }
+        :root {
+            --background-color: #f4f6f8;
+            --card-bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #d1a3a4;
+        }
+
         body { font-family: 'Poppins', sans-serif; background: var(--background-color); margin: 0; padding: 2rem; color: var(--text-color); transition: 0.3s; }
+        
+        /* LOGIN */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: var(--card-bg-color); padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: var(--text-color); }
-        .login-box input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; background: var(--background-color); color: var(--text-color); }
+        .login-box input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; background: var(--background-color); color: var(--text-color); }
         .login-btn { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
         .error-msg { color: #e74c3c; font-size: 0.9rem; display: none; margin-top: 10px; }
+
+        /* DASHBOARD */
         #dashboard-content { display: none; }
         .container { max-width: 1200px; margin: 0 auto; }
         .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
         h1 { margin: 0; font-size: 1.8rem; }
+        
         .switch-container { display: flex; align-items: center; gap: 10px; background: var(--card-bg-color); padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .switch-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); cursor: pointer; opacity: 0.8; }
+        
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .kpi-card { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; color: var(--text-color); }
         .kpi-title { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .kpi-value { font-size: 1.8rem; font-weight: bold; }
+        
         .card-stock { border-left-color: #3498db; }
         .card-value { border-left-color: #f1c40f; }
         .card-sales { border-left-color: #27ae60; }
         .card-alert { border-left-color: #e74c3c; }
         .card-visitors { border-left-color: #9b59b6; }
         .card-profit { border-left-color: #8e44ad; background-color: rgba(142, 68, 173, 0.1); display: none; }
+
         .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
         .full-width { grid-column: 1 / -1; }
         .chart-container, .table-container { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .section-title { margin-top: 0; font-size: 1.1rem; opacity: 0.9; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+        
+        /* FILTRES DATE */
+        .filters-bar { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; background: var(--background-color); padding: 10px; border-radius: 8px; }
+        .date-input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; background: var(--card-bg-color); color: var(--text-color); }
+        .filter-btn { background: var(--accent-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .filter-btn:hover { opacity: 0.9; }
+
         table { width: 100%; border-collapse: collapse; color: var(--text-color); }
         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         th { opacity: 0.6; font-weight: 500; }
         .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: var(--text-color); border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: var(--card-bg-color); }
-        .btn-back:hover { opacity: 0.8; }
         .toggle-switch { position: relative; width: 40px; height: 22px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -59,9 +76,9 @@
     <!-- LOGIN -->
     <div id="login-overlay">
         <div class="login-box">
-            <h2>🔐 Accès Business</h2>
+            <h2>Accès Business</h2>
             <p>Mot de passe requis</p>
-            <input type="password" id="password-input" placeholder="Entrez le code...">
+            <input type="password" id="password-input" placeholder="Code...">
             <button class="login-btn" onclick="checkPassword()">Accéder</button>
             <p class="error-msg" id="error-msg">Code incorrect</p>
             <a href="index.html" style="display:block; margin-top:15px; opacity:0.7; font-size:0.8rem; text-decoration:none; color: inherit;">← Retour au site</a>
@@ -86,57 +103,59 @@
                 <div class="kpi-title">Chiffre d'Affaires Total</div>
                 <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
             </div>
-            
-            <!-- CARTE VISITEURS (Auto-remplie par Busuanzi) -->
             <div class="kpi-card card-visitors">
-                <div class="kpi-title">Interactions sur le site(Total Site)</div>
-                <div class="kpi-value" style="color: #9b59b6;">
-                    <span id="busuanzi_value_site_uv">...</span>
-                </div>
+                <div class="kpi-title">Visiteurs (Total Site)</div>
+                <div class="kpi-value" style="color: #9b59b6;"><span id="busuanzi_value_site_uv">...</span></div>
             </div>
-
             <div class="kpi-card card-profit" id="card-profit-realized">
                 <div class="kpi-title">Bénéfice Net (Encaissé)</div>
                 <div class="kpi-value" id="profit-realized" style="color: #8e44ad;">0</div>
             </div>
-
             <div class="kpi-card card-value">
                 <div class="kpi-title">Valeur Stock (Vente)</div>
                 <div class="kpi-value" id="stock-value">0</div>
             </div>
-
             <div class="kpi-card card-profit" id="card-profit-potential">
                 <div class="kpi-title">Bénéfice Potentiel (Stock)</div>
                 <div class="kpi-value" id="profit-potential" style="color: #8e44ad;">0</div>
             </div>
-
             <div class="kpi-card card-alert">
                 <div class="kpi-title">Alertes Stock (&le;3)</div>
                 <div class="kpi-value" id="low-stock-count" style="color: #e74c3c;">0</div>
             </div>
         </div>
 
+        <!-- GRAPHIQUE ÉVOLUTION AVEC FILTRE -->
         <div class="charts-row">
             <div class="chart-container full-width">
-                <h3 class="section-title">Évolution du Chiffre d'Affaires (Mensuel)</h3>
+                <h3 class="section-title">Évolution du Chiffre d'Affaires</h3>
+                
+                <!-- NOUVEAU : BARRE DE FILTRES -->
+                <div class="filters-bar">
+                    <label>Du : <input type="date" id="start-date" class="date-input"></label>
+                    <label>Au : <input type="date" id="end-date" class="date-input"></label>
+                    <button onclick="updateDateFilter()" class="filter-btn">Filtrer</button>
+                    <span id="period-total" style="margin-left: auto; font-weight: bold; color: #27ae60;"></span>
+                </div>
+
                 <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
 
         <div class="charts-row">
             <div class="chart-container">
-                <h3 class="section-title">Top 5 Produits (Unités Vendues)</h3>
+                <h3 class="section-title"> Top 5 Produits (Unités Vendues)</h3>
                 <div style="height: 250px;"><canvas id="topProductsChart"></canvas></div>
             </div>
             <div class="chart-container">
-                <h3 class="section-title">Répartition du Stock</h3>
+                <h3 class="section-title"> Répartition du Stock</h3>
                 <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
         </div>
 
         <div class="charts-row">
             <div class="table-container full-width">
-                <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes (Stock faible)</h3>
+                <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
                 <table><thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead><tbody id="low-stock-list"></tbody></table>
             </div>
         </div>
@@ -169,7 +188,6 @@
         function showDashboard() { loginOverlay.style.display = 'none'; dashboardContent.style.display = 'block'; loadStats(); }
         function logout() { sessionStorage.removeItem('isStatsAuth'); location.reload(); }
 
-        // --- MODE SECRET ---
         const toggle = document.getElementById('profit-toggle');
         const isProfitMode = localStorage.getItem('showProfit') === 'true';
         toggle.checked = isProfitMode;
@@ -177,10 +195,13 @@
         toggle.addEventListener('change', (e) => { localStorage.setItem('showProfit', e.target.checked); toggleProfitDisplay(e.target.checked); });
         function toggleProfitDisplay(show) { document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none'); }
 
-        // --- DATA & CHARTS ---
+        // VARIABLES GLOBALES POUR LES DONNÉES
+        let globalSales = [];
+        let evolutionChartInstance = null;
+
+        // --- CHARGEMENT ---
         async function loadStats() {
             try {
-                // Chargement des données
                 const [prodData, salesData] = await Promise.all([
                     fetch('data/produits.json').then(res => res.json()),
                     fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] }))
@@ -189,8 +210,23 @@
                 const products = prodData.items ? prodData.items : prodData;
                 const sales = salesData.items ? salesData.items : salesData;
                 
+                // On stocke les ventes globalement pour le filtre
+                globalSales = sales.map(sale => {
+                    // Normalisation de la date pour le tri
+                    let dateObj = null;
+                    if (sale.date) {
+                        let d = new Date(sale.date);
+                        if (isNaN(d)) {
+                            const parts = sale.date.split('/');
+                            if(parts.length === 3) d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                        }
+                        if (!isNaN(d)) dateObj = d;
+                    }
+                    return { ...sale, dateObj: dateObj };
+                }).filter(s => s.dateObj !== null); // On garde que les ventes avec date valide
+
+                // --- 1. CALCULS GLOBAUX ---
                 let totalSales = 0, realizedProfit = 0;
-                let salesByMonth = {}; 
                 let salesByProduct = {};
 
                 sales.forEach(sale => {
@@ -198,17 +234,6 @@
                     totalSales += amount;
                     const productInfo = products.find(p => p.nom === sale.produit);
                     if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
-                    if (sale.date) {
-                        let dateObj = new Date(sale.date);
-                        if (isNaN(dateObj)) {
-                            const parts = sale.date.split('/');
-                            if(parts.length === 3) dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-                        }
-                        if (!isNaN(dateObj)) {
-                            const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-                            salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + amount;
-                        }
-                    }
                     const pName = sale.produit || "Inconnu";
                     salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
                 });
@@ -231,19 +256,17 @@
                 listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
                     lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
-                const sortedMonths = Object.keys(salesByMonth).sort();
-                new Chart(document.getElementById('evolutionChart').getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels: sortedMonths.map(m => {
-                            const [y, mo] = m.split('-');
-                            return new Date(y, mo - 1).toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
-                        }),
-                        datasets: [{ label: "CA", data: sortedMonths.map(m => salesByMonth[m]), borderColor: '#27ae60', backgroundColor: 'rgba(39, 174, 96, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
-                });
+                // --- 2. INITIALISATION GRAPHIQUE ÉVOLUTION ---
+                // Par défaut : Du 1er janvier à aujourd'hui
+                const today = new Date();
+                const firstDay = new Date(today.getFullYear(), 0, 1);
+                
+                document.getElementById('start-date').valueAsDate = firstDay;
+                document.getElementById('end-date').valueAsDate = today;
+                
+                updateDateFilter(); // Lance l'affichage du graph
 
+                // --- 3. AUTRES GRAPHIQUES ---
                 const sortedProducts = Object.entries(salesByProduct).sort((a, b) => b[1] - a[1]).slice(0, 5); 
                 new Chart(document.getElementById('topProductsChart').getContext('2d'), {
                     type: 'bar',
@@ -264,6 +287,70 @@
                 });
 
             } catch (error) { console.error("Erreur:", error); }
+        }
+
+        // --- FONCTION FILTRE DATE & GRAPHIQUE ---
+        function updateDateFilter() {
+            const startVal = document.getElementById('start-date').value;
+            const endVal = document.getElementById('end-date').value;
+            
+            if(!startVal || !endVal) return;
+
+            const startDate = new Date(startVal);
+            const endDate = new Date(endVal);
+            // Fin de journée pour inclure la date de fin
+            endDate.setHours(23, 59, 59);
+
+            // 1. Filtrer les ventes
+            const filteredSales = globalSales.filter(s => s.dateObj >= startDate && s.dateObj <= endDate);
+
+            // 2. Calculer le total sur la période
+            const totalPeriod = filteredSales.reduce((acc, curr) => acc + (curr.montant || 0), 0);
+            document.getElementById('period-total').textContent = "Total Période : " + formatPrice(totalPeriod);
+
+            // 3. Regrouper par JOUR
+            const salesByDay = {};
+            filteredSales.forEach(s => {
+                // Clé : YYYY-MM-DD
+                const dayKey = s.dateObj.toISOString().split('T')[0]; 
+                salesByDay[dayKey] = (salesByDay[dayKey] || 0) + (s.montant || 0);
+            });
+
+            // 4. Trier les jours chronologiquement
+            const sortedDays = Object.keys(salesByDay).sort();
+            
+            // 5. Mise à jour du graphique
+            const ctx = document.getElementById('evolutionChart').getContext('2d');
+            
+            if (evolutionChartInstance) {
+                evolutionChartInstance.destroy(); // Supprime l'ancien graph
+            }
+
+            evolutionChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDays.map(d => {
+                        // Affiche "17 Déc"
+                        const date = new Date(d);
+                        return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                    }),
+                    datasets: [{
+                        label: "Chiffre d'Affaires (FCFA)",
+                        data: sortedDays.map(d => salesByDay[d]),
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
+                }
+            });
         }
     </script>
 </body>
