@@ -193,30 +193,26 @@ function loadGoogleAnalytics() {
     document.head.appendChild(inlineScript);
 }
 
-// --- FONCTION DE COMPTAGE INTELLIGENTE (1 fois par jour) ---
+// --- FONCTION DE COMPTAGE (Nouvelle ID) ---
 function countNewVisitor() {
-    const namespace = 'sandyshop-v1'; 
+    // Nouveau nom unique pour repartir à zéro proprement
+    const namespace = 'sandy-shop-officiel'; 
     const key = 'visites';
 
-    // 1. Date d'aujourd'hui
     const today = new Date().toISOString().split('T')[0];
-    
-    // 2. Dernière visite enregistrée
     const lastVisit = localStorage.getItem('lastVisitDate');
 
-    // 3. Si déjà venu aujourd'hui, ON ARRÊTE TOUT
     if (lastVisit === today) {
-        console.log("Visiteur déjà compté aujourd'hui.");
+        console.log("Déjà compté aujourd'hui.");
         return; 
     }
 
-    // 4. Sinon, on appelle l'API pour ajouter +1
+    // On utilise l'option /up pour ajouter +1
     fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
         .then(response => response.json())
         .then(data => {
-            console.log("Nouveau visiteur compté ! Total :", data.count);
-            // 5. On note la date pour ne plus compter aujourd'hui
+            console.log("Compteur incrémenté :", data.count);
             localStorage.setItem('lastVisitDate', today);
         })
-        .catch(err => console.log("Erreur compteur (Bloqueur de pub ?)", err));
-                                                    }
+        .catch(err => console.error("Erreur compteur:", err));
+}
