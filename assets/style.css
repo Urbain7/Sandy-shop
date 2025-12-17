@@ -513,3 +513,54 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .vip-close { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); }
 @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
 
+/* --- SÉLECTEUR DE DEVISE --- */
+.currency-select {
+    background: transparent;
+    border: 1px solid var(--card-border-color);
+    color: var(--header-text-color);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.currency-select option { color: #333; } /* Pour que les options soient lisibles */
+
+/* --- ZOOM IMAGE --- */
+.main-image-container {
+    overflow: hidden; /* Important pour ne pas que l'image sorte du cadre */
+    border-radius: 8px;
+    border: 1px solid var(--card-border-color);
+    cursor: crosshair; /* Curseur loupe */
+}
+.zoom-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease-out; /* Fluidité du zoom */
+}
+
+/* --- BOUTONS TAILLES --- */
+.product-sizes { margin-bottom: 1rem; }
+.product-sizes label { font-weight: bold; display: block; margin-bottom: 0.5rem; }
+.size-options { display: flex; gap: 10px; flex-wrap: wrap; }
+.size-options input[type="radio"] { display: none; } /* Cache le rond moche */
+
+.size-box {
+    border: 1px solid var(--input-border-color);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--input-bg-color);
+    color: var(--text-color);
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Style quand sélectionné */
+.size-options input[type="radio"]:checked + .size-box {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}
