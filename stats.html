@@ -6,13 +6,8 @@
     <title>Tableau de Bord - Sandy'Shop</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- CHART.JS (Graphiques) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- MOTEUR DE THÈME (Couleurs du site) -->
     <script src="js/theme-engine.js"></script>
-
     <style>
         :root {
             --background-color: #f4f6f8;
@@ -20,73 +15,47 @@
             --text-color: #333333;
             --accent-color: #d1a3a4;
         }
-
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: var(--background-color); 
-            margin: 0; padding: 2rem; 
-            color: var(--text-color); 
-            transition: 0.3s; 
-        }
-        
-        /* --- ECRAN DE CONNEXION --- */
+        body { font-family: 'Poppins', sans-serif; background: var(--background-color); margin: 0; padding: 2rem; color: var(--text-color); transition: 0.3s; }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: var(--card-bg-color); padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: var(--text-color); }
         .login-box input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; background: var(--background-color); color: var(--text-color); }
         .login-btn { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
         .error-msg { color: #e74c3c; font-size: 0.9rem; display: none; margin-top: 10px; }
-
-        /* --- DASHBOARD --- */
         #dashboard-content { display: none; }
         .container { max-width: 1200px; margin: 0 auto; }
         .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
         h1 { margin: 0; font-size: 1.8rem; }
-        
         .switch-container { display: flex; align-items: center; gap: 10px; background: var(--card-bg-color); padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .switch-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); cursor: pointer; opacity: 0.8; }
-        
-        /* Cartes KPI */
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .kpi-card { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; color: var(--text-color); }
         .kpi-title { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .kpi-value { font-size: 1.8rem; font-weight: bold; }
-        
-        /* Couleurs des cartes */
         .card-stock { border-left-color: #3498db; }
         .card-value { border-left-color: #f1c40f; }
         .card-sales { border-left-color: #27ae60; }
         .card-alert { border-left-color: #e74c3c; }
-        .card-visitors { border-left-color: #9b59b6; } /* Violet pour les visiteurs */
+        .card-visitors { border-left-color: #9b59b6; }
         .card-profit { border-left-color: #8e44ad; background-color: rgba(142, 68, 173, 0.1); display: none; }
-
-        /* Graphiques & Tableaux */
         .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
         .full-width { grid-column: 1 / -1; }
-        
         .chart-container, .table-container { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .section-title { margin-top: 0; font-size: 1.1rem; opacity: 0.9; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
-
         table { width: 100%; border-collapse: collapse; color: var(--text-color); }
         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         th { opacity: 0.6; font-weight: 500; }
-        
         .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: var(--text-color); border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: var(--card-bg-color); }
         .btn-back:hover { opacity: 0.8; }
-
-        /* Switch */
         .toggle-switch { position: relative; width: 40px; height: 22px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #8e44ad; }
         input:checked + .slider:before { transform: translateX(18px); }
-
         @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-
-    <!-- 🔒 LOGIN -->
     <div id="login-overlay">
         <div class="login-box">
             <h2>Accès Business</h2>
@@ -97,8 +66,6 @@
             <a href="index.html" style="display:block; margin-top:15px; opacity:0.7; font-size:0.8rem; text-decoration:none; color: inherit;">← Retour au site</a>
         </div>
     </div>
-
-    <!-- 📊 DASHBOARD -->
     <div id="dashboard-content" class="container">
         <div class="header-dashboard">
             <h1>Analyse & Performance</h1>
@@ -110,93 +77,67 @@
                 <label for="profit-toggle" class="switch-label">Mode Expert (Marge) 🤫</label>
             </div>
         </div>
-
         <div class="kpi-grid">
-            <!-- CA Total -->
             <div class="kpi-card card-sales">
                 <div class="kpi-title">Chiffre d'Affaires Total</div>
                 <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
             </div>
-            
-            <!-- Visiteurs Uniques (CORRIGÉ) -->
             <div class="kpi-card card-visitors">
                 <div class="kpi-title">Visiteurs Uniques (Cookies)</div>
-                <div class="kpi-value" id="unique-visitors" style="color: #9b59b6;">0</div>
+                <div class="kpi-value" id="unique-visitors" style="color: #9b59b6;">...</div>
             </div>
-
-            <!-- Secrets : Marge -->
             <div class="kpi-card card-profit" id="card-profit-realized">
                 <div class="kpi-title">Bénéfice Net (Encaissé)</div>
                 <div class="kpi-value" id="profit-realized" style="color: #8e44ad;">0</div>
             </div>
-
-            <!-- Valeur Stock -->
             <div class="kpi-card card-value">
                 <div class="kpi-title">Valeur Stock (Vente)</div>
                 <div class="kpi-value" id="stock-value">0</div>
             </div>
-
-            <!-- Secrets : Potentiel -->
             <div class="kpi-card card-profit" id="card-profit-potential">
                 <div class="kpi-title">Bénéfice Potentiel (Stock)</div>
                 <div class="kpi-value" id="profit-potential" style="color: #8e44ad;">0</div>
             </div>
-
-            <!-- Alertes -->
             <div class="kpi-card card-alert">
                 <div class="kpi-title">Alertes Stock (&le;3)</div>
                 <div class="kpi-value" id="low-stock-count" style="color: #e74c3c;">0</div>
             </div>
         </div>
-
-        <!-- GRAPHIQUE ÉVOLUTION (Ligne) -->
         <div class="charts-row">
             <div class="chart-container full-width">
                 <h3 class="section-title">Évolution du Chiffre d'Affaires (Mensuel)</h3>
                 <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
-
         <div class="charts-row">
-            <!-- TOP 5 PRODUITS (QUANTITÉ) -->
             <div class="chart-container">
                 <h3 class="section-title">Top 5 Produits (Unités Vendues)</h3>
                 <div style="height: 250px;"><canvas id="topProductsChart"></canvas></div>
             </div>
-
-            <!-- STOCK PAR CATÉGORIE -->
             <div class="chart-container">
                 <h3 class="section-title">Répartition du Stock</h3>
                 <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
         </div>
-
         <div class="charts-row">
             <div class="table-container full-width">
                 <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes (Stock faible)</h3>
                 <table><thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead><tbody id="low-stock-list"></tbody></table>
             </div>
         </div>
-        
         <div style="text-align: center;">
             <button onclick="logout()" class="btn-back" style="background:var(--accent-color); color:white; border:none; cursor:pointer;">🔒 Se déconnecter</button>
             <a href="index.html" class="btn-back">← Retour au site</a>
         </div>
     </div>
-
     <script>
         function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
-
-        // --- 🔐 LOGIN ---
-        const MY_PASSWORD = "admin123"; // CHANGEZ VOTRE MOT DE PASSE ICI
-
+        const MY_PASSWORD = "admin123";
         const loginOverlay = document.getElementById('login-overlay');
         const dashboardContent = document.getElementById('dashboard-content');
         const passInput = document.getElementById('password-input');
         const errorMsg = document.getElementById('error-msg');
-
         if (sessionStorage.getItem('isStatsAuth') === 'true') showDashboard();
-
         function checkPassword() {
             if (passInput.value === MY_PASSWORD) {
                 sessionStorage.setItem('isStatsAuth', 'true');
@@ -206,158 +147,102 @@
         passInput.addEventListener("keypress", (e) => { if (e.key === "Enter") checkPassword(); });
         function showDashboard() { loginOverlay.style.display = 'none'; dashboardContent.style.display = 'block'; loadStats(); }
         function logout() { sessionStorage.removeItem('isStatsAuth'); location.reload(); }
-
-        // --- MODE SECRET ---
         const toggle = document.getElementById('profit-toggle');
         const isProfitMode = localStorage.getItem('showProfit') === 'true';
         toggle.checked = isProfitMode;
         toggleProfitDisplay(isProfitMode);
         toggle.addEventListener('change', (e) => { localStorage.setItem('showProfit', e.target.checked); toggleProfitDisplay(e.target.checked); });
         function toggleProfitDisplay(show) { document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none'); }
-
-        // --- VISITEURS UNIQUES (API V2 FIABLE) ---
-        async function loadVisitorCount() {
-            try {
-                const namespace = 'sandyshop-v1';
-                const key = 'visites';
-                // Lecture simple sans incrémentation
-                const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`);
-                const data = await response.json();
-                
-                if (data && data.count) {
-                    document.getElementById('unique-visitors').textContent = data.count;
-                } else {
-                    document.getElementById('unique-visitors').textContent = "0";
-                }
-            } catch (e) {
-                console.log("Erreur lecture visiteurs");
-                document.getElementById('unique-visitors').textContent = "-";
-            }
-        }
-
+        
         // --- DATA & CHARTS ---
         async function loadStats() {
-            // Lancer le chargement des visiteurs
-            loadVisitorCount();
+            // CORRECTION ICI : On utilise Promise.all pour lancer les requêtes en parallèle
+            // Cela garantit que toutes les données sont prêtes avant de continuer
+            const [prodData, salesData, visitorData] = await Promise.all([
+                fetch('data/produits.json').then(res => res.json()),
+                fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] })), // Si ventes.json n'existe pas, on renvoie un tableau vide
+                fetch('https://api.counterapi.dev/v1/sandyshop-v1/visites').then(res => res.json()).catch(() => ({ count: '-' })) // Si compteur plante, on renvoie '-'
+            ]);
 
-            try {
-                // 1. Charger Produits & Ventes
-                const prodResponse = await fetch('data/produits.json');
-                const prodData = await prodResponse.json();
-                const products = prodData.items ? prodData.items : prodData;
+            // Afficher le nombre de visiteurs dès qu'il est prêt
+            document.getElementById('unique-visitors').textContent = visitorData.count || 0;
 
-                let totalSales = 0, realizedProfit = 0;
-                let salesByMonth = {}; 
-                let salesByProduct = {}; // Compteur de QUANTITÉ
+            const products = prodData.items ? prodData.items : prodData;
+            const sales = salesData.items ? salesData.items : salesData;
+            
+            let totalSales = 0, realizedProfit = 0;
+            let salesByMonth = {}; 
+            let salesByProduct = {};
 
-                try {
-                    const salesResponse = await fetch('data/ventes.json');
-                    if (salesResponse.ok) {
-                        const salesData = await salesResponse.json();
-                        const sales = salesData.items ? salesData.items : salesData;
-                        
-                        sales.forEach(sale => {
-                            const amount = sale.montant || 0;
-                            totalSales += amount;
-                            
-                            // Calcul Profit
-                            const productInfo = products.find(p => p.nom === sale.produit);
-                            if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
-
-                            // Agrégation par Mois (CA)
-                            if (sale.date) {
-                                let dateObj = new Date(sale.date);
-                                if (isNaN(dateObj)) {
-                                    const parts = sale.date.split('/');
-                                    if(parts.length === 3) dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-                                }
-                                if (!isNaN(dateObj)) {
-                                    const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-                                    salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + amount;
-                                }
-                            }
-
-                            // Agrégation par Produit (QUANTITÉ)
-                            // On ajoute +1 (1 unité) et non le prix
-                            const pName = sale.produit || "Inconnu";
-                            salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
-                        });
+            sales.forEach(sale => {
+                const amount = sale.montant || 0;
+                totalSales += amount;
+                const productInfo = products.find(p => p.nom === sale.produit);
+                if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
+                if (sale.date) {
+                    let dateObj = new Date(sale.date);
+                    if (isNaN(dateObj)) {
+                        const parts = sale.date.split('/');
+                        if(parts.length === 3) dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
                     }
-                } catch (e) { console.log("Pas de ventes"); }
-
-                // KPI Stock
-                const stockValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
-                const potentialProfit = products.reduce((sum, p) => {
-                    const buyPrice = p.prix_achat || 0;
-                    return buyPrice > 0 ? sum + ((p.prix - buyPrice) * p.stock) : sum;
-                }, 0);
-                const lowStockItems = products.filter(p => p.stock <= 3 && p.stock > 0);
-                const categoriesCount = {};
-                products.forEach(p => { categoriesCount[p.categorie] = (categoriesCount[p.categorie] || 0) + 1; });
-
-                // Affichage KPI HTML
-                document.getElementById('total-sales').textContent = formatPrice(totalSales);
-                document.getElementById('stock-value').textContent = formatPrice(stockValue);
-                document.getElementById('low-stock-count').textContent = lowStockItems.length;
-                document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
-                document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
-
-                const listContainer = document.getElementById('low-stock-list');
-                listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
-                    lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
-
-                // --- CHART 1 : ÉVOLUTION MENSUELLE (CA) ---
-                const sortedMonths = Object.keys(salesByMonth).sort();
-                new Chart(document.getElementById('evolutionChart').getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels: sortedMonths.map(m => {
-                            const [y, mo] = m.split('-');
-                            return new Date(y, mo - 1).toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
-                        }),
-                        datasets: [{
-                            label: "Chiffre d'Affaires (FCFA)", data: sortedMonths.map(m => salesByMonth[m]),
-                            borderColor: '#27ae60', backgroundColor: 'rgba(39, 174, 96, 0.1)', borderWidth: 3, fill: true, tension: 0.4
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
-                });
-
-                // --- CHART 2 : TOP 5 PRODUITS (QUANTITÉ VENDUE) ---
-                const sortedProducts = Object.entries(salesByProduct)
-                    .sort((a, b) => b[1] - a[1]) // Tri par quantité décroissante
-                    .slice(0, 5); 
-
-                new Chart(document.getElementById('topProductsChart').getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: sortedProducts.map(item => item[0]), // Noms
-                        datasets: [{
-                            label: "Unités vendues", // Label corrigé
-                            data: sortedProducts.map(item => item[1]), // Quantités
-                            backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'],
-                            borderRadius: 5
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y', 
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } // Nombres entiers
+                    if (!isNaN(dateObj)) {
+                        const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+                        salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + amount;
                     }
-                });
+                }
+                const pName = sale.produit || "Inconnu";
+                salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
+            });
 
-                // --- CHART 3 : RÉPARTITION STOCK ---
-                new Chart(document.getElementById('categoryChart').getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: Object.keys(categoriesCount),
-                        datasets: [{ data: Object.values(categoriesCount), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'], borderWidth: 0 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
-                });
+            const stockValue = products.reduce((sum, p) => sum + (p.prix * p.stock), 0);
+            const potentialProfit = products.reduce((sum, p) => {
+                const buyPrice = p.prix_achat || 0;
+                return buyPrice > 0 ? sum + ((p.prix - buyPrice) * p.stock) : sum;
+            }, 0);
+            const lowStockItems = products.filter(p => p.stock <= 3 && p.stock > 0);
+            const categoriesCount = {};
+            products.forEach(p => { categoriesCount[p.categorie] = (categoriesCount[p.categorie] || 0) + 1; });
 
-            } catch (error) { console.error("Erreur:", error); }
+            document.getElementById('total-sales').textContent = formatPrice(totalSales);
+            document.getElementById('stock-value').textContent = formatPrice(stockValue);
+            document.getElementById('low-stock-count').textContent = lowStockItems.length;
+            document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
+            document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
+            const listContainer = document.getElementById('low-stock-list');
+            listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
+                lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
+
+            const sortedMonths = Object.keys(salesByMonth).sort();
+            new Chart(document.getElementById('evolutionChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: sortedMonths.map(m => {
+                        const [y, mo] = m.split('-');
+                        return new Date(y, mo - 1).toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
+                    }),
+                    datasets: [{ label: "CA", data: sortedMonths.map(m => salesByMonth[m]), borderColor: '#27ae60', backgroundColor: 'rgba(39, 174, 96, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
+            });
+
+            const sortedProducts = Object.entries(salesByProduct).sort((a, b) => b[1] - a[1]).slice(0, 5); 
+            new Chart(document.getElementById('topProductsChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: sortedProducts.map(item => item[0]),
+                    datasets: [{ label: "Unités", data: sortedProducts.map(item => item[1]), backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'], borderRadius: 5 }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } }
+            });
+
+            new Chart(document.getElementById('categoryChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(categoriesCount),
+                    datasets: [{ data: Object.values(categoriesCount), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
+            });
         }
     </script>
 </body>
