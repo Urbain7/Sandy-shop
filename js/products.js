@@ -475,4 +475,4 @@ async function initPanierPage() {
             } catch (error) { console.error(error); showToast("Erreur. Réessayez."); submitBtn.textContent = "Valider"; submitBtn.disabled = false; }
         });
     }
-}
+                     }
