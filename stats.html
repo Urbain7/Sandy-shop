@@ -9,21 +9,34 @@
     
     <!-- CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- MOTEUR DE THÈME -->
     <script src="js/theme-engine.js"></script>
-    <!-- NOUVEAU COMPTEUR (BUSUANZI) -->
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     <style>
-        :root { --background-color: #f4f6f8; --card-bg-color: #ffffff; --text-color: #333333; --accent-color: #d1a3a4; }
-        body { font-family: 'Poppins', sans-serif; background: var(--background-color); margin: 0; padding: 2rem; color: var(--text-color); transition: 0.3s; }
+        :root {
+            --background-color: #f4f6f8;
+            --card-bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #d1a3a4;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--background-color); 
+            margin: 0; padding: 2rem; 
+            color: var(--text-color); 
+            transition: 0.3s; 
+        }
         
+        /* --- LOGIN --- */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: var(--card-bg-color); padding: 2rem; border-radius: 10px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: var(--text-color); }
         .login-box input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; background: var(--background-color); color: var(--text-color); }
         .login-btn { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
         .error-msg { color: #e74c3c; font-size: 0.9rem; display: none; margin-top: 10px; }
 
+        /* --- DASHBOARD --- */
         #dashboard-content { display: none; }
         .container { max-width: 1200px; margin: 0 auto; }
         .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
@@ -31,13 +44,7 @@
         
         .switch-container { display: flex; align-items: center; gap: 10px; background: var(--card-bg-color); padding: 8px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .switch-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); cursor: pointer; opacity: 0.8; }
-        .toggle-switch { position: relative; width: 40px; height: 22px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #8e44ad; }
-        input:checked + .slider:before { transform: translateX(18px); }
-
+        
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .kpi-card { background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; border-left: 4px solid transparent; color: var(--text-color); }
         .kpi-title { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
@@ -59,6 +66,13 @@
         th { opacity: 0.6; font-weight: 500; }
         .btn-back { display: inline-block; margin-top: 2rem; text-decoration: none; color: var(--text-color); border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; transition: 0.3s; background: var(--card-bg-color); }
         .btn-back:hover { opacity: 0.8; }
+        
+        .toggle-switch { position: relative; width: 40px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #8e44ad; }
+        input:checked + .slider:before { transform: translateX(18px); }
         @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -91,31 +105,27 @@
 
         <div class="kpi-grid">
             <div class="kpi-card card-sales">
-                <div class="kpi-title">Chiffre d'Affaires</div>
+                <div class="kpi-title">Chiffre d'Affaires Total</div>
                 <div class="kpi-value" id="total-sales" style="color: #27ae60;">0</div>
             </div>
             
-            <!-- NOUVEAU COMPTEUR ROBUSTE -->
             <div class="kpi-card card-visitors">
-                <div class="kpi-title">Visiteurs (Total Site)</div>
-                <div class="kpi-value" style="color: #9b59b6;">
-                    <!-- Cette balise span sera remplie automatiquement par le script -->
-                    <span id="busuanzi_value_site_uv">...</span>
-                </div>
+                <div class="kpi-title">Visiteurs Uniques (Cookies)</div>
+                <div class="kpi-value" id="unique-visitors" style="color: #9b59b6;">...</div>
             </div>
 
             <div class="kpi-card card-profit" id="card-profit-realized">
-                <div class="kpi-title">Bénéfice Net</div>
+                <div class="kpi-title">Bénéfice Net (Encaissé)</div>
                 <div class="kpi-value" id="profit-realized" style="color: #8e44ad;">0</div>
             </div>
 
             <div class="kpi-card card-value">
-                <div class="kpi-title">Valeur Stock</div>
+                <div class="kpi-title">Valeur Stock (Vente)</div>
                 <div class="kpi-value" id="stock-value">0</div>
             </div>
 
             <div class="kpi-card card-profit" id="card-profit-potential">
-                <div class="kpi-title">Bénéfice Potentiel</div>
+                <div class="kpi-title">Bénéfice Potentiel (Stock)</div>
                 <div class="kpi-value" id="profit-potential" style="color: #8e44ad;">0</div>
             </div>
 
@@ -125,27 +135,29 @@
             </div>
         </div>
 
+        <!-- GRAPHIQUES -->
         <div class="charts-row">
             <div class="chart-container full-width">
-                <h3 class="section-title">Évolution CA (Mensuel)</h3>
+                <h3 class="section-title">Évolution du Chiffre d'Affaires (Mensuel)</h3>
                 <div style="height: 300px;"><canvas id="evolutionChart"></canvas></div>
             </div>
         </div>
 
         <div class="charts-row">
             <div class="chart-container">
-                <h3 class="section-title">Top 5 Produits (Ventes)</h3>
+                <h3 class="section-title">Top 5 Produits (Unités Vendues)</h3>
                 <div style="height: 250px;"><canvas id="topProductsChart"></canvas></div>
             </div>
             <div class="chart-container">
-                <h3 class="section-title">Répartition Stock</h3>
+                <h3 class="section-title">Répartition du Stock</h3>
                 <div style="height: 250px; display:flex; justify-content:center;"><canvas id="categoryChart"></canvas></div>
             </div>
         </div>
 
+        <!-- TABLEAU RUPTURES -->
         <div class="charts-row">
             <div class="table-container full-width">
-                <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes</h3>
+                <h3 class="section-title" style="color: #e74c3c;">⚠️ Ruptures imminentes (Stock faible)</h3>
                 <table><thead><tr><th>Produit</th><th>Stock</th><th>Prix</th></tr></thead><tbody id="low-stock-list"></tbody></table>
             </div>
         </div>
@@ -178,6 +190,7 @@
         function showDashboard() { loginOverlay.style.display = 'none'; dashboardContent.style.display = 'block'; loadStats(); }
         function logout() { sessionStorage.removeItem('isStatsAuth'); location.reload(); }
 
+        // --- MODE SECRET ---
         const toggle = document.getElementById('profit-toggle');
         const isProfitMode = localStorage.getItem('showProfit') === 'true';
         toggle.checked = isProfitMode;
@@ -185,26 +198,34 @@
         toggle.addEventListener('change', (e) => { localStorage.setItem('showProfit', e.target.checked); toggleProfitDisplay(e.target.checked); });
         function toggleProfitDisplay(show) { document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none'); }
 
-        // --- DATA ---
+        // --- DATA & CHARTS ---
         async function loadStats() {
             try {
-                const [prodData, salesData] = await Promise.all([
+                // 1. Chargement Parallèle
+                const [prodData, salesData, visitorData] = await Promise.all([
                     fetch('data/produits.json').then(res => res.json()),
-                    fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] }))
+                    fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] })),
+                    // Lecture du compteur (Lecture seule, pas de /up)
+                    fetch('https://api.counterapi.dev/v1/sandyshop-v1/visites').then(res => res.json()).catch(() => ({ count: 0 }))
                 ]);
+
+                // 2. Affichage Visiteurs
+                document.getElementById('unique-visitors').textContent = visitorData.count || 0;
 
                 const products = prodData.items ? prodData.items : prodData;
                 const sales = salesData.items ? salesData.items : salesData;
                 
                 let totalSales = 0, realizedProfit = 0;
                 let salesByMonth = {}; 
-                let salesByProduct = {};
+                let salesByProduct = {}; // Compteur de QUANTITÉ
 
                 sales.forEach(sale => {
                     const amount = sale.montant || 0;
                     totalSales += amount;
+                    
                     const productInfo = products.find(p => p.nom === sale.produit);
                     if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
+
                     if (sale.date) {
                         let dateObj = new Date(sale.date);
                         if (isNaN(dateObj)) {
@@ -216,6 +237,8 @@
                             salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + amount;
                         }
                     }
+
+                    // Top 5 : On compte le nombre de fois vendu (+1)
                     const pName = sale.produit || "Inconnu";
                     salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
                 });
@@ -234,10 +257,12 @@
                 document.getElementById('low-stock-count').textContent = lowStockItems.length;
                 document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
                 document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
+
                 const listContainer = document.getElementById('low-stock-list');
                 listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
                     lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
+                // Graphique Evolution
                 const sortedMonths = Object.keys(salesByMonth).sort();
                 new Chart(document.getElementById('evolutionChart').getContext('2d'), {
                     type: 'line',
@@ -251,16 +276,18 @@
                     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
                 });
 
+                // Graphique Top 5 (Quantité)
                 const sortedProducts = Object.entries(salesByProduct).sort((a, b) => b[1] - a[1]).slice(0, 5); 
                 new Chart(document.getElementById('topProductsChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: sortedProducts.map(item => item[0]),
-                        datasets: [{ label: "Unités", data: sortedProducts.map(item => item[1]), backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'], borderRadius: 5 }]
+                        datasets: [{ label: "Unités vendues", data: sortedProducts.map(item => item[1]), backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'], borderRadius: 5 }]
                     },
                     options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } }
                 });
 
+                // Graphique Catégories
                 new Chart(document.getElementById('categoryChart').getContext('2d'), {
                     type: 'doughnut',
                     data: {
@@ -274,4 +301,4 @@
         }
     </script>
 </body>
-                                                                                              </html>
+</html>
