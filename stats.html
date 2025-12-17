@@ -168,10 +168,10 @@
         </div>
     </div>
 
-    <script>
+   <script>
         function formatPrice(price) { return Number(price).toLocaleString('fr-FR') + ' F'; }
 
-        // --- 🔐 LOGIN ---
+        // --- 1. LOGIN ---
         const MY_PASSWORD = "admin123"; 
         const loginOverlay = document.getElementById('login-overlay');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -187,10 +187,10 @@
             } else { errorMsg.style.display = 'block'; passInput.value = ''; }
         }
         passInput.addEventListener("keypress", (e) => { if (e.key === "Enter") checkPassword(); });
-        function showDashboard() { loginOverlay.style.display = 'none'; dashboardContent.style.display = 'block'; loadStats(); }
+        function showDashboard() { loginOverlay.style.display = 'none'; dashboardContent.style.display = 'block'; loadAllData(); }
         function logout() { sessionStorage.removeItem('isStatsAuth'); location.reload(); }
 
-        // --- MODE SECRET ---
+        // --- 2. SWITCH MARGE ---
         const toggle = document.getElementById('profit-toggle');
         const isProfitMode = localStorage.getItem('showProfit') === 'true';
         toggle.checked = isProfitMode;
@@ -198,34 +198,59 @@
         toggle.addEventListener('change', (e) => { localStorage.setItem('showProfit', e.target.checked); toggleProfitDisplay(e.target.checked); });
         function toggleProfitDisplay(show) { document.querySelectorAll('.card-profit').forEach(card => card.style.display = show ? 'block' : 'none'); }
 
-        // --- DATA & CHARTS ---
+        // --- 3. FONCTION PRINCIPALE ---
+        function loadAllData() {
+            loadStats();        // Charge les produits/ventes
+            loadVisitorCount(); // Charge le compteur (SÉPARÉ)
+        }
+
+        // --- 4. CHARGEMENT COMPTEUR (SÉPARÉ) ---
+        async function loadVisitorCount() {
+            const element = document.getElementById('unique-visitors');
+            element.textContent = "Chargement...";
+            
+            try {
+                // On utilise le même NOM que dans utils.js
+                const namespace = 'sandy-shop-officiel';
+                const key = 'visites';
+                
+                const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`);
+                
+                if (!response.ok) {
+                    throw new Error("Erreur " + response.status);
+                }
+
+                const data = await response.json();
+                element.textContent = data.count; // Affiche le chiffre
+                
+            } catch (e) {
+                console.error("Erreur Visiteurs:", e);
+                // Affiche l'erreur à l'écran pour comprendre
+                element.textContent = "Erreur co.";
+                element.style.fontSize = "1rem"; // Réduit la taille pour lire l'erreur
+            }
+        }
+
+        // --- 5. CHARGEMENT STATS BUSINESS ---
         async function loadStats() {
             try {
-                // 1. Chargement Parallèle
-                const [prodData, salesData, visitorData] = await Promise.all([
+                const [prodData, salesData] = await Promise.all([
                     fetch('data/produits.json').then(res => res.json()),
-                    fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] })),
-                    // Lecture du compteur (Lecture seule, pas de /up)
-                    fetch('https://api.counterapi.dev/v1/sandyshop-v1/visites').then(res => res.json()).catch(() => ({ count: 0 }))
+                    fetch('data/ventes.json').then(res => res.json()).catch(() => ({ items: [] }))
                 ]);
-
-                // 2. Affichage Visiteurs
-                document.getElementById('unique-visitors').textContent = visitorData.count || 0;
 
                 const products = prodData.items ? prodData.items : prodData;
                 const sales = salesData.items ? salesData.items : salesData;
                 
                 let totalSales = 0, realizedProfit = 0;
                 let salesByMonth = {}; 
-                let salesByProduct = {}; // Compteur de QUANTITÉ
+                let salesByProduct = {};
 
                 sales.forEach(sale => {
                     const amount = sale.montant || 0;
                     totalSales += amount;
-                    
                     const productInfo = products.find(p => p.nom === sale.produit);
                     if (productInfo && productInfo.prix_achat > 0) realizedProfit += (amount - productInfo.prix_achat);
-
                     if (sale.date) {
                         let dateObj = new Date(sale.date);
                         if (isNaN(dateObj)) {
@@ -237,8 +262,6 @@
                             salesByMonth[monthKey] = (salesByMonth[monthKey] || 0) + amount;
                         }
                     }
-
-                    // Top 5 : On compte le nombre de fois vendu (+1)
                     const pName = sale.produit || "Inconnu";
                     salesByProduct[pName] = (salesByProduct[pName] || 0) + 1;
                 });
@@ -257,12 +280,10 @@
                 document.getElementById('low-stock-count').textContent = lowStockItems.length;
                 document.getElementById('profit-potential').textContent = formatPrice(potentialProfit);
                 document.getElementById('profit-realized').textContent = formatPrice(realizedProfit);
-
                 const listContainer = document.getElementById('low-stock-list');
                 listContainer.innerHTML = lowStockItems.length === 0 ? '<tr><td colspan="3">Stock OK 🎉</td></tr>' : 
                     lowStockItems.map(p => `<tr><td>${p.nom}</td><td style="font-weight:bold; color:red;">${p.stock}</td><td>${formatPrice(p.prix)}</td></tr>`).join('');
 
-                // Graphique Evolution
                 const sortedMonths = Object.keys(salesByMonth).sort();
                 new Chart(document.getElementById('evolutionChart').getContext('2d'), {
                     type: 'line',
@@ -276,18 +297,16 @@
                     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
                 });
 
-                // Graphique Top 5 (Quantité)
                 const sortedProducts = Object.entries(salesByProduct).sort((a, b) => b[1] - a[1]).slice(0, 5); 
                 new Chart(document.getElementById('topProductsChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: sortedProducts.map(item => item[0]),
-                        datasets: [{ label: "Unités vendues", data: sortedProducts.map(item => item[1]), backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'], borderRadius: 5 }]
+                        datasets: [{ label: "Unités", data: sortedProducts.map(item => item[1]), backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c', '#9b59b6', '#3498db'], borderRadius: 5 }]
                     },
                     options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { stepSize: 1 } } } }
                 });
 
-                // Graphique Catégories
                 new Chart(document.getElementById('categoryChart').getContext('2d'), {
                     type: 'doughnut',
                     data: {
