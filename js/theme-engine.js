@@ -23,25 +23,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         const theme = palettes[config.theme] || palettes['mode'];
         const root = document.documentElement;
 
-        // 3. Application de la couleur principale (S'applique en Clair ET en Sombre)
+        // 3. Application de la couleur principale
         root.style.setProperty('--theme-primary', theme.primary);
 
-        // 4. Cas spécial : Thème Luxe (100% Noir)
+        // 4. Cas spécial : Thème Luxe (Force le Noir)
         if (theme.isDark) {
             root.classList.add('dark-mode');
-            localStorage.setItem('theme', 'dark');
-            // On cache le bouton switch car ce thème n'a pas de version claire
+            // On ne sauvegarde PAS 'dark' dans le localStorage ici pour ne pas bloquer l'utilisateur
+            // s'il change de thème plus tard. On cache juste le bouton.
             const toggleBtn = document.getElementById('theme-toggle');
             if(toggleBtn) toggleBtn.style.display = 'none';
         } 
         else {
-            // 5. Thèmes normaux : On définit les couleurs du mode CLAIR uniquement
-            // On utilise les variables tampons définies dans le CSS
+            // 5. Thèmes normaux : On définit les couleurs TAMPO
             root.style.setProperty('--theme-light-bg', theme.bg);
             root.style.setProperty('--theme-light-card', theme.card);
             root.style.setProperty('--theme-light-text', theme.text);
             
-            // On s'assure que le bouton switch est visible
+            // C'EST ICI LA CORRECTION :
+            // On a supprimé la ligne "root.classList.remove('dark-mode')"
+            // On laisse le fichier js/theme.js décider s'il faut le mode sombre ou pas.
+            
             const toggleBtn = document.getElementById('theme-toggle');
             if(toggleBtn) toggleBtn.style.display = 'block';
         }
