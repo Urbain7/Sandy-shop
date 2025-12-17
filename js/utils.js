@@ -180,39 +180,20 @@ function closeBanner(banner) {
     banner.classList.remove('show');
     setTimeout(() => banner.remove(), 500);
 }
+// ... (Code précédent du panier, confirm, etc...)
 
 function loadGoogleAnalytics() {
     if (document.getElementById('gtm-script')) return;
     const script = document.createElement('script');
     script.id = 'gtm-script';
     script.async = true;
-    script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-59W7JKXZ'; // VOTRE ID GTM
+    script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-59W7JKXZ'; 
     const inlineScript = document.createElement('script');
     inlineScript.innerHTML = `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'GTM-59W7JKXZ');`;
     document.head.appendChild(script);
     document.head.appendChild(inlineScript);
+    console.log("Google Analytics activé ✅");
 }
 
-// --- FONCTION DE COMPTAGE (Nouvelle ID) ---
-function countNewVisitor() {
-    // Nouveau nom unique pour repartir à zéro proprement
-    const namespace = 'sandy-shop-officiel'; 
-    const key = 'visites';
-
-    const today = new Date().toISOString().split('T')[0];
-    const lastVisit = localStorage.getItem('lastVisitDate');
-
-    if (lastVisit === today) {
-        console.log("Déjà compté aujourd'hui.");
-        return; 
-    }
-
-    // On utilise l'option /up pour ajouter +1
-    fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Compteur incrémenté :", data.count);
-            localStorage.setItem('lastVisitDate', today);
-        })
-        .catch(err => console.error("Erreur compteur:", err));
-}
+// SUPPRIMEZ la fonction countNewVisitor() qui était ici.
+// Elle n'est plus nécessaire.
