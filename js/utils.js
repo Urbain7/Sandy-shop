@@ -145,29 +145,24 @@ function removeFromCart(productId) {
 document.addEventListener('DOMContentLoaded', updateCartIcon);
 
 
-/* ============================================== */
-/* GESTION DES COOKIES & COMPTEUR INTELLIGENT     */
-/* ============================================== */
+/* =============================== */
+/* GESTION DES COOKIES & ANALYTICS */
+/* =============================== */
 
 document.addEventListener("DOMContentLoaded", () => {
     const consent = localStorage.getItem("cookieConsent"); // 'accepted' ou 'refused'
 
-    // 1. Si déjà accepté, on charge tout
+    // 1. Si déjà accepté, on charge Google Analytics
     if (consent === "accepted") {
         loadGoogleAnalytics();
-        countNewVisitor(); // Tente de compter (vérifie la date)
-    } 
-    // 2. Si refusé, on tente juste de compter (anonyme)
-    else if (consent === "refused") {
-        countNewVisitor();
     }
     
-    // 3. Si aucun choix, on affiche la bannière
+    // 2. Si aucun choix n'a encore été fait, on affiche la bannière
     if (!consent) {
         createCookieBanner();
     }
     
-    // Lien footer
+    // 3. Lien "Gérer les cookies" du pied de page
     const manageLink = document.querySelector('.cky-banner-element');
     if(manageLink) {
         manageLink.addEventListener('click', (e) => {
@@ -178,56 +173,73 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function createCookieBanner() {
-    let banner = document.getElementById('cookie-banner');
-    if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'cookie-banner';
-        banner.innerHTML = `
-            <div class="cookie-text">
-                <strong>🍪 Cookies & Statistiques</strong><br>
-                Nous utilisons des cookies pour analyser le trafic. Acceptez-vous le suivi ?
-            </div>
-            <div class="cookie-buttons">
-                <button id="decline-cookies" class="btn-secondary" style="background:#fff; color:#333; border:1px solid #ccc;">Refuser</button>
-                <button id="accept-cookies" class="btn">Accepter</button>
-            </div>
-        `;
-        document.body.appendChild(banner);
+    // Si la bannière existe déjà, on ne la recrée pas
+    if (document.getElementById('cookie-banner')) return;
 
-        document.getElementById('accept-cookies').addEventListener('click', () => {
-            localStorage.setItem("cookieConsent", "accepted");
-            loadGoogleAnalytics();
-            countNewVisitor();
-            closeBanner(banner);
-        });
+    const banner = document.createElement('div');
+    banner.id = 'cookie-banner';
+    banner.innerHTML = `
+        <div class="cookie-text">
+            <strong>🍪 Cookies & Confidentialité</strong><br>
+            Nous utilisons des cookies pour analyser le trafic et améliorer votre expérience.
+        </div>
+        <div class="cookie-buttons">
+            <button id="decline-cookies" class="btn-secondary" style="background:#fff; color:#333; border:1px solid #ccc;">Refuser</button>
+            <button id="accept-cookies" class="btn">Accepter</button>
+        </div>
+    `;
+    document.body.appendChild(banner);
 
-        document.getElementById('decline-cookies').addEventListener('click', () => {
-            localStorage.setItem("cookieConsent", "refused");
-            countNewVisitor(); // On compte quand même le passage (anonyme)
-            closeBanner(banner);
-        });
-    }
+    // --- ACTION : ACCEPTER ---
+    document.getElementById('accept-cookies').addEventListener('click', () => {
+        localStorage.setItem("cookieConsent", "accepted");
+        loadGoogleAnalytics(); 
+        closeBanner(); // Appel sans paramètre
+    });
+
+    // --- ACTION : REFUSER ---
+    document.getElementById('decline-cookies').addEventListener('click', () => {
+        localStorage.setItem("cookieConsent", "refused");
+        closeBanner(); // Appel sans paramètre
+    });
+
+    // Affichage avec petit délai pour l'animation
     setTimeout(() => banner.classList.add('show'), 100);
 }
 
-function closeBanner(banner) {
-    banner.classList.remove('show');
-    setTimeout(() => banner.remove(), 500);
+// Fonction de fermeture ROBUSTE
+function closeBanner() {
+    const banner = document.getElementById('cookie-banner');
+    if (banner) {
+        // 1. On lance l'animation de sortie (CSS)
+        banner.classList.remove('show');
+        
+        // 2. On attend 0.5s et on détruit tout
+        setTimeout(() => {
+            banner.style.display = 'none'; // Force la disparition visuelle
+            banner.remove();               // Supprime du code HTML
+        }, 500);
+    }
 }
-// ... (Code précédent du panier, confirm, etc...)
 
+// Fonction qui insère le code Google (GTM) dynamiquement
 function loadGoogleAnalytics() {
     if (document.getElementById('gtm-script')) return;
+
     const script = document.createElement('script');
     script.id = 'gtm-script';
     script.async = true;
-    script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-59W7JKXZ'; 
+    script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-59W7JKXZ'; // ID GTM
+
     const inlineScript = document.createElement('script');
-    inlineScript.innerHTML = `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'GTM-59W7JKXZ');`;
+    inlineScript.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GTM-59W7JKXZ');
+    `;
+
     document.head.appendChild(script);
     document.head.appendChild(inlineScript);
     console.log("Google Analytics activé ✅");
 }
-
-// SUPPRIMEZ la fonction countNewVisitor() qui était ici.
-// Elle n'est plus nécessaire.
