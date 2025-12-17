@@ -1,49 +1,52 @@
 /* =============================== */
 /* Style global et variables       */
 /* =============================== */
-:root { 
-    /* 1. Variables par défaut (si le JS plante) */
-    --theme-light-bg: #f4f6f8;
-    --theme-light-text: #333333;
-    --accent-color: #d1a3a4;
 
-    /* 2. Application du mode CLAIR */
-    --background-color: var(--theme-light-bg); /* On utilise la couleur du moteur */
+:root {
+    /* 1. VALEURS PAR DÉFAUT (Si le JS ne charge pas) */
+    --theme-light-bg: #f4f6f8;       /* Couleur de fond du thème choisi */
+    --theme-light-card: #ffffff;     /* Couleur des cartes du thème choisi */
+    --theme-light-text: #333333;     /* Couleur du texte du thème choisi */
+    --theme-primary: #d1a3a4;        /* Couleur principale (Boutons, Prix) */
+
+    /* 2. MODE CLAIR (Utilise les variables du thème) */
+    --background-color: var(--theme-light-bg);
+    --card-bg-color: var(--theme-light-card);
     --text-color: var(--theme-light-text);
+    --accent-color: var(--theme-primary);
     
     --header-bg-color: #333;
     --header-text-color: #f0f0f0;
     
-    --card-bg-color: #ffffff;
     --card-border-color: #e1e4e8;
     --input-bg-color: #ffffff;
     --input-border-color: #ccc;
     
-    --secondary-color: #333;
-    
-    --btn-main-bg: var(--accent-color);
+    --btn-main-bg: var(--theme-primary);
     --btn-main-text: #fff;
     --btn-secondary-bg: transparent;
     --btn-secondary-border: var(--input-border-color);
-    --btn-secondary-text: var(--secondary-color);
+    --btn-secondary-text: var(--text-color);
 }
 
-/* 3. Application du mode SOMBRE (Écrase le mode clair) */
-html.dark-mode { 
-    --background-color: #1a1a1a !important; /* !important pour forcer le noir */
-    --text-color: #f0f0f0 !important;
+/* 3. MODE SOMBRE (Écrase les couleurs de fond, mais GARDE la couleur principale) */
+html.dark-mode {
+    --background-color: #121212 !important;  /* Noir profond */
+    --card-bg-color: #1e1e1e !important;     /* Gris foncé */
+    --text-color: #e0e0e0 !important;        /* Blanc cassé */
     
-    --header-bg-color: #000;
+    /* On garde l'accent color du thème (ex: Orange pour Resto) ou on le force */
+    /* --accent-color: var(--theme-primary); <--- Si vous voulez garder la couleur du thème */
+    
+    --header-bg-color: #000000;
     --header-text-color: #f0f0f0;
     
-    --card-bg-color: #2a2a2a;
-    --card-border-color: #444;
+    --card-border-color: #333333;
+    --input-bg-color: #2c2c2c;
+    --input-border-color: #444444;
     
-    --input-bg-color: #333;
-    --input-border-color: #555;
-    
-    --secondary-color: #f0f0f0;
-    --btn-main-text: #1a1a1a;
+    --btn-main-text: #121212; /* Texte noir sur bouton coloré */
+    --btn-secondary-text: #f0f0f0;
 }
 
 /* =============================== */
