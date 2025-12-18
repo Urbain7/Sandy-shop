@@ -567,3 +567,31 @@ form button { background-color: var(--accent-color); color: white; border: none;
     border-color: var(--accent-color);
     transform: scale(1.05);
 }
+/* =============================== */
+/* CORRECTION RECOMMANDATIONS      */
+/* =============================== */
+
+/* Force la couleur du texte et enlève le soulignement */
+#recommendations-grid .product-link {
+    color: var(--text-color) !important;
+    text-decoration: none !important;
+    display: block;
+}
+
+#recommendations-grid h3 {
+    color: var(--text-color) !important;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+#recommendations-grid .product-price {
+    color: var(--accent-color) !important;
+    font-weight: bold;
+}
+
+/* S'assure que l'image ne dépasse pas */
+#recommendations-grid img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+}
