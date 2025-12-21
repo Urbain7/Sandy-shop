@@ -121,6 +121,12 @@ collections:
 
               - {label: "Description", name: "description", widget: "text"}
               
+              - label: "Note Vocale (Audio Description)"
+            name: "audio"
+            widget: "file"
+            required: false
+            hint: "Fichier MP3 ou WAV. La vendeuse décrit le produit."
+              
               - label: "PRODUIT STAR (Mise en avant payante)"
                 name: "is_star"
                 widget: "boolean"
