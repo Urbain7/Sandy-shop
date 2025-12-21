@@ -142,15 +142,62 @@ h2 { text-align: center; margin-bottom: 2rem; font-size: 2rem; color: var(--acce
 /* =============================== */
 /* Grille de produits et Cartes    */
 /* =============================== */
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; transition: opacity 0.3s ease-in-out; }
+.product-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 2rem; 
+    transition: opacity 0.3s ease-in-out; 
+}
+
 .product-grid.is-loading { opacity: 0; }
-.product-card { border: 1px solid var(--card-border-color); background-color: var(--card-bg-color); border-radius: 8px; overflow: hidden; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.3s; padding-bottom: 1rem; position: relative; }
+
+.product-card { 
+    border: 1px solid var(--card-border-color); 
+    background-color: var(--card-bg-color); 
+    border-radius: 8px; 
+    overflow: hidden; 
+    text-align: center; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    transition: all 0.3s; 
+    position: relative;
+    
+    /* MODIFICATION ICI : On force 0 padding sur les côtés pour l'image */
+    padding: 0; 
+    padding-bottom: 1rem; /* On garde de l'espace en bas pour les boutons */
+}
+
 .product-card .product-link { text-decoration: none; color: inherit; }
+
 .product-card:hover { transform: translateY(-5px); }
-.product-card img { max-width: 100%; height: 250px; object-fit: cover; }
-.product-card h3 { font-size: 1.2rem; margin: 1rem 0 0.5rem; color: var(--text-color); }
-.product-price { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; }
-.product-actions { display: flex; justify-content: space-around; align-items: center; padding: 1rem; }
+
+/* CORRECTION IMAGE PRODUIT PC */
+.product-card img {
+    width: 100%;        /* L'image prend toute la largeur */
+    height: 250px;      /* Hauteur fixe */
+    object-fit: cover;  /* Remplissage intelligent */
+    display: block;     
+    border-bottom: 1px solid var(--card-border-color);
+}
+
+.product-card h3 { 
+    font-size: 1.2rem; 
+    margin: 1rem 0 0.5rem; 
+    color: var(--text-color); 
+    padding: 0 10px; /* Petit espacement pour le texte pour qu'il ne touche pas le bord */
+}
+
+.product-price { 
+    color: var(--accent-color); 
+    font-weight: bold; 
+    font-size: 1.1rem; 
+}
+
+.product-actions { 
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center; 
+    padding: 1rem; 
+}
 
 /* =============================== */
 /* Styles des boutons              */
