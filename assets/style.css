@@ -694,3 +694,45 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .network-icon {
     font-size: 1.2rem;
 }
+/* =============================== */
+/* NOTIFICATIONS & ANIMATIONS      */
+/* =============================== */
+
+/* 1. La Notification (Toast) */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333; /* Fond sombre */
+    color: #fff;
+    text-align: center;
+    border-radius: 50px; /* Bords ronds modernes */
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: opacity 0.3s, bottom 0.3s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 50px; /* Petit effet de remontée */
+}
+
+/* 2. Animation du Panier (Rebond) */
+@keyframes bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+.cart-bump {
+    animation: bounce 0.3s ease-in-out;
+    background-color: #27ae60 !important; /* Devient vert brièvement */
+    color: white !important;
+}
