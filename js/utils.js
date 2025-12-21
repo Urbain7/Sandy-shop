@@ -2,27 +2,47 @@
 /* 1. GESTION DEVISE & PRIX        */
 /* =============================== */
 
-// Configuration par défaut
-let SHOP_CURRENCY = { symbol: 'FCFA', position: 'after' };
+// Configuration par défaut (Si le fichier settings.json n'est pas encore chargé)
+let SHOP_SETTINGS = { 
+    currencySymbol: 'FCFA', 
+    currencyPosition: 'after' 
+};
 
 // Charge la configuration définie dans l'Admin
 async function loadShopSettings() {
     try {
         const response = await fetch('data/settings.json');
         if (response.ok) {
-            const settings = await response.json();
-            SHOP_CURRENCY = settings;
-            localStorage.setItem('shopSettings', JSON.stringify(settings));
+            const data = await response.json();
+            // On fusionne pour être sûr d'avoir les données
+            SHOP_SETTINGS = { ...SHOP_SETTINGS, ...data };
+            
+            // Sauvegarde en mémoire pour aller plus vite la prochaine fois
+            localStorage.setItem('shopSettings', JSON.stringify(SHOP_SETTINGS));
+            
+            // Si on est sur une page produit, on rafraîchit l'affichage pour virer le "undefined"
+            // (Seulement si le chargement a pris un peu de temps)
+            const priceTags = document.querySelectorAll('.product-price');
+            if(priceTags.length > 0 && priceTags[0].textContent.includes('undefined')) {
+                location.reload(); 
+            }
         }
     } catch (e) {
-        // En cas d'erreur, on utilise le cache ou la valeur par défaut
+        // En cas d'erreur, on essaie de lire le cache
         const cached = localStorage.getItem('shopSettings');
-        if (cached) SHOP_CURRENCY = JSON.parse(cached);
+        if (cached) SHOP_SETTINGS = JSON.parse(cached);
     }
 }
-loadShopSettings(); // Lancement immédiat
 
-// Fonction de formatage (1000 -> "1 000 FCFA" ou "$ 1,000")
+// Lancement immédiat
+// On tente d'abord de charger le cache pour éviter le "clignotement"
+const cachedSettings = localStorage.getItem('shopSettings');
+if (cachedSettings) {
+    SHOP_SETTINGS = JSON.parse(cachedSettings);
+}
+loadShopSettings(); 
+
+// Fonction de formatage
 function formatPrice(price) {
     const priceNumber = Number(price);
     if (isNaN(priceNumber)) return 'Prix sur demande';
@@ -32,12 +52,18 @@ function formatPrice(price) {
         maximumFractionDigits: 2 
     });
 
-    if (SHOP_CURRENCY.position === 'before') {
-        return `${SHOP_CURRENCY.symbol} ${formattedNumber}`;
+    // CORRECTION ICI : On utilise bien 'currencySymbol' et 'currencyPosition'
+    if (SHOP_SETTINGS.currencyPosition === 'before') {
+        return `${SHOP_SETTINGS.currencySymbol} ${formattedNumber}`;
     } else {
-        return `${formattedNumber} ${SHOP_CURRENCY.symbol}`;
+        return `${formattedNumber} ${SHOP_SETTINGS.currencySymbol}`;
     }
 }
+
+/* =============================== */
+/* 2. NOTIFICATIONS & UI           */
+/* =============================== */
+// ... (La suite du fichier showToast etc. ne change pas) ...
 
 /* =============================== */
 /* 2. NOTIFICATIONS & UI           */
