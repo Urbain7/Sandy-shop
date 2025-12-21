@@ -274,19 +274,132 @@ async function initPanierPage() {
             });
         });
 
-        // PDF Simple (Sans livraison)
-        document.getElementById('btn-pdf').addEventListener('click', () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("FACTURE - Sandy'Shop", 20, 20);
-            let y = 40;
-            cart.forEach(i => {
-                doc.text(`${i.nom} x${i.quantity} = ${i.prix * i.quantity} F`, 20, y);
-                y += 10;
-            });
-            doc.text(`TOTAL : ${totalProduits} F`, 20, y + 10);
-            doc.save("facture.pdf");
-        });
+       // --- GÉNÉRATEUR DE FACTURE PRO ---
+function generatePDF(cart, subtotal, deliverySelect) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Couleurs de la marque (Rose Poudré #d1a3a4 -> RGB: 209, 163, 164)
+    const brandColor = [209, 163, 164]; 
+    const black = [60, 60, 60];
+
+    // --- 1. EN-TÊTE ---
+    // Bande de couleur en haut
+    doc.setFillColor(...brandColor);
+    doc.rect(0, 0, 210, 40, 'F'); // Rectangle plein
+
+    // Titre Blanc
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(26);
+    doc.setFont("helvetica", "bold");
+    doc.text("SANDY'SHOP", 105, 20, null, null, "center");
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text("Facture & Récapitulatif de commande", 105, 30, null, null, "center");
+
+    // --- 2. INFOS COMMANDE ---
+    doc.setTextColor(...black);
+    doc.setFontSize(10);
+    
+    // Date et Numéro
+    const date = new Date().toLocaleDateString('fr-FR');
+    const time = new Date().toLocaleTimeString('fr-FR');
+    const orderId = "CMD-" + Math.floor(Math.random() * 100000); // Faux numéro unique
+
+    doc.text(`Date : ${date} à ${time}`, 140, 50);
+    doc.text(`Réf : ${orderId}`, 140, 55);
+
+    // Infos Client (Récupérées du formulaire HTML si rempli)
+    const clientName = document.getElementById('customer-name') ? document.getElementById('customer-name').value : "Client";
+    const clientPhone = document.getElementById('customer-phone') ? document.getElementById('customer-phone').value : "";
+
+    doc.setFont("helvetica", "bold");
+    doc.text("CLIENT :", 15, 50);
+    doc.setFont("helvetica", "normal");
+    doc.text(clientName || "Client Invité", 15, 55);
+    if(clientPhone) doc.text(`Tél : ${clientPhone}`, 15, 60);
+
+    // --- 3. TABLEAU DES PRODUITS (AutoTable) ---
+    const tableColumn = ["Produit", "Prix Unit.", "Qté", "Total"];
+    const tableRows = [];
+
+    cart.forEach(item => {
+        const itemTotal = item.prix * item.quantity;
+        const productData = [
+            item.nom,
+            formatPrice(item.prix),
+            item.quantity,
+            formatPrice(itemTotal)
+        ];
+        tableRows.push(productData);
+    });
+
+    // Configuration du tableau
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 70, // Commence après les infos
+        theme: 'striped', // Rayures gris/blanc
+        headStyles: {
+            fillColor: brandColor, // En-tête Rose
+            textColor: [255, 255, 255],
+            fontStyle: 'bold'
+        },
+        styles: {
+            font: 'helvetica',
+            fontSize: 10
+        },
+        columnStyles: {
+            0: { cellWidth: 90 }, // La colonne produit est plus large
+            3: { fontStyle: 'bold' } // Le total en gras
+        }
+    });
+
+    // --- 4. TOTAUX ---
+    // On récupère la position Y où le tableau s'est arrêté
+    let finalY = doc.lastAutoTable.finalY + 10;
+
+    const shipping = parseInt(deliverySelect.value) || 0;
+    const shippingName = deliverySelect.options[deliverySelect.selectedIndex].text;
+    const total = subtotal + shipping;
+
+    // Cadre des totaux
+    doc.setDrawColor(...brandColor);
+    doc.setLineWidth(0.5);
+    doc.line(110, finalY, 200, finalY); // Ligne de séparation
+
+    doc.setFontSize(11);
+    doc.text(`Sous-total :`, 140, finalY + 10);
+    doc.text(formatPrice(subtotal), 195, finalY + 10, null, null, "right");
+
+    doc.text(`Livraison :`, 140, finalY + 17);
+    doc.setFontSize(9);
+    doc.text(`(${shippingName})`, 140, finalY + 21); // Nom du quartier
+    doc.setFontSize(11);
+    doc.text(formatPrice(shipping), 195, finalY + 17, null, null, "right");
+
+    // Total final en gros
+    doc.setFillColor(...brandColor);
+    doc.rect(135, finalY + 28, 65, 12, 'F'); // Fond rose
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`TOTAL : ${formatPrice(total)}`, 195, finalY + 36, null, null, "right");
+
+    // --- 5. PIED DE PAGE ---
+    doc.setTextColor(...black);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "italic");
+    
+    // Positionner tout en bas de la page (A4 = 297mm de haut)
+    const pageHeight = doc.internal.pageSize.height;
+    doc.text("Merci de votre confiance ! Sandy'Shop - Lomé, Togo", 105, pageHeight - 20, null, null, "center");
+    doc.text("Contact : +228 93 89 95 38", 105, pageHeight - 15, null, null, "center");
+
+    // Sauvegarde
+    doc.save(`Facture_SandyShop_${orderId}.pdf`);
+}
     };
     renderCart();
 
