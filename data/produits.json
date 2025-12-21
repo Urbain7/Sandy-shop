@@ -9,6 +9,7 @@
       "tailles": "M",
       "categorie": "Sacs",
       "image": "images/sacs/sac_pedro_marron.jpg",
+      "audio": "/images/uploads/sac_pedro_note_vocale.wav",
       "description": "Ce sac élégant est un accessoire de choix...",
       "is_star": true,
       "in_story": false
