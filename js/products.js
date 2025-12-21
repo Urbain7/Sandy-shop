@@ -1,23 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ROUTAGE ---
-    if (document.getElementById('product-list')) {
-        initProduitsPage();
-    }
-    if (document.getElementById('cart-container')) {
-        initPanierPage();
-    }
-    if (document.getElementById('product-detail-container')) {
-        initProduitDetailPage();
-    }
+    // ROUTAGE
+    if (document.getElementById('product-list')) initProduitsPage();
+    if (document.getElementById('cart-container')) initPanierPage();
+    if (document.getElementById('product-detail-container')) initProduitDetailPage();
     
-    // Affiliation
+    // AFFILIATION (Sauvegarde du parrain)
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if (ref) sessionStorage.setItem('affiliation_ref', ref);
 });
 
 // =================================================================
-// 1. UTILITAIRES (Squelettes, Mélange, PDF)
+// 1. PAGE CATALOGUE
 // =================================================================
 
 function displaySkeletonCards() {
@@ -32,7 +26,7 @@ function shuffleArray(array) {
     } 
 }
 
-// Convertisseur couleur Hex (#d1a3a4) vers RGB pour le PDF
+// Convertisseur couleur pour le PDF
 function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
@@ -40,9 +34,6 @@ function hexToRgb(hex) {
     return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 }
 
-// =================================================================
-// 2. PAGE CATALOGUE
-// =================================================================
 async function initProduitsPage() {
     const productList = document.getElementById('product-list');
     const loadMoreContainer = document.getElementById('load-more-container');
@@ -50,6 +41,7 @@ async function initProduitsPage() {
     displaySkeletonCards();
 
     try {
+        await new Promise(resolve => setTimeout(resolve, 500));
         const response = await fetch('data/produits.json');
         const data = await response.json();
         const rawProducts = data.items ? data.items : data;
@@ -60,7 +52,7 @@ async function initProduitsPage() {
         shuffleArray(others);
         const allProducts = [...stars, ...others];
 
-        // --- PAGINATION & FILTRES ---
+        // --- FILTRES & PAGINATION ---
         const ITEMS_PER_PAGE = 12; 
         let currentPage = 1;
         let currentFilteredProducts = [];
@@ -84,6 +76,8 @@ async function initProduitsPage() {
             
             if (sortBy.value === 'price-asc') temp.sort((a,b) => a.prix - b.prix);
             if (sortBy.value === 'price-desc') temp.sort((a,b) => b.prix - a.prix);
+            if (sortBy.value === 'name-asc') temp.sort((a,b) => a.nom.localeCompare(b.nom));
+            if (sortBy.value === 'name-desc') temp.sort((a,b) => b.nom.localeCompare(a.nom));
             
             currentFilteredProducts = temp;
             currentPage = 1;
@@ -96,7 +90,7 @@ async function initProduitsPage() {
             const end = start + ITEMS_PER_PAGE;
             const batch = currentFilteredProducts.slice(start, end);
 
-            if (batch.length === 0) { productList.innerHTML = '<p class="empty-grid-message">Aucun produit.</p>'; loadMoreContainer.style.display='none'; return; }
+            if (batch.length === 0) { productList.innerHTML = '<p class="empty-grid-message">Aucun produit trouvé.</p>'; loadMoreContainer.style.display='none'; return; }
 
             batch.forEach(p => {
                 const isOutOfStock = p.stock === 0;
@@ -114,9 +108,7 @@ async function initProduitsPage() {
                         <div class="product-actions" data-id="${p.id}">${btn}<button class="like-btn">❤️</button></div>
                     </div>`;
                 
-                // Alerte stock
                 if (p.stock > 0 && p.stock <= 3) html = html.replace('<p class="product-price">', `<div class="stock-alert">🔥 Vite ! Plus que ${p.stock} !</div><p class="product-price">`);
-                
                 productList.insertAdjacentHTML('beforeend', html);
             });
             
@@ -151,13 +143,22 @@ function addEventListenersToCards(allProducts) {
         const cartBtn = actions.querySelector('.add-to-cart');
         if (cartBtn) cartBtn.addEventListener('click', () => {
             const product = allProducts.find(p => p.id == productId);
-            if (product) { addToCart(product); showToast("Ajouté !"); }
+            if (product) { 
+                addToCart(product); 
+                showToast("Ajouté au panier !");
+                
+                // Feedback visuel sur le bouton
+                const originalText = cartBtn.innerHTML;
+                cartBtn.innerHTML = '✔';
+                cartBtn.disabled = true;
+                setTimeout(() => { cartBtn.innerHTML = originalText; cartBtn.disabled = false; }, 2000);
+            }
         });
     });
 }
 
 // =================================================================
-// 3. PAGE DÉTAIL (ZOOM, AUDIO, TAILLES)
+// 2. PAGE DÉTAIL PRODUIT
 // =================================================================
 async function initProduitDetailPage() {
     const container = document.getElementById('product-detail-container');
@@ -200,10 +201,8 @@ async function initProduitDetailPage() {
                 </div>
             </div>`;
 
-        // Stock Faible
         if (product.stock > 0 && product.stock <= 3) container.querySelector('h1').insertAdjacentHTML('afterend', `<div class="stock-alert">🔥 Vite ! Plus que ${product.stock} exemplaires !</div>`);
 
-        // WhatsApp + Partage
         const refName = sessionStorage.getItem('affiliation_ref');
         const refText = refName ? ` (Référé par: ${refName})` : '';
         const waMsg = `Bonjour, je veux commander : ${product.nom}${refText}. Est-il dispo ?`;
@@ -221,7 +220,7 @@ function setupProductInteractions(product, container) {
     const mainImg = document.getElementById('main-product-image');
     container.querySelectorAll('.thumbnail-images img').forEach(th => th.addEventListener('click', () => mainImg.src = th.src));
     
-    // Zoom
+    // Zoom PC
     const imgCont = document.getElementById('img-container');
     if (window.innerWidth > 768 && imgCont) {
         imgCont.addEventListener("mousemove", e => {
@@ -238,31 +237,36 @@ function setupProductInteractions(product, container) {
         try { if (navigator.share) await navigator.share({ title: product.nom, text: `Regarde ça : ${product.nom}`, url: window.location.href }); } catch {}
     });
 
-    // Panier avec Taille
+    // Panier Detail
     const btnCart = container.querySelector('.add-to-cart-detail');
     if(btnCart) btnCart.addEventListener('click', () => {
         const qty = parseInt(document.getElementById('product-quantity').value);
         const size = container.querySelector('input[name="size"]:checked')?.value || '';
         const prodCart = { ...product, id: product.id + size, nom: product.nom + (size ? ` (${size})` : '') };
         addToCart(prodCart, qty);
-        showToast("Ajouté !");
+        showToast("Ajouté au panier !");
+        
+        const originalText = btnCart.innerHTML;
+        btnCart.innerHTML = 'Ajouté ✔';
+        btnCart.disabled = true;
+        setTimeout(() => { btnCart.innerHTML = originalText; btnCart.disabled = false; }, 2000);
     });
 }
 
 function displayRecommendations(currentProduct, allProducts) {
-    const recommendationsGrid = document.getElementById('recommendations-grid');
-    if (!recommendationsGrid) return;
+    const grid = document.getElementById('recommendations-grid');
+    if (!grid) return;
     const recommended = allProducts.filter(p => p.categorie === currentProduct.categorie && p.id !== currentProduct.id).slice(0, 4);
     if (recommended.length > 0) {
         document.getElementById('recommendations-section').style.display = 'block';
         recommended.forEach(p => {
-            recommendationsGrid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
+            grid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
         });
     }
 }
 
 // =================================================================
-// 4. PANIER & FACTURE PDF DYNAMIQUE
+// 3. PANIER & PDF
 // =================================================================
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
@@ -278,9 +282,9 @@ async function initPanierPage() {
         document.getElementById('order-section').style.display = 'block';
 
         let totalProduits = cart.reduce((sum, item) => sum + (item.prix * item.quantity), 0);
+        let summary = "";
         
         let html = `<table class="cart-items" data-aos="fade-up"><thead><tr><th>Produit</th><th>Prix</th><th>Qté</th><th>Total</th><th>Action</th></tr></thead><tbody>`;
-        let summary = "";
         cart.forEach(item => {
             const lineTotal = item.prix * item.quantity;
             html += `<tr><td>${item.nom}</td><td>${formatPrice(item.prix)}</td><td><input type="number" class="cart-quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="99"></td><td>${formatPrice(lineTotal)}</td><td><button class="btn-secondary" onclick="removeFromCart('${item.id}');location.reload()">X</button></td></tr>`;
@@ -304,22 +308,17 @@ async function initPanierPage() {
             });
         });
 
-        // GENERATION PDF DYNAMIQUE (CAMELEON)
+        // PDF GENERATION
         document.getElementById('btn-pdf').addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // 1. Récupérer la couleur du site (Thème)
             const rootStyles = getComputedStyle(document.documentElement);
-            let siteColorHex = rootStyles.getPropertyValue('--accent-color').trim();
-            if (!siteColorHex) siteColorHex = "#333333";
+            let siteColorHex = rootStyles.getPropertyValue('--accent-color').trim() || "#333333";
             const brandColor = hexToRgb(siteColorHex); 
             const black = [60, 60, 60];
+            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "BOUTIQUE";
 
-            // 2. Nom de la boutique
-            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "MA BOUTIQUE";
-
-            // En-tête couleur
             doc.setFillColor(...brandColor);
             doc.rect(0, 0, 210, 40, 'F');
             doc.setTextColor(255, 255, 255);
@@ -327,18 +326,13 @@ async function initPanierPage() {
             doc.setFont("helvetica", "bold");
             doc.text(shopName.toUpperCase(), 105, 20, null, null, "center");
 
-            // Infos
             doc.setTextColor(...black);
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            const date = new Date().toLocaleDateString('fr-FR');
-            const clientName = document.getElementById('customer-name') ? document.getElementById('customer-name').value : "Client";
-            
-            doc.text(`Date : ${date}`, 140, 50);
-            doc.text("CLIENT :", 15, 50);
-            doc.text(clientName || "Invité", 15, 55);
+            const clientName = document.getElementById('customer-name')?.value || "Client";
+            doc.text("CLIENT : " + clientName, 15, 55);
+            doc.text("Date : " + new Date().toLocaleDateString(), 140, 55);
 
-            // Tableau
             const tableRows = [];
             cart.forEach(item => {
                 tableRows.push([item.nom, formatPrice(item.prix), item.quantity, formatPrice(item.prix * item.quantity)]);
@@ -352,17 +346,10 @@ async function initPanierPage() {
                 headStyles: { fillColor: brandColor, textColor: [255, 255, 255] }
             });
 
-            // Total
             let finalY = doc.lastAutoTable.finalY + 10;
             doc.setFontSize(14);
             doc.setFont("helvetica", "bold");
             doc.text(`TOTAL : ${formatPrice(totalProduits)}`, 190, finalY, null, null, "right");
-
-            // Footer
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "italic");
-            doc.text("Merci de votre confiance !", 105, 280, null, null, "center");
-
             doc.save("facture.pdf");
         });
     };
