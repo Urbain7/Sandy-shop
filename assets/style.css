@@ -613,3 +613,37 @@ form button { background-color: var(--accent-color); color: white; border: none;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+/* =============================== */
+/* BADGE RÉSEAU EM AREA            */
+/* =============================== */
+.network-badge {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1); /* Ligne discrète */
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.network-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: var(--header-text-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.network-link:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+}
+
+.network-icon {
+    font-size: 1.2rem;
+}
