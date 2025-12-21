@@ -9,7 +9,7 @@ public_folder: "images/uploads"
 collections:
   # 1. PARAMÈTRES GÉNÉRAUX (Devise)
   - name: "settings"
-    label: "⚙️ Paramètres Boutique"
+    label: "Paramètres Boutique"
     files:
       - name: "config_generale"
         label: "Configuration Générale"
@@ -30,7 +30,7 @@ collections:
 
   # 2. CONFIGURATION DU DESIGN
   - name: "config"
-    label: "🎨 Design & Couleurs"
+    label: "Design & Couleurs"
     files:
       - name: "design"
         label: "Personnaliser le site"
@@ -55,7 +55,7 @@ collections:
 
   # 3. PRODUITS
   - name: "produits"
-    label: "📦 Produits"
+    label: "Produits"
     files:
       - name: "catalogue"
         label: "Catalogue Général"
@@ -121,6 +121,12 @@ collections:
 
               - {label: "Description", name: "description", widget: "text"}
               
+              - label: "PRODUIT STAR (Mise en avant payante)"
+                name: "is_star"
+                widget: "boolean"
+                default: false
+                hint: "Cochez pour afficher ce produit en premier avec un badge."
+              
               - label: "Mettre en Story (Accueil) ?"
                 name: "in_story"
                 widget: "boolean"
@@ -128,7 +134,7 @@ collections:
 
   # 4. AVIS CLIENTS
   - name: "avis"
-    label: "⭐️ Avis Clients"
+    label: "Avis Clients"
     files:
       - name: "liste_avis"
         label: "Liste des Avis"
@@ -143,7 +149,7 @@ collections:
 
   # 5. JOURNAL DES VENTES
   - name: "ventes"
-    label: "💰 Journal des Ventes"
+    label: "Journal des Ventes"
     files:
       - name: "historique_ventes"
         label: "Historique"
@@ -160,7 +166,7 @@ collections:
 
   # 6. MARKETING & OUTILS
   - name: "marketing"
-    label: "📢 Marketing & Outils"
+    label: "Marketing & Outils"
     files:
       - name: "config_promo"
         label: "🔥 Promo Flash (Compte à rebours)"
