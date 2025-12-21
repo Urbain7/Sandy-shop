@@ -6,9 +6,11 @@
       "prix": 14500,
       "prix_achat": 9000,
       "stock": 99,
+      "tailles": "M",
       "categorie": "Sacs",
       "image": "images/sacs/sac_pedro_marron.jpg",
       "description": "Ce sac élégant est un accessoire de choix...",
+      "is_star": true,
       "in_story": false
     },
     {
