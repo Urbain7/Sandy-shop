@@ -6,7 +6,6 @@
     <meta name="description" content="Bienvenue chez Sandy'Shop, votre boutique en ligne de mode à Lomé.">
     <title>Sandy'Shop - Accueil</title>
     
-    <!-- Open Graph -->
     <meta property="og:image" content="images/ban.jpg">
     <meta property="og:title" content="Sandy'Shop - Mode & Accessoires">
     
@@ -15,24 +14,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <!-- Scripts Essentiels -->
     <script src="js/theme-engine.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d1a3a4">
     <script>
       if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); }); }
+      const theme = localStorage.getItem('theme'); if (theme === 'dark') { document.documentElement.classList.add('dark-mode'); }
     </script>
-    <script>
-    const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark-mode');
-    }
-</script>
-    <!-- Générateur PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div id="toast-notification" class="toast"></div>
@@ -47,13 +36,9 @@
                     <li><a href="favoris.html">Favoris</a></li>
                     <li><a href="panier.html" class="nav-cart-link">Panier <span id="cart-item-count" class="cart-count">0</span></a></li>
                     <li><a href="contact.html">Contact</a></li>
-                    
                 </ul>
             </nav>
             <div class="header-right">
-                
-    
-
                 <button id="theme-toggle" class="theme-toggle-btn">
                     <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.59a.75.75 0 011.061 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.894 17.894a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.061zM12 18.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zM5.106 17.894a.75.75 0 010-1.06l1.59-1.591a.75.75 0 111.06 1.06l-1.59 1.59a.75.75 0 01-1.06 0zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zM6.106 5.106a.75.75 0 011.06 0l1.591 1.59a.75.75 0 01-1.06 1.06l-1.59-1.591a.75.75 0 010-1.06z"/></svg>
                     <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 004.463-.948a.75.75 0 01.981.632A11.25 11.25 0 0112 21a11.25 11.25 0 01-11.25-11.25 11.25 11.25 0 019.528-11.25z" clip-rule="evenodd" /></svg>
@@ -70,9 +55,9 @@
                 <li><a href="favoris.html">Favoris</a></li>
                 <li><a href="panier.html">Panier</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <!-- LIEN VERS LA MARKETPLACE -->
+                <!-- Badge Réseau EM AREA Mobile -->
                 <li style="margin-top: 20px; border-top: 1px solid var(--card-border-color);">
-                    <a href="https://urbain7.github.io/em-area/#" target="_blank" style="color: var(--accent-color); font-weight: bold;">
+                    <a href="https://urbain7.github.io/em-area/" target="_blank" style="color: var(--accent-color); font-weight: bold;">
                         🌍 Aller sur EM AREA
                     </a>
                 </li>
@@ -81,6 +66,7 @@
     </header>
 
     <main>
+        <!-- BANNIÈRE -->
         <section class="banner-container container" data-aos="fade-up">
             <div class="banner-text">
                 <h1>Nouvelle Collection</h1>
@@ -88,44 +74,86 @@
                 <a href="produits.html" class="btn">Voir la collection</a>
             </div>
             <div class="banner-image">
-                <img src="images/ban.jpg" alt="Collection">
+                <img src="images/ban.jpg" alt="Collection" loading="lazy">
             </div>
         </section>
+
+        <!-- BARRE DE CONFIANCE (NOUVEAU) -->
+        <div class="container" data-aos="fade-up">
+            <div class="service-bar">
+                <div class="service-item">
+                    <span class="service-icon">🚚</span>
+                    <span class="service-title">Livraison Rapide</span>
+                    <span class="service-desc">Partout à Lomé et environs</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">✨</span>
+                    <span class="service-title">Qualité Garantie</span>
+                    <span class="service-desc">Satisfait ou échangé</span>
+                </div>
+                <div class="service-item">
+                    <span class="service-icon">💬</span>
+                    <span class="service-title">Support WhatsApp</span>
+                    <span class="service-desc">Réponse en moins d'1h</span>
+                </div>
+            </div>
+        </div>
         
+        <!-- STORIES -->
         <section class="stories-section container" data-aos="fade-up">
             <div id="stories-container" class="stories-container"></div>
         </section>
 
-        <!-- Inspirations (Lookbook) -->
-        <section id="looks-container" class="container" style="margin-top:4rem;" data-aos="fade-up"></section>
-
-        <section class="container" data-aos="fade-up">
-            <h2>Nos Catégories</h2>
-            <div class="product-grid" id="category-preview"></div>
+        <!-- CATÉGORIES VISUELLES (NOUVEAU) -->
+        <section class="container" data-aos="fade-up" style="margin-top: 3rem;">
+            <div class="section-header">
+                <h2 class="section-title">Nos Univers</h2>
+            </div>
+            <div id="categories-grid" class="category-grid">
+                <!-- Rempli par JS -->
+            </div>
         </section>
 
-        <!-- Témoignages -->
+        <!-- INSPIRATIONS / LOOKBOOK -->
+        <section id="looks-container" class="container" style="margin-top:4rem;" data-aos="fade-up"></section>
+
+        <!-- LES PÉPITES DU MOMENT (NOUVEAU) -->
+        <section class="container" data-aos="fade-up" style="margin-top: 3rem;">
+            <div class="section-header">
+                <h2 class="section-title">🔥 Les Pépites du Moment</h2>
+                <p class="section-subtitle">Nos meilleures ventes et coups de cœur</p>
+            </div>
+            <div class="product-grid" id="trending-grid">
+                <!-- Rempli par JS (Produits Stars) -->
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="produits.html" class="btn btn-secondary">Voir tout le catalogue</a>
+            </div>
+        </section>
+
+        <!-- TÉMOIGNAGES -->
         <section class="container testimonials-section" data-aos="fade-up" style="margin-bottom: 4rem;">
-            <h2 style="text-align: center; margin-bottom: 2rem;">Elles nous font confiance ❤️</h2>
+            <h2 style="font-size: 1.8rem; margin-bottom: 2rem;">Elles nous font confiance ❤️</h2>
             <div class="testimonials-grid"></div>
         </section>
     </main>
     
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-copyright">&copy; 2025 Sandy'Shop.</div>
-           <!-- Badge Réseau EM AREA -->
-            <div class="network-badge">
-                <p style="margin-bottom: 10px; opacity: 0.7; font-size: 0.8rem;">Membre du réseau</p>
-                <a href="https://https://urbain7.github.io/em-area/#" target="_blank" class="network-link">
-                    <span class="network-icon">🌍</span>
-                    <span>Découvrir <strong>EM AREA</strong></span>
-                </a>
-            </div>
+            <div class="footer-copyright">&copy; 2025 Sandy'Shop. Tous droits réservés.</div>
             <div class="footer-links">
                 <a href="mentions-legales.html">Mentions Légales</a><span class="footer-separator">|</span>
                 <a href="conditions-vente.html">Conditions de Vente</a><span class="footer-separator">|</span>
                 <a href="#" class="cky-banner-element">Gérer les cookies</a>
+            </div>
+            
+            <!-- Badge Réseau EM AREA -->
+            <div class="network-badge" style="width: 100%; margin-top: 20px;">
+                <p style="margin-bottom: 10px; opacity: 0.7; font-size: 0.8rem;">Membre du réseau</p>
+                <a href="https://urbain7.github.io/em-area/" target="_blank" class="network-link">
+                    <span class="network-icon">🌍</span>
+                    <span>Découvrir <strong>EM AREA</strong></span>
+                </a>
             </div>
         </div>
     </footer>
@@ -141,6 +169,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
       AOS.init();
-      </script>
+      // Le sélecteur de devise a été supprimé du header dans cette version
+      // pour laisser la main au vendeur via l'admin.
+    </script>
 </body>
-    </html>
+</html>
