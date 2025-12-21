@@ -1,48 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. SYSTÈME D'AFFILIATION ---
+    // --- ROUTAGE ---
+    if (document.getElementById('product-list')) {
+        initProduitsPage();
+    }
+    if (document.getElementById('cart-container')) {
+        initPanierPage();
+    }
+    if (document.getElementById('product-detail-container')) {
+        initProduitDetailPage();
+    }
+    
+    // Affiliation
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if (ref) sessionStorage.setItem('affiliation_ref', ref);
-
-    // --- ROUTAGE ---
-    if (document.getElementById('product-list')) initProduitsPage();
-    if (document.getElementById('cart-container')) initPanierPage();
-    if (document.getElementById('product-detail-container')) initProduitDetailPage();
 });
 
 // =================================================================
-// FONCTIONS COMMUNES
+// 1. UTILITAIRES (Squelettes, Mélange, PDF)
 // =================================================================
+
 function displaySkeletonCards() {
     const list = document.getElementById('product-list');
     if(list) { list.innerHTML = ''; for(let i=0; i<8; i++) list.innerHTML += `<div class="product-card skeleton"><div class="skeleton-img"></div><div class="skeleton-text"></div></div>`; }
 }
-function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
 
-function addEventListenersToCards(allProducts) {
-    document.querySelectorAll('.product-actions').forEach(actions => {
-        if(actions.getAttribute('data-listening') === 'true') return;
-        actions.setAttribute('data-listening', 'true');
-        const productId = actions.dataset.id;
-        
-        const likeBtn = actions.querySelector('.like-btn');
-        if (likeBtn) likeBtn.addEventListener('click', () => {
-            let likes = JSON.parse(localStorage.getItem('likes')) || {};
-            likes[productId] = !likes[productId];
-            localStorage.setItem('likes', JSON.stringify(likes));
-            likeBtn.classList.toggle('liked', likes[productId]);
-        });
+function shuffleArray(array) { 
+    for (let i = array.length - 1; i > 0; i--) { 
+        const j = Math.floor(Math.random() * (i + 1)); 
+        [array[i], array[j]] = [array[j], array[i]]; 
+    } 
+}
 
-        const cartBtn = actions.querySelector('.add-to-cart');
-        if (cartBtn) cartBtn.addEventListener('click', () => {
-            const product = allProducts.find(p => p.id == productId);
-            if (product) { addToCart(product); showToast("Ajouté !"); }
-        });
-    });
+// Convertisseur couleur Hex (#d1a3a4) vers RGB pour le PDF
+function hexToRgb(hex) {
+    hex = hex.replace(/^#/, '');
+    if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    const bigint = parseInt(hex, 16);
+    return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 }
 
 // =================================================================
-// PAGE CATALOGUE
+// 2. PAGE CATALOGUE
 // =================================================================
 async function initProduitsPage() {
     const productList = document.getElementById('product-list');
@@ -55,13 +54,13 @@ async function initProduitsPage() {
         const data = await response.json();
         const rawProducts = data.items ? data.items : data;
         
-        // Stars + Mélange
+        // --- LOGIQUE STARS ---
         const stars = rawProducts.filter(p => p.is_star === true);
         const others = rawProducts.filter(p => p.is_star !== true);
         shuffleArray(others);
         const allProducts = [...stars, ...others];
 
-        // Pagination & Filtres
+        // --- PAGINATION & FILTRES ---
         const ITEMS_PER_PAGE = 12; 
         let currentPage = 1;
         let currentFilteredProducts = [];
@@ -115,7 +114,9 @@ async function initProduitsPage() {
                         <div class="product-actions" data-id="${p.id}">${btn}<button class="like-btn">❤️</button></div>
                     </div>`;
                 
+                // Alerte stock
                 if (p.stock > 0 && p.stock <= 3) html = html.replace('<p class="product-price">', `<div class="stock-alert">🔥 Vite ! Plus que ${p.stock} !</div><p class="product-price">`);
+                
                 productList.insertAdjacentHTML('beforeend', html);
             });
             
@@ -133,8 +134,30 @@ async function initProduitsPage() {
     } catch (e) { console.error(e); }
 }
 
+function addEventListenersToCards(allProducts) {
+    document.querySelectorAll('.product-actions').forEach(actions => {
+        if(actions.getAttribute('data-listening') === 'true') return;
+        actions.setAttribute('data-listening', 'true');
+        const productId = actions.dataset.id;
+        
+        const likeBtn = actions.querySelector('.like-btn');
+        if (likeBtn) likeBtn.addEventListener('click', () => {
+            let likes = JSON.parse(localStorage.getItem('likes')) || {};
+            likes[productId] = !likes[productId];
+            localStorage.setItem('likes', JSON.stringify(likes));
+            likeBtn.classList.toggle('liked', likes[productId]);
+        });
+
+        const cartBtn = actions.querySelector('.add-to-cart');
+        if (cartBtn) cartBtn.addEventListener('click', () => {
+            const product = allProducts.find(p => p.id == productId);
+            if (product) { addToCart(product); showToast("Ajouté !"); }
+        });
+    });
+}
+
 // =================================================================
-// PAGE DÉTAIL
+// 3. PAGE DÉTAIL (ZOOM, AUDIO, TAILLES)
 // =================================================================
 async function initProduitDetailPage() {
     const container = document.getElementById('product-detail-container');
@@ -180,7 +203,7 @@ async function initProduitDetailPage() {
         // Stock Faible
         if (product.stock > 0 && product.stock <= 3) container.querySelector('h1').insertAdjacentHTML('afterend', `<div class="stock-alert">🔥 Vite ! Plus que ${product.stock} exemplaires !</div>`);
 
-        // WhatsApp + Affiliation
+        // WhatsApp + Partage
         const refName = sessionStorage.getItem('affiliation_ref');
         const refText = refName ? ` (Référé par: ${refName})` : '';
         const waMsg = `Bonjour, je veux commander : ${product.nom}${refText}. Est-il dispo ?`;
@@ -190,6 +213,7 @@ async function initProduitDetailPage() {
             <div class="share-section" style="margin-top:10px;"><button id="native-share-btn" class="btn-secondary" style="width:100%">Partager ce produit</button></div>`;
 
         setupProductInteractions(product, container);
+        displayRecommendations(product, allProducts);
     } catch (e) { console.error(e); }
 }
 
@@ -214,7 +238,7 @@ function setupProductInteractions(product, container) {
         try { if (navigator.share) await navigator.share({ title: product.nom, text: `Regarde ça : ${product.nom}`, url: window.location.href }); } catch {}
     });
 
-    // Panier
+    // Panier avec Taille
     const btnCart = container.querySelector('.add-to-cart-detail');
     if(btnCart) btnCart.addEventListener('click', () => {
         const qty = parseInt(document.getElementById('product-quantity').value);
@@ -225,8 +249,20 @@ function setupProductInteractions(product, container) {
     });
 }
 
+function displayRecommendations(currentProduct, allProducts) {
+    const recommendationsGrid = document.getElementById('recommendations-grid');
+    if (!recommendationsGrid) return;
+    const recommended = allProducts.filter(p => p.categorie === currentProduct.categorie && p.id !== currentProduct.id).slice(0, 4);
+    if (recommended.length > 0) {
+        document.getElementById('recommendations-section').style.display = 'block';
+        recommended.forEach(p => {
+            recommendationsGrid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
+        });
+    }
+}
+
 // =================================================================
-// 4. PANIER (SANS LIVRAISON COMPLEXE)
+// 4. PANIER & FACTURE PDF DYNAMIQUE
 // =================================================================
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
@@ -245,21 +281,15 @@ async function initPanierPage() {
         
         let html = `<table class="cart-items" data-aos="fade-up"><thead><tr><th>Produit</th><th>Prix</th><th>Qté</th><th>Total</th><th>Action</th></tr></thead><tbody>`;
         let summary = "";
-        
         cart.forEach(item => {
             const lineTotal = item.prix * item.quantity;
             html += `<tr><td>${item.nom}</td><td>${formatPrice(item.prix)}</td><td><input type="number" class="cart-quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="99"></td><td>${formatPrice(lineTotal)}</td><td><button class="btn-secondary" onclick="removeFromCart('${item.id}');location.reload()">X</button></td></tr>`;
             summary += `• ${item.nom} x${item.quantity} : ${formatPrice(lineTotal)}\n`;
         });
         html += `</tbody></table>
-        
-        <div style="background:var(--card-bg-color); padding:15px; margin-top:20px; border-radius:8px; border:1px solid var(--card-border-color); text-align:right;">
-            <p style="margin-bottom:5px;"><em>* Les frais de livraison seront calculés lors de la confirmation WhatsApp</em></p>
-            <div style="font-size:1.5rem; color:var(--accent-color); font-weight:bold;">Total Produits : ${formatPrice(totalProduits)}</div>
-        </div>
-        
-        <div style="text-align:right; margin-top:15px;">
-            <button id="btn-pdf" class="btn-secondary" style="font-size:0.9rem;">📄 Télécharger ma Facture</button>
+        <div style="text-align:right; margin-top:20px;">
+            <div style="font-size:1.5rem; color:var(--accent-color); font-weight:bold;">Total : ${formatPrice(totalProduits)}</div>
+            <button id="btn-pdf" class="btn-secondary" style="margin-top:10px;">📄 Télécharger Facture</button>
         </div>`;
 
         cartContainer.innerHTML = html;
@@ -274,132 +304,67 @@ async function initPanierPage() {
             });
         });
 
-       // --- GÉNÉRATEUR DE FACTURE PRO ---
-function generatePDF(cart, subtotal, deliverySelect) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+        // GENERATION PDF DYNAMIQUE (CAMELEON)
+        document.getElementById('btn-pdf').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-    // Couleurs de la marque (Rose Poudré #d1a3a4 -> RGB: 209, 163, 164)
-    const brandColor = [209, 163, 164]; 
-    const black = [60, 60, 60];
+            // 1. Récupérer la couleur du site (Thème)
+            const rootStyles = getComputedStyle(document.documentElement);
+            let siteColorHex = rootStyles.getPropertyValue('--accent-color').trim();
+            if (!siteColorHex) siteColorHex = "#333333";
+            const brandColor = hexToRgb(siteColorHex); 
+            const black = [60, 60, 60];
 
-    // --- 1. EN-TÊTE ---
-    // Bande de couleur en haut
-    doc.setFillColor(...brandColor);
-    doc.rect(0, 0, 210, 40, 'F'); // Rectangle plein
+            // 2. Nom de la boutique
+            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "MA BOUTIQUE";
 
-    // Titre Blanc
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(26);
-    doc.setFont("helvetica", "bold");
-    doc.text("SANDY'SHOP", 105, 20, null, null, "center");
-    
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text("Facture & Récapitulatif de commande", 105, 30, null, null, "center");
+            // En-tête couleur
+            doc.setFillColor(...brandColor);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont("helvetica", "bold");
+            doc.text(shopName.toUpperCase(), 105, 20, null, null, "center");
 
-    // --- 2. INFOS COMMANDE ---
-    doc.setTextColor(...black);
-    doc.setFontSize(10);
-    
-    // Date et Numéro
-    const date = new Date().toLocaleDateString('fr-FR');
-    const time = new Date().toLocaleTimeString('fr-FR');
-    const orderId = "CMD-" + Math.floor(Math.random() * 100000); // Faux numéro unique
+            // Infos
+            doc.setTextColor(...black);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            const date = new Date().toLocaleDateString('fr-FR');
+            const clientName = document.getElementById('customer-name') ? document.getElementById('customer-name').value : "Client";
+            
+            doc.text(`Date : ${date}`, 140, 50);
+            doc.text("CLIENT :", 15, 50);
+            doc.text(clientName || "Invité", 15, 55);
 
-    doc.text(`Date : ${date} à ${time}`, 140, 50);
-    doc.text(`Réf : ${orderId}`, 140, 55);
+            // Tableau
+            const tableRows = [];
+            cart.forEach(item => {
+                tableRows.push([item.nom, formatPrice(item.prix), item.quantity, formatPrice(item.prix * item.quantity)]);
+            });
 
-    // Infos Client (Récupérées du formulaire HTML si rempli)
-    const clientName = document.getElementById('customer-name') ? document.getElementById('customer-name').value : "Client";
-    const clientPhone = document.getElementById('customer-phone') ? document.getElementById('customer-phone').value : "";
+            doc.autoTable({
+                head: [["Produit", "Prix", "Qté", "Total"]],
+                body: tableRows,
+                startY: 65,
+                theme: 'striped',
+                headStyles: { fillColor: brandColor, textColor: [255, 255, 255] }
+            });
 
-    doc.setFont("helvetica", "bold");
-    doc.text("CLIENT :", 15, 50);
-    doc.setFont("helvetica", "normal");
-    doc.text(clientName || "Client Invité", 15, 55);
-    if(clientPhone) doc.text(`Tél : ${clientPhone}`, 15, 60);
+            // Total
+            let finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.text(`TOTAL : ${formatPrice(totalProduits)}`, 190, finalY, null, null, "right");
 
-    // --- 3. TABLEAU DES PRODUITS (AutoTable) ---
-    const tableColumn = ["Produit", "Prix Unit.", "Qté", "Total"];
-    const tableRows = [];
+            // Footer
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "italic");
+            doc.text("Merci de votre confiance !", 105, 280, null, null, "center");
 
-    cart.forEach(item => {
-        const itemTotal = item.prix * item.quantity;
-        const productData = [
-            item.nom,
-            formatPrice(item.prix),
-            item.quantity,
-            formatPrice(itemTotal)
-        ];
-        tableRows.push(productData);
-    });
-
-    // Configuration du tableau
-    doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 70, // Commence après les infos
-        theme: 'striped', // Rayures gris/blanc
-        headStyles: {
-            fillColor: brandColor, // En-tête Rose
-            textColor: [255, 255, 255],
-            fontStyle: 'bold'
-        },
-        styles: {
-            font: 'helvetica',
-            fontSize: 10
-        },
-        columnStyles: {
-            0: { cellWidth: 90 }, // La colonne produit est plus large
-            3: { fontStyle: 'bold' } // Le total en gras
-        }
-    });
-
-    // --- 4. TOTAUX ---
-    // On récupère la position Y où le tableau s'est arrêté
-    let finalY = doc.lastAutoTable.finalY + 10;
-
-    const shipping = parseInt(deliverySelect.value) || 0;
-    const shippingName = deliverySelect.options[deliverySelect.selectedIndex].text;
-    const total = subtotal + shipping;
-
-    // Cadre des totaux
-    doc.setDrawColor(...brandColor);
-    doc.setLineWidth(0.5);
-    doc.line(110, finalY, 200, finalY); // Ligne de séparation
-
-    doc.setFontSize(11);
-    doc.text(`Sous-total :`, 140, finalY + 10);
-    doc.text(formatPrice(subtotal), 195, finalY + 10, null, null, "right");
-
-    doc.text(`Livraison :`, 140, finalY + 17);
-    doc.setFontSize(9);
-    doc.text(`(${shippingName})`, 140, finalY + 21); // Nom du quartier
-    doc.setFontSize(11);
-    doc.text(formatPrice(shipping), 195, finalY + 17, null, null, "right");
-
-    // Total final en gros
-    doc.setFillColor(...brandColor);
-    doc.rect(135, finalY + 28, 65, 12, 'F'); // Fond rose
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text(`TOTAL : ${formatPrice(total)}`, 195, finalY + 36, null, null, "right");
-
-    // --- 5. PIED DE PAGE ---
-    doc.setTextColor(...black);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "italic");
-    
-    // Positionner tout en bas de la page (A4 = 297mm de haut)
-    const pageHeight = doc.internal.pageSize.height;
-    doc.text("Merci de votre confiance ! Sandy'Shop - Lomé, Togo", 105, pageHeight - 20, null, null, "center");
-    doc.text("Contact : +228 93 89 95 38", 105, pageHeight - 15, null, null, "center");
-
-    // Sauvegarde
-    doc.save(`Facture_SandyShop_${orderId}.pdf`);
-}
+            doc.save("facture.pdf");
+        });
     };
     renderCart();
 
