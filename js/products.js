@@ -1,17 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ROUTAGE
-    if (document.getElementById('product-list')) initProduitsPage();
-    if (document.getElementById('cart-container')) initPanierPage();
-    if (document.getElementById('product-detail-container')) initProduitDetailPage();
+    // --- ROUTAGE ---
+    if (document.getElementById('product-list')) {
+        initProduitsPage();
+    }
+    if (document.getElementById('cart-container')) {
+        initPanierPage();
+    }
+    if (document.getElementById('product-detail-container')) {
+        initProduitDetailPage();
+    }
     
-    // AFFILIATION (Sauvegarde du parrain)
+    // Affiliation
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if (ref) sessionStorage.setItem('affiliation_ref', ref);
 });
 
 // =================================================================
-// 1. PAGE CATALOGUE
+// 1. UTILITAIRES (Squelettes, Mélange, PDF)
 // =================================================================
 
 function displaySkeletonCards() {
@@ -26,7 +32,7 @@ function shuffleArray(array) {
     } 
 }
 
-// Convertisseur couleur pour le PDF
+// Convertisseur couleur Hex (#d1a3a4) vers RGB pour le PDF
 function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
@@ -34,6 +40,9 @@ function hexToRgb(hex) {
     return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 }
 
+// =================================================================
+// 2. PAGE CATALOGUE
+// =================================================================
 async function initProduitsPage() {
     const productList = document.getElementById('product-list');
     const loadMoreContainer = document.getElementById('load-more-container');
@@ -43,6 +52,8 @@ async function initProduitsPage() {
     try {
         await new Promise(resolve => setTimeout(resolve, 500));
         const response = await fetch('data/produits.json');
+        if (!response.ok) throw new Error('Fichier JSON introuvable');
+        
         const data = await response.json();
         const rawProducts = data.items ? data.items : data;
         
@@ -52,7 +63,7 @@ async function initProduitsPage() {
         shuffleArray(others);
         const allProducts = [...stars, ...others];
 
-        // --- FILTRES & PAGINATION ---
+        // --- PAGINATION & FILTRES ---
         const ITEMS_PER_PAGE = 12; 
         let currentPage = 1;
         let currentFilteredProducts = [];
@@ -109,6 +120,7 @@ async function initProduitsPage() {
                     </div>`;
                 
                 if (p.stock > 0 && p.stock <= 3) html = html.replace('<p class="product-price">', `<div class="stock-alert">🔥 Vite ! Plus que ${p.stock} !</div><p class="product-price">`);
+                
                 productList.insertAdjacentHTML('beforeend', html);
             });
             
@@ -146,8 +158,6 @@ function addEventListenersToCards(allProducts) {
             if (product) { 
                 addToCart(product); 
                 showToast("Ajouté au panier !");
-                
-                // Feedback visuel sur le bouton
                 const originalText = cartBtn.innerHTML;
                 cartBtn.innerHTML = '✔';
                 cartBtn.disabled = true;
@@ -158,7 +168,7 @@ function addEventListenersToCards(allProducts) {
 }
 
 // =================================================================
-// 2. PAGE DÉTAIL PRODUIT
+// 3. PAGE DÉTAIL PRODUIT
 // =================================================================
 async function initProduitDetailPage() {
     const container = document.getElementById('product-detail-container');
@@ -175,10 +185,7 @@ async function initProduitDetailPage() {
         document.title = `${product.nom} - Sandy'Shop`;
         const images = product.images && product.images.length > 0 ? product.images : [product.image];
         
-        // Audio
         let audioHTML = product.audio ? `<div class="audio-player" style="margin:15px 0;background:#f9f9f9;padding:10px;border-radius:8px;"><p style="font-size:0.8rem;font-weight:bold;">🎧 Écouter la présentation :</p><audio controls style="width:100%"><source src="${product.audio}" type="audio/mpeg"></audio></div>` : '';
-
-        // Tailles
         let sizesHTML = product.tailles ? `<div class="product-sizes"><label>Taille :</label><div class="size-options">${product.tailles.split(',').map((s,i) => `<input type="radio" name="size" id="s${i}" value="${s.trim()}" ${i===0?'checked':''}><label for="s${i}" class="size-box">${s.trim()}</label>`).join('')}</div></div>` : '';
 
         container.innerHTML = `
@@ -220,7 +227,6 @@ function setupProductInteractions(product, container) {
     const mainImg = document.getElementById('main-product-image');
     container.querySelectorAll('.thumbnail-images img').forEach(th => th.addEventListener('click', () => mainImg.src = th.src));
     
-    // Zoom PC
     const imgCont = document.getElementById('img-container');
     if (window.innerWidth > 768 && imgCont) {
         imgCont.addEventListener("mousemove", e => {
@@ -231,13 +237,11 @@ function setupProductInteractions(product, container) {
         imgCont.addEventListener("mouseleave", () => mainImg.style.transform = "scale(1)");
     }
 
-    // Partage
     const shareBtn = document.getElementById('native-share-btn');
     if(shareBtn) shareBtn.addEventListener('click', async () => {
         try { if (navigator.share) await navigator.share({ title: product.nom, text: `Regarde ça : ${product.nom}`, url: window.location.href }); } catch {}
     });
 
-    // Panier Detail
     const btnCart = container.querySelector('.add-to-cart-detail');
     if(btnCart) btnCart.addEventListener('click', () => {
         const qty = parseInt(document.getElementById('product-quantity').value);
@@ -266,7 +270,7 @@ function displayRecommendations(currentProduct, allProducts) {
 }
 
 // =================================================================
-// 3. PANIER & PDF
+// 4. PANIER & PDF CORRIGÉ
 // =================================================================
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
@@ -308,7 +312,7 @@ async function initPanierPage() {
             });
         });
 
-        // PDF GENERATION
+        // --- GÉNÉRATEUR DE FACTURE CORRIGÉ ---
         document.getElementById('btn-pdf').addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -317,7 +321,17 @@ async function initPanierPage() {
             let siteColorHex = rootStyles.getPropertyValue('--accent-color').trim() || "#333333";
             const brandColor = hexToRgb(siteColorHex); 
             const black = [60, 60, 60];
-            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "BOUTIQUE";
+
+            // Helper pour formatage propre dans le PDF (Pas d'espace insécable)
+            const safeFormat = (val) => {
+                let parts = val.toString().split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                let symbol = "FCFA";
+                if(typeof SHOP_SETTINGS !== 'undefined' && SHOP_SETTINGS.currencySymbol) symbol = SHOP_SETTINGS.currencySymbol;
+                return parts.join(".") + " " + symbol;
+            };
+
+            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "MA BOUTIQUE";
 
             doc.setFillColor(...brandColor);
             doc.rect(0, 0, 210, 40, 'F');
@@ -329,27 +343,55 @@ async function initPanierPage() {
             doc.setTextColor(...black);
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
+            const date = new Date().toLocaleDateString('fr-FR');
             const clientName = document.getElementById('customer-name')?.value || "Client";
+            
+            doc.text(`Date : ${date}`, 140, 50);
             doc.text("CLIENT : " + clientName, 15, 55);
-            doc.text("Date : " + new Date().toLocaleDateString(), 140, 55);
 
             const tableRows = [];
             cart.forEach(item => {
-                tableRows.push([item.nom, formatPrice(item.prix), item.quantity, formatPrice(item.prix * item.quantity)]);
+                const totalItem = item.prix * item.quantity;
+                tableRows.push([
+                    item.nom, 
+                    safeFormat(item.prix), 
+                    String(item.quantity), 
+                    safeFormat(totalItem)
+                ]);
             });
 
             doc.autoTable({
                 head: [["Produit", "Prix", "Qté", "Total"]],
                 body: tableRows,
-                startY: 65,
+                startY: 70,
                 theme: 'striped',
-                headStyles: { fillColor: brandColor, textColor: [255, 255, 255] }
+                headStyles: { fillColor: brandColor, textColor: [255, 255, 255] },
+                columnStyles: { 
+                    0: { cellWidth: 80 }, 
+                    3: { fontStyle: 'bold', halign: 'right' },
+                    1: { halign: 'right' },
+                    2: { halign: 'center' }
+                }
             });
 
             let finalY = doc.lastAutoTable.finalY + 10;
+            
+            // Cadre Total
+            doc.setFillColor(...brandColor); 
+            doc.rect(120, finalY + 5, 75, 12, 'F');
+            doc.setTextColor(255, 255, 255);
             doc.setFontSize(14);
             doc.setFont("helvetica", "bold");
-            doc.text(`TOTAL : ${formatPrice(totalProduits)}`, 190, finalY, null, null, "right");
+            // Aligné à droite mais avec marge pour éviter coupure
+            doc.text(`TOTAL : ${safeFormat(totalProduits)}`, 190, finalY + 13, null, null, "right");
+            
+            // Footer
+            doc.setTextColor(...black);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "italic");
+            const pageHeight = doc.internal.pageSize.height;
+            doc.text("Merci de votre confiance !", 105, pageHeight - 20, null, null, "center");
+
             doc.save("facture.pdf");
         });
     };
