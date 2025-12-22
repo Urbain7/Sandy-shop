@@ -773,3 +773,30 @@ form button { background-color: var(--accent-color); color: white; border: none;
 .product-info .promo-price {
     font-size: 1.5rem;
 }
+/* --- BOUTON GÉNÉRATEUR D'AFFICHE --- */
+.btn-poster {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
+    color: white;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.btn-poster:hover {
+    transform: scale(1.02);
+}
+
+.btn-poster svg {
+    width: 20px;
+    height: 20px;
+}
