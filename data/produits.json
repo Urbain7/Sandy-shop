@@ -3,8 +3,8 @@
     {
       "id": "prod_1",
       "nom": "Sac à main Pedro",
-      "prix_original": 1000,
-      "prix": 14500,
+      "prix_original": 14500,
+      "prix": 10000,
       "prix_achat": 9000,
       "stock": 99,
       "tailles": "M",
