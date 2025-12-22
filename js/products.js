@@ -10,14 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
         initProduitDetailPage();
     }
     
-    // Affiliation
+    // Affiliation (Sauvegarde du parrain si présent dans l'URL)
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if (ref) sessionStorage.setItem('affiliation_ref', ref);
 });
 
 // =================================================================
-// 1. UTILITAIRES (Squelettes, Mélange, PDF)
+// 1. UTILITAIRES (Squelettes, Mélange, Couleurs)
 // =================================================================
 
 function displaySkeletonCards() {
@@ -108,14 +108,10 @@ async function initProduitsPage() {
                 const badge = p.is_star ? '<span class="star-badge">🌟 STAR</span>' : '';
                 const btn = isOutOfStock ? `<button disabled class="btn out-of-stock-btn">Épuisé</button>` : `<button class="btn add-to-cart">Ajouter</button>`;
                 
-                // --- LOGIQUE PRIX PROMO (CATALOGUE) ---
+                // Logique Prix Promo
                 let priceHTML = '';
                 if (p.prix_original && p.prix_original > p.prix) {
-                    priceHTML = `
-                        <div class="price-container">
-                            <span class="old-price">${formatPrice(p.prix_original)}</span>
-                            <span class="promo-price">${formatPrice(p.prix)}</span>
-                        </div>`;
+                    priceHTML = `<div class="price-container"><span class="old-price">${formatPrice(p.prix_original)}</span><span class="promo-price">${formatPrice(p.prix)}</span></div>`;
                 } else {
                     priceHTML = `<p class="product-price">${formatPrice(p.prix)}</p>`;
                 }
@@ -199,14 +195,10 @@ async function initProduitDetailPage() {
         let audioHTML = product.audio ? `<div class="audio-player" style="margin:15px 0;background:#f9f9f9;padding:10px;border-radius:8px;"><p style="font-size:0.8rem;font-weight:bold;">🎧 Écouter la présentation :</p><audio controls style="width:100%"><source src="${product.audio}" type="audio/mpeg"></audio></div>` : '';
         let sizesHTML = product.tailles ? `<div class="product-sizes"><label>Taille :</label><div class="size-options">${product.tailles.split(',').map((s,i) => `<input type="radio" name="size" id="s${i}" value="${s.trim()}" ${i===0?'checked':''}><label for="s${i}" class="size-box">${s.trim()}</label>`).join('')}</div></div>` : '';
 
-        // --- LOGIQUE PRIX PROMO (DETAIL) ---
+        // Prix Promo
         let priceHTML = '';
         if (product.prix_original && product.prix_original > product.prix) {
-            priceHTML = `
-                <div class="price-container">
-                    <span class="old-price">${formatPrice(product.prix_original)}</span>
-                    <span class="promo-price">${formatPrice(product.prix)}</span>
-                </div>`;
+            priceHTML = `<div class="price-container"><span class="old-price">${formatPrice(product.prix_original)}</span><span class="promo-price">${formatPrice(product.prix)}</span></div>`;
         } else {
             priceHTML = `<p class="product-price">${formatPrice(product.prix)}</p>`;
         }
@@ -227,21 +219,42 @@ async function initProduitDetailPage() {
                     </div>
                     <p class="product-description">${product.description}</p>
                     ${product.stock > 0 ? '<button class="btn add-to-cart-detail">Ajouter au panier</button>' : '<button disabled class="btn out-of-stock-btn">Épuisé</button>'}
+                    
+                    <!-- BOUTONS ACTION -->
                     <div id="extra-buttons-container"></div>
                 </div>
             </div>`;
 
         if (product.stock > 0 && product.stock <= 3) container.querySelector('h1').insertAdjacentHTML('afterend', `<div class="stock-alert">🔥 Vite ! Plus que ${product.stock} exemplaires !</div>`);
 
-        const refName = sessionStorage.getItem('affiliation_ref');
-        const refText = refName ? ` (Référé par: ${refName})` : '';
-        const waMsg = `Bonjour, je veux commander : ${product.nom}${refText}. Est-il dispo ?`;
+        // --- AFFILIATION & WHATSAPP ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const promoCode = urlParams.get('promo');
+        const refName = sessionStorage.getItem('affiliation_ref') || urlParams.get('ref');
+        
+        let waMsg = `Bonjour, je veux commander : ${product.nom}.`;
+        if (promoCode) waMsg += `\n🎁 J'ai gagné le code promo : ${promoCode}`;
+        if (refName) waMsg += `\n(Référé par : ${refName})`;
+        waMsg += `\nEst-il disponible ?`;
         
         document.getElementById('extra-buttons-container').innerHTML = `
-            <a href="https://wa.me/22893899538?text=${encodeURIComponent(waMsg)}" class="btn btn-whatsapp-order" target="_blank">Commander sur WhatsApp</a>
-            <div class="share-section" style="margin-top:10px;"><button id="native-share-btn" class="btn-secondary" style="width:100%">Partager ce produit</button></div>`;
+            <a href="https://wa.me/22893899538?text=${encodeURIComponent(waMsg)}" class="btn btn-whatsapp-order" target="_blank">
+                Commander sur WhatsApp ${promoCode ? '(Promo 🎁)' : ''}
+            </a>
 
+            <!-- BOUTON CRÉER AFFICHE -->
+            <button id="btn-poster" class="btn-poster">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                Créer mon Affiche Pub
+            </button>
+
+            <div class="share-section" style="margin-top:10px;">
+                <button id="native-share-btn" class="btn-secondary" style="width:100%">Partager ce produit</button>
+            </div>`;
+
+        // Activations
         setupProductInteractions(product, container);
+        document.getElementById('btn-poster').addEventListener('click', () => generatePoster(product)); // Active le générateur d'affiche
         displayRecommendations(product, allProducts);
     } catch (e) { console.error(e); }
 }
@@ -281,13 +294,13 @@ function setupProductInteractions(product, container) {
 }
 
 function displayRecommendations(currentProduct, allProducts) {
-    const recommendationsGrid = document.getElementById('recommendations-grid');
-    if (!recommendationsGrid) return;
+    const grid = document.getElementById('recommendations-grid');
+    if (!grid) return;
     const recommended = allProducts.filter(p => p.categorie === currentProduct.categorie && p.id !== currentProduct.id).slice(0, 4);
     if (recommended.length > 0) {
         document.getElementById('recommendations-section').style.display = 'block';
         recommended.forEach(p => {
-            recommendationsGrid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
+            grid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
         });
     }
 }
@@ -335,7 +348,7 @@ async function initPanierPage() {
             });
         });
 
-        // PDF GENERATION
+        // PDF GENERATION (Optimisé)
         document.getElementById('btn-pdf').addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -346,7 +359,6 @@ async function initPanierPage() {
             const black = [60, 60, 60];
             const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "MA BOUTIQUE";
 
-            // SafeFormat (Copie de la fonction locale pour être sûr)
             const safeFormat = (val) => {
                 let parts = val.toString().split(".");
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -365,11 +377,10 @@ async function initPanierPage() {
             doc.setTextColor(...black);
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            const date = new Date().toLocaleDateString('fr-FR');
             const clientName = document.getElementById('customer-name')?.value || "Client";
             
-            doc.text(`Date : ${date}`, 140, 50);
             doc.text("CLIENT : " + clientName, 15, 55);
+            doc.text("Date : " + new Date().toLocaleDateString(), 140, 55);
 
             const tableRows = [];
             cart.forEach(item => {
@@ -414,89 +425,82 @@ async function initPanierPage() {
             } catch { showToast("Erreur d'envoi."); btn.disabled = false; }
         });
     }
-   
 }
+
 // =================================================================
-// 5. GÉNÉRATEUR D'AFFICHE WHATSAPP (CANVAS)
+// 5. GÉNÉRATEUR D'AFFICHE (CANVAS)
 // =================================================================
 async function generatePoster(product) {
     const btn = document.getElementById('btn-poster');
     const originalText = btn.innerHTML;
-    btn.innerHTML = "🎨 Création en cours...";
+    btn.innerHTML = "🎨 Création...";
     btn.disabled = true;
 
     try {
-        // 1. Créer le canevas (Zone de dessin invisible)
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const size = 1080; // Haute qualité (Carré)
+        const size = 1080; 
         canvas.width = size;
         canvas.height = size;
 
-        // 2. Fond Blanc
+        // Fond Blanc
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, size, size);
 
-        // 3. Charger l'image du produit (Gestion CORS pour éviter les erreurs de sécurité)
+        // Image Produit
         const img = new Image();
         img.crossOrigin = "Anonymous";
-        
-        // Astuce : On utilise un proxy pour être sûr de pouvoir télécharger l'image
         img.src = `https://wsrv.nl/?url=${encodeURIComponent(product.image)}&w=800&output=jpg`;
 
-        await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-        });
+        await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
 
-        // 4. Dessiner l'image (Centrée et redimensionnée)
-        // On garde un ratio carré 800x800 au centre
+        // Dessin
         const scale = Math.min(800 / img.width, 800 / img.height);
         const w = img.width * scale;
         const h = img.height * scale;
         const x = (size - w) / 2;
-        const y = 100; // Marge du haut
+        const y = 100;
         ctx.drawImage(img, x, y, w, h);
 
-        // 5. Dessiner le cadre décoratif
-        ctx.strokeStyle = "#f68b1e"; // Orange EM AREA
+        // Cadre et Texte
+        const rootStyles = getComputedStyle(document.documentElement);
+        let siteColor = rootStyles.getPropertyValue('--accent-color').trim() || "#e67e22";
+        
+        ctx.strokeStyle = siteColor;
         ctx.lineWidth = 20;
         ctx.strokeRect(0, 0, size, size);
 
-        // 6. Écrire le Texte
         ctx.textAlign = "center";
         
-        // Nom du produit
+        // Nom
         ctx.fillStyle = "#333333";
         ctx.font = "bold 60px Arial";
-        // Si le nom est trop long, on le coupe
         const name = product.nom.length > 30 ? product.nom.substring(0, 30) + "..." : product.nom;
         ctx.fillText(name, size / 2, 950);
 
-        // Prix (En gros et Orange)
+        // Prix
         const price = formatPrice(product.prix);
-        ctx.fillStyle = "#e67e22";
+        ctx.fillStyle = siteColor;
         ctx.font = "bold 90px Arial";
         ctx.fillText(price, size / 2, 850);
 
-        // Badge "Disponible sur EM AREA"
-        ctx.fillStyle = "#111"; // Fond noir
-        ctx.fillRect(size / 2 - 250, 40, 500, 60); // Bandeau haut
+        // Badge
+        ctx.fillStyle = "#111";
+        ctx.fillRect(size / 2 - 250, 40, 500, 60);
         ctx.fillStyle = "#fff";
         ctx.font = "bold 30px Arial";
         ctx.fillText("DISPONIBLE SUR EM AREA", size / 2, 82);
 
-        // 7. Télécharger
+        // Download
         const link = document.createElement('a');
-        link.download = `Affiche_${product.nom.replace(/\s+/g, '_')}.jpg`;
+        link.download = `Affiche_${product.nom}.jpg`;
         link.href = canvas.toDataURL('image/jpeg', 0.9);
         link.click();
-
-        showToast("Affiche téléchargée ! Postez-la sur WhatsApp 📸");
+        showToast("Affiche téléchargée !");
 
     } catch (e) {
         console.error(e);
-        showToast("Erreur lors de la création de l'image.");
+        showToast("Erreur image.");
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
