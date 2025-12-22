@@ -428,7 +428,7 @@ async function initPanierPage() {
 }
 
 // =================================================================
-// 5. GÉNÉRATEUR D'AFFICHE (CANVAS)
+// 5. GÉNÉRATEUR D'AFFICHE CORRIGÉ (CORS & URL ABSOLUE)
 // =================================================================
 async function generatePoster(product) {
     const btn = document.getElementById('btn-poster');
@@ -443,18 +443,26 @@ async function generatePoster(product) {
         canvas.width = size;
         canvas.height = size;
 
-        // Fond Blanc
+        // 1. Fond Blanc
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, size, size);
 
-        // Image Produit
+        // 2. CORRECTION URL : On force l'URL absolue (https://...)
+        // Si l'image est "images/sac.jpg", elle devient "https://monsite.com/images/sac.jpg"
+        const fullImageUrl = new URL(product.image, window.location.href).href;
+
+        // 3. Charger l'image via un Proxy (pour contourner la sécurité CORS)
         const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = `https://wsrv.nl/?url=${encodeURIComponent(product.image)}&w=800&output=jpg`;
+        img.crossOrigin = "Anonymous"; // Indispensable
+        // On utilise wsrv.nl qui ajoute les bons entêtes de sécurité
+        img.src = `https://wsrv.nl/?url=${encodeURIComponent(fullImageUrl)}&w=800&output=jpg&q=80`;
 
-        await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = (e) => reject("Impossible de charger l'image");
+        });
 
-        // Dessin
+        // 4. Dessin
         const scale = Math.min(800 / img.width, 800 / img.height);
         const w = img.width * scale;
         const h = img.height * scale;
@@ -462,27 +470,29 @@ async function generatePoster(product) {
         const y = 100;
         ctx.drawImage(img, x, y, w, h);
 
-        // Cadre et Texte
+        // 5. Cadre (Couleur du thème)
         const rootStyles = getComputedStyle(document.documentElement);
-        let siteColor = rootStyles.getPropertyValue('--accent-color').trim() || "#e67e22";
+        let siteColor = rootStyles.getPropertyValue('--accent-color').trim();
+        // Si la couleur n'est pas trouvée (bug css), on met orange par défaut
+        if (!siteColor) siteColor = "#e67e22"; 
         
         ctx.strokeStyle = siteColor;
         ctx.lineWidth = 20;
         ctx.strokeRect(0, 0, size, size);
 
+        // 6. Textes
         ctx.textAlign = "center";
         
         // Nom
         ctx.fillStyle = "#333333";
         ctx.font = "bold 60px Arial";
-        const name = product.nom.length > 30 ? product.nom.substring(0, 30) + "..." : product.nom;
+        const name = product.nom.length > 25 ? product.nom.substring(0, 25) + "..." : product.nom;
         ctx.fillText(name, size / 2, 950);
 
         // Prix
-        const price = formatPrice(product.prix);
         ctx.fillStyle = siteColor;
         ctx.font = "bold 90px Arial";
-        ctx.fillText(price, size / 2, 850);
+        ctx.fillText(formatPrice(product.prix), size / 2, 850);
 
         // Badge
         ctx.fillStyle = "#111";
@@ -491,16 +501,17 @@ async function generatePoster(product) {
         ctx.font = "bold 30px Arial";
         ctx.fillText("DISPONIBLE SUR EM AREA", size / 2, 82);
 
-        // Download
+        // 7. Téléchargement
         const link = document.createElement('a');
-        link.download = `Affiche_${product.nom}.jpg`;
+        link.download = `Affiche_${product.nom.replace(/\s+/g, '_')}.jpg`;
         link.href = canvas.toDataURL('image/jpeg', 0.9);
         link.click();
-        showToast("Affiche téléchargée !");
+        
+        showToast("Affiche téléchargée ! 📸");
 
     } catch (e) {
         console.error(e);
-        showToast("Erreur image.");
+        showToast("Erreur image (Réessayez).");
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
