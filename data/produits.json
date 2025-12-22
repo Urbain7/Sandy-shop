@@ -3,6 +3,7 @@
     {
       "id": "prod_1",
       "nom": "Sac à main Pedro",
+      "prix_original": 1000,
       "prix": 14500,
       "prix_achat": 9000,
       "stock": 99,
@@ -17,6 +18,7 @@
     {
       "id": "prod_2",
       "nom": "Sac PEDRA",
+      "prix_original": null,
       "prix": 12000,
       "prix_achat": null,
       "stock": 100,
@@ -30,6 +32,7 @@
     {
       "id": "prod_3",
       "nom": "Tapette Femme",
+      "prix_original": null,
       "prix": 9000,
       "prix_achat": null,
       "stock": 10,
@@ -38,11 +41,12 @@
       "image": "/images/uploads/IMG-20251113-WA0323 (1).jpg",
       "description": "Chaussures...",
       "is_star": true,
-      "in_story": true
+      "in_story": false
     },
     {
       "id": "prod_4",
       "nom": "Sac à main Ginventhi",
+      "prix_original": null,
       "prix": 12000,
       "stock": 12,
       "categorie": "Sacs",
