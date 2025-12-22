@@ -18,20 +18,26 @@
       "id": "prod_2",
       "nom": "Sac PEDRA",
       "prix": 12000,
+      "prix_achat": null,
       "stock": 100,
+      "tailles": "",
       "categorie": "Sacs",
       "image": "images/sacs/sac_pedra.jpg",
       "description": "Découvrez le sac PEDRA, un accessoire chic...",
-      "in_story": true
+      "is_star": true,
+      "in_story": false
     },
     {
       "id": "prod_3",
       "nom": "Tapette Femme",
       "prix": 9000,
+      "prix_achat": null,
       "stock": 10,
+      "tailles": "",
       "categorie": "Chaussures",
       "image": "/images/uploads/IMG-20251113-WA0323 (1).jpg",
       "description": "Chaussures...",
+      "is_star": true,
       "in_story": true
     },
     {
