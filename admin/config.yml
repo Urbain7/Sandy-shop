@@ -9,7 +9,7 @@ public_folder: "images/uploads"
 collections:
   # 1. PARAMÈTRES
   - name: "settings"
-    label: "Paramètres Boutique"
+    label: "⚙️ Paramètres Boutique"
     files:
       - name: "config_generale"
         label: "Configuration Générale"
@@ -29,7 +29,7 @@ collections:
           - {label: "Thème", name: "theme", widget: "select", options: ["mode", "cuisine", "btp", "nature", "luxe", "perso"]}
           - {label: "Couleur Perso", name: "couleur_perso", widget: "color", default: "#d1a3a4"}
 
-  # 3. PRODUITS (Avec Audio & Stars)
+  # 3. PRODUITS
   - name: "produits"
     label: "Produits"
     files:
@@ -44,14 +44,23 @@ collections:
             fields:
               - {label: "ID (Unique)", name: "id", widget: "string"}
               - {label: "Nom", name: "nom", widget: "string"}
-              - {label: "Prix Vente", name: "prix", widget: "number", value_type: "int"}
+              
+              # --- PROMO ---
+              - label: "Prix Original (Avant réduction - Facultatif)"
+                name: "prix_original"
+                widget: "number"
+                value_type: "int"
+                required: false
+              # -------------
+              
+              - {label: "Prix de Vente (Actuel)", name: "prix", widget: "number", value_type: "int"}
               - {label: "Prix Achat (Marge)", name: "prix_achat", widget: "number", default: 0, required: false}
               - {label: "Stock", name: "stock", widget: "number", default: 1}
-              - {label: "Tailles (ex: S, M, L)", name: "tailles", widget: "string", required: false}
+              - {label: "Tailles", name: "tailles", widget: "string", required: false}
               - {label: "Catégorie", name: "categorie", widget: "select", options: ["Sacs", "Chaussures", "Robes", "Accessoires", "Jeans", "Ensembles", "Cosmétiques", "Bijoux"]}
               - {label: "Image Principale", name: "image", widget: "image"}
               - {label: "Galerie", name: "images", widget: "list", field: {label: "Photo", widget: "image"}}
-              - {label: "Note Vocale (Audio)", name: "audio", widget: "file", required: false}
+              - {label: "Note Vocale", name: "audio", widget: "file", required: false}
               - {label: "Description", name: "description", widget: "text"}
               - {label: "Produit Star ?", name: "is_star", widget: "boolean", default: false}
               - {label: "En Story ?", name: "in_story", widget: "boolean", default: false}
