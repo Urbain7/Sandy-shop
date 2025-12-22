@@ -414,4 +414,91 @@ async function initPanierPage() {
             } catch { showToast("Erreur d'envoi."); btn.disabled = false; }
         });
     }
+   
+}
+// =================================================================
+// 5. GÉNÉRATEUR D'AFFICHE WHATSAPP (CANVAS)
+// =================================================================
+async function generatePoster(product) {
+    const btn = document.getElementById('btn-poster');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "🎨 Création en cours...";
+    btn.disabled = true;
+
+    try {
+        // 1. Créer le canevas (Zone de dessin invisible)
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const size = 1080; // Haute qualité (Carré)
+        canvas.width = size;
+        canvas.height = size;
+
+        // 2. Fond Blanc
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+
+        // 3. Charger l'image du produit (Gestion CORS pour éviter les erreurs de sécurité)
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        
+        // Astuce : On utilise un proxy pour être sûr de pouvoir télécharger l'image
+        img.src = `https://wsrv.nl/?url=${encodeURIComponent(product.image)}&w=800&output=jpg`;
+
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+        });
+
+        // 4. Dessiner l'image (Centrée et redimensionnée)
+        // On garde un ratio carré 800x800 au centre
+        const scale = Math.min(800 / img.width, 800 / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        const x = (size - w) / 2;
+        const y = 100; // Marge du haut
+        ctx.drawImage(img, x, y, w, h);
+
+        // 5. Dessiner le cadre décoratif
+        ctx.strokeStyle = "#f68b1e"; // Orange EM AREA
+        ctx.lineWidth = 20;
+        ctx.strokeRect(0, 0, size, size);
+
+        // 6. Écrire le Texte
+        ctx.textAlign = "center";
+        
+        // Nom du produit
+        ctx.fillStyle = "#333333";
+        ctx.font = "bold 60px Arial";
+        // Si le nom est trop long, on le coupe
+        const name = product.nom.length > 30 ? product.nom.substring(0, 30) + "..." : product.nom;
+        ctx.fillText(name, size / 2, 950);
+
+        // Prix (En gros et Orange)
+        const price = formatPrice(product.prix);
+        ctx.fillStyle = "#e67e22";
+        ctx.font = "bold 90px Arial";
+        ctx.fillText(price, size / 2, 850);
+
+        // Badge "Disponible sur EM AREA"
+        ctx.fillStyle = "#111"; // Fond noir
+        ctx.fillRect(size / 2 - 250, 40, 500, 60); // Bandeau haut
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 30px Arial";
+        ctx.fillText("DISPONIBLE SUR EM AREA", size / 2, 82);
+
+        // 7. Télécharger
+        const link = document.createElement('a');
+        link.download = `Affiche_${product.nom.replace(/\s+/g, '_')}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.9);
+        link.click();
+
+        showToast("Affiche téléchargée ! Postez-la sur WhatsApp 📸");
+
+    } catch (e) {
+        console.error(e);
+        showToast("Erreur lors de la création de l'image.");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 }
