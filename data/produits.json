@@ -18,7 +18,7 @@
     {
       "id": "prod_2",
       "nom": "Sac PEDRA",
-      "prix_original": null,
+      "prix_original": 10000,
       "prix": 12000,
       "prix_achat": null,
       "stock": 100,
@@ -32,7 +32,7 @@
     {
       "id": "prod_3",
       "nom": "Tapette Femme",
-      "prix_original": null,
+      "prix_original": 6000,
       "prix": 9000,
       "prix_achat": null,
       "stock": 10,
@@ -48,30 +48,38 @@
       "nom": "Sac à main Ginventhi",
       "prix_original": null,
       "prix": 12000,
+      "prix_achat": null,
       "stock": 12,
+      "tailles": "",
       "categorie": "Sacs",
       "image": "/images/uploads/IMG-20251113-WA0207.jpg",
       "images": [
         "/images/uploads/IMG-20251113-WA0209 (1).jpg"
       ],
       "description": "Sac...",
-      "in_story": true
+      "in_story": false
     },
     {
       "id": "prod_5",
       "nom": "Combinaison jean",
+      "prix_original": null,
       "prix": 8500,
+      "prix_achat": null,
       "stock": 3,
+      "tailles": "",
       "categorie": "Jeans",
       "image": "images/robes/jeans.png",
       "description": "Affirmez votre style avec notre ensemble...",
-      "in_story": true
+      "in_story": false
     },
     {
       "id": "prod_6",
       "nom": "Divine Jupe & Top",
+      "prix_original": null,
       "prix": 7000,
+      "prix_achat": null,
       "stock": 10,
+      "tailles": "",
       "categorie": "Robes",
       "image": "images/robes/robevc.png",
       "description": "Capturez l'essence de l'élégance...",
@@ -80,12 +88,15 @@
     {
       "id": "prod_7",
       "nom": "Robe Corset",
+      "prix_original": null,
       "prix": 8500,
+      "prix_achat": null,
       "stock": 100,
+      "tailles": "",
       "categorie": "Robes",
       "image": "images/robes/robe_mou_blanche.png",
       "description": "Cette robe longue met en valeur une silhouette...",
-      "in_story": true
+      "in_story": false
     }
   ]
 }
