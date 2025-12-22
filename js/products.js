@@ -32,7 +32,6 @@ function shuffleArray(array) {
     } 
 }
 
-// Convertisseur couleur Hex (#d1a3a4) vers RGB pour le PDF
 function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
@@ -109,17 +108,29 @@ async function initProduitsPage() {
                 const badge = p.is_star ? '<span class="star-badge">🌟 STAR</span>' : '';
                 const btn = isOutOfStock ? `<button disabled class="btn out-of-stock-btn">Épuisé</button>` : `<button class="btn add-to-cart">Ajouter</button>`;
                 
+                // --- LOGIQUE PRIX PROMO (CATALOGUE) ---
+                let priceHTML = '';
+                if (p.prix_original && p.prix_original > p.prix) {
+                    priceHTML = `
+                        <div class="price-container">
+                            <span class="old-price">${formatPrice(p.prix_original)}</span>
+                            <span class="promo-price">${formatPrice(p.prix)}</span>
+                        </div>`;
+                } else {
+                    priceHTML = `<p class="product-price">${formatPrice(p.prix)}</p>`;
+                }
+
                 let html = `
                     <div class="product-card ${starClass} ${isOutOfStock ? 'out-of-stock' : ''}" data-aos="fade-up">
                         ${badge}
                         <a href="produit.html?id=${p.id}" class="product-link">
                             <img src="${p.image}" loading="lazy"><h3>${p.nom}</h3>
                         </a>
-                        <p class="product-price">${formatPrice(p.prix)}</p>
+                        ${priceHTML}
                         <div class="product-actions" data-id="${p.id}">${btn}<button class="like-btn">❤️</button></div>
                     </div>`;
                 
-                if (p.stock > 0 && p.stock <= 3) html = html.replace('<p class="product-price">', `<div class="stock-alert">🔥 Vite ! Plus que ${p.stock} !</div><p class="product-price">`);
+                if (p.stock > 0 && p.stock <= 3) html = html.replace(/<div class="price-container">|<p class="product-price">/, `<div class="stock-alert">🔥 Vite ! Plus que ${p.stock} !</div>$&`);
                 
                 productList.insertAdjacentHTML('beforeend', html);
             });
@@ -188,6 +199,18 @@ async function initProduitDetailPage() {
         let audioHTML = product.audio ? `<div class="audio-player" style="margin:15px 0;background:#f9f9f9;padding:10px;border-radius:8px;"><p style="font-size:0.8rem;font-weight:bold;">🎧 Écouter la présentation :</p><audio controls style="width:100%"><source src="${product.audio}" type="audio/mpeg"></audio></div>` : '';
         let sizesHTML = product.tailles ? `<div class="product-sizes"><label>Taille :</label><div class="size-options">${product.tailles.split(',').map((s,i) => `<input type="radio" name="size" id="s${i}" value="${s.trim()}" ${i===0?'checked':''}><label for="s${i}" class="size-box">${s.trim()}</label>`).join('')}</div></div>` : '';
 
+        // --- LOGIQUE PRIX PROMO (DETAIL) ---
+        let priceHTML = '';
+        if (product.prix_original && product.prix_original > product.prix) {
+            priceHTML = `
+                <div class="price-container">
+                    <span class="old-price">${formatPrice(product.prix_original)}</span>
+                    <span class="promo-price">${formatPrice(product.prix)}</span>
+                </div>`;
+        } else {
+            priceHTML = `<p class="product-price">${formatPrice(product.prix)}</p>`;
+        }
+
         container.innerHTML = `
             <div class="product-detail" data-aos="fade-in">
                 <div class="product-gallery">
@@ -196,7 +219,7 @@ async function initProduitDetailPage() {
                 </div>
                 <div class="product-info">
                     <h1>${product.nom}</h1>
-                    <p class="product-price">${formatPrice(product.prix)}</p>
+                    ${priceHTML}
                     ${audioHTML}
                     ${sizesHTML}
                     <div class="product-options">
@@ -258,19 +281,19 @@ function setupProductInteractions(product, container) {
 }
 
 function displayRecommendations(currentProduct, allProducts) {
-    const grid = document.getElementById('recommendations-grid');
-    if (!grid) return;
+    const recommendationsGrid = document.getElementById('recommendations-grid');
+    if (!recommendationsGrid) return;
     const recommended = allProducts.filter(p => p.categorie === currentProduct.categorie && p.id !== currentProduct.id).slice(0, 4);
     if (recommended.length > 0) {
         document.getElementById('recommendations-section').style.display = 'block';
         recommended.forEach(p => {
-            grid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
+            recommendationsGrid.innerHTML += `<div class="product-card" data-aos="fade-up"><a href="produit.html?id=${p.id}" class="product-link"><img src="${p.image}"><h3>${p.nom}</h3></a><p class="product-price">${formatPrice(p.prix)}</p></div>`;
         });
     }
 }
 
 // =================================================================
-// 4. PANIER & PDF CORRIGÉ
+// 4. PANIER & PDF
 // =================================================================
 async function initPanierPage() {
     const cartContainer = document.getElementById('cart-container');
@@ -312,7 +335,7 @@ async function initPanierPage() {
             });
         });
 
-        // --- GÉNÉRATEUR DE FACTURE CORRIGÉ ---
+        // PDF GENERATION
         document.getElementById('btn-pdf').addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -321,8 +344,9 @@ async function initPanierPage() {
             let siteColorHex = rootStyles.getPropertyValue('--accent-color').trim() || "#333333";
             const brandColor = hexToRgb(siteColorHex); 
             const black = [60, 60, 60];
+            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "MA BOUTIQUE";
 
-            // Helper pour formatage propre dans le PDF (Pas d'espace insécable)
+            // SafeFormat (Copie de la fonction locale pour être sûr)
             const safeFormat = (val) => {
                 let parts = val.toString().split(".");
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -330,8 +354,6 @@ async function initPanierPage() {
                 if(typeof SHOP_SETTINGS !== 'undefined' && SHOP_SETTINGS.currencySymbol) symbol = SHOP_SETTINGS.currencySymbol;
                 return parts.join(".") + " " + symbol;
             };
-
-            const shopName = document.querySelector('.logo') ? document.querySelector('.logo').innerText : "MA BOUTIQUE";
 
             doc.setFillColor(...brandColor);
             doc.rect(0, 0, 210, 40, 'F');
@@ -351,47 +373,25 @@ async function initPanierPage() {
 
             const tableRows = [];
             cart.forEach(item => {
-                const totalItem = item.prix * item.quantity;
-                tableRows.push([
-                    item.nom, 
-                    safeFormat(item.prix), 
-                    String(item.quantity), 
-                    safeFormat(totalItem)
-                ]);
+                tableRows.push([item.nom, safeFormat(item.prix), String(item.quantity), safeFormat(item.prix * item.quantity)]);
             });
 
             doc.autoTable({
                 head: [["Produit", "Prix", "Qté", "Total"]],
                 body: tableRows,
-                startY: 70,
+                startY: 65,
                 theme: 'striped',
-                headStyles: { fillColor: brandColor, textColor: [255, 255, 255] },
-                columnStyles: { 
-                    0: { cellWidth: 80 }, 
-                    3: { fontStyle: 'bold', halign: 'right' },
-                    1: { halign: 'right' },
-                    2: { halign: 'center' }
-                }
+                headStyles: { fillColor: brandColor, textColor: [255, 255, 255] }
             });
 
             let finalY = doc.lastAutoTable.finalY + 10;
-            
-            // Cadre Total
             doc.setFillColor(...brandColor); 
             doc.rect(120, finalY + 5, 75, 12, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(14);
             doc.setFont("helvetica", "bold");
-            // Aligné à droite mais avec marge pour éviter coupure
             doc.text(`TOTAL : ${safeFormat(totalProduits)}`, 190, finalY + 13, null, null, "right");
             
-            // Footer
-            doc.setTextColor(...black);
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "italic");
-            const pageHeight = doc.internal.pageSize.height;
-            doc.text("Merci de votre confiance !", 105, pageHeight - 20, null, null, "center");
-
             doc.save("facture.pdf");
         });
     };
