@@ -9,7 +9,7 @@ public_folder: "images/uploads"
 collections:
   # 1. PARAMÈTRES
   - name: "settings"
-    label: "⚙️ Paramètres Boutique"
+    label: " Paramètres Boutique"
     files:
       - name: "config_generale"
         label: "Configuration Générale"
